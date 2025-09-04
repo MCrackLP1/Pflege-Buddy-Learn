@@ -1,7 +1,8 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { createLocalizedPath } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -10,6 +11,7 @@ import { Flame, Star, Target } from 'lucide-react';
 
 export function DashboardCard() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   
   // Mock data - will be replaced with real data from database
@@ -28,7 +30,7 @@ export function DashboardCard() {
           </CardHeader>
           <CardContent>
             <Button 
-              onClick={() => router.push('/de/learn')}
+              onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
               className="w-full"
               size="lg"
             >

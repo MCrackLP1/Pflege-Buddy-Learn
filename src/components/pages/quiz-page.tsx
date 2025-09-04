@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { QuizQuestion } from '@/components/quiz/quiz-question';
 import { QuizResults } from '@/components/quiz/quiz-results';
@@ -79,6 +80,7 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [startTime] = useState(Date.now());
   
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -137,8 +139,8 @@ export function QuizPage({ topic }: QuizPageProps) {
       <MainLayout>
         <QuizResults 
           {...results}
-                  onRestart={() => router.push('/de/learn')}
-        onReview={() => router.push('/de/review')}
+          onRestart={() => router.push(createLocalizedPath(locale, '/learn'))}
+          onReview={() => router.push(createLocalizedPath(locale, '/review'))}
         />
       </MainLayout>
     );

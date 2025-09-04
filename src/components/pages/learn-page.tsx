@@ -1,7 +1,8 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Shuffle, ChevronRight } from 'lucide-react';
 
 export function LearnPage() {
   const t = useTranslations('learn');
+  const locale = useLocale();
   const router = useRouter();
 
   // Mock topics data - will be replaced with real data from database
@@ -49,11 +51,11 @@ export function LearnPage() {
   ];
 
   const handleTopicSelect = (slug: string) => {
-    router.push(`/quiz/${slug}`);
+    router.push(createLocalizedPath(locale, `/quiz/${slug}`));
   };
 
   const handleRandomQuiz = () => {
-    router.push('/quiz/random');
+    router.push(createLocalizedPath(locale, '/quiz/random'));
   };
 
   return (
