@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Session, User } from '@supabase/supabase-js';
 
@@ -14,15 +15,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ 
-  children, 
-  initialSession 
-}: { 
+export function AuthProvider({
+  children,
+  initialSession
+}: {
   children: React.ReactNode;
   initialSession: Session | null;
 }) {
   const [session, setSession] = useState<Session | null>(initialSession);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
@@ -50,6 +52,8 @@ export function AuthProvider({
     setLoading(true);
     await supabase.auth.signOut();
     setLoading(false);
+    // Navigate to home page after sign out
+    router.push('/');
   };
 
   const value: AuthContextType = {
