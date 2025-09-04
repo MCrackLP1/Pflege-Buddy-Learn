@@ -3,10 +3,18 @@ import type { QuestionWithChoices } from '@/lib/db/schema';
 
 /**
  * Fetch questions for a specific topic from database using Supabase client
+ * Excludes questions that user has already answered correctly
  */
 export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWithChoices[]> {
   try {
     const supabase = createServerClient();
+    
+    // Get user from auth
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
     
     // Get topic by slug
     const { data: topics, error: topicError } = await supabase
@@ -22,6 +30,19 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
     
     const topic = topics[0];
     
+    // Get questions that user has already answered correctly
+    const { data: correctAttempts, error: attemptsError } = await supabase
+      .from('attempts')
+      .select('question_id')
+      .eq('user_id', user.id)
+      .eq('is_correct', true);
+      
+    if (attemptsError) throw attemptsError;
+    
+    const answeredQuestionIds = new Set(
+      (correctAttempts || []).map(a => a.question_id)
+    );
+    
     // Get questions for this topic with all related data
     const { data: questionsData, error: questionsError } = await supabase
       .from('questions')
@@ -34,8 +55,18 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
     
     if (questionsError) throw questionsError;
     
+    // Filter out questions user has already answered correctly
+    const unansweredQuestions = (questionsData || []).filter(q => 
+      !answeredQuestionIds.has(q.id)
+    );
+    
+    // If no unanswered questions, return a few for review/practice
+    const finalQuestions = unansweredQuestions.length > 0 
+      ? unansweredQuestions 
+      : (questionsData || []).slice(0, 3); // Show 3 for review
+    
     // Transform to QuestionWithChoices format
-    const questionsWithRelations: QuestionWithChoices[] = (questionsData || []).map(q => ({
+    const questionsWithRelations: QuestionWithChoices[] = finalQuestions.map(q => ({
       id: q.id,
       topicId: q.topic_id,
       type: q.type,

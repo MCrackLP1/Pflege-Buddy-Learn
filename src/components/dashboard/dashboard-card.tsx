@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
@@ -9,15 +10,55 @@ import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Flame, Star, Target } from 'lucide-react';
 
+interface UserProgress {
+  xp: number;
+  streak_days: number;
+  total_questions: number;
+  accuracy: number;
+  today_attempts: number;
+}
+
 export function DashboardCard() {
+  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+  
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
   
-  // Mock data - will be replaced with real data from database
-  const streak = 5;
-  const xp = 1250;
-  const todayProgress = 60; // percentage
+  // Load real user progress from API
+  useEffect(() => {
+    async function loadUserProgress() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/user/progress');
+        const data = await response.json();
+        
+        if (data.success) {
+          setUserProgress(data.user_progress);
+        } else {
+          throw new Error(data.error || 'Failed to load progress');
+        }
+      } catch (err) {
+        console.error('Error loading user progress:', err);
+        // Fallback to mock data for demonstration
+        setUserProgress({
+          xp: 0,
+          streak_days: 0,
+          total_questions: 0,
+          accuracy: 0,
+          today_attempts: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadUserProgress();
+  }, []);
+
+  // Calculate today's progress (simple goal: 5 questions per day)
+  const todayProgress = Math.min(((userProgress?.today_attempts || 0) / 5) * 100, 100);
 
   return (
     <MainLayout>
@@ -46,7 +87,7 @@ export function DashboardCard() {
             <CardContent className="p-4 text-center space-y-2">
               <Flame className="h-8 w-8 mx-auto text-orange-500" />
               <div>
-                <div className="text-2xl font-bold">{streak}</div>
+                <div className="text-2xl font-bold">{userProgress?.streak_days || 0}</div>
                 <div className="text-sm text-muted-foreground">{t('home.days')}</div>
               </div>
               <div className="text-xs font-medium">{t('home.currentStreak')}</div>
@@ -58,7 +99,7 @@ export function DashboardCard() {
             <CardContent className="p-4 text-center space-y-2">
               <Star className="h-8 w-8 mx-auto text-yellow-500" />
               <div>
-                <div className="text-2xl font-bold">{xp.toLocaleString()}</div>
+                <div className="text-2xl font-bold">{(userProgress?.xp || 0).toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground">XP</div>
               </div>
               <div className="text-xs font-medium">{t('home.totalXP')}</div>

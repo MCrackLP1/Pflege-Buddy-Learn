@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
@@ -9,44 +10,88 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Shuffle, ChevronRight } from 'lucide-react';
 
+interface TopicWithProgress {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  totalQuestions: number;
+  completedQuestions: number;
+  progress: number;
+}
+
 export function LearnPage() {
+  const [topics, setTopics] = useState<TopicWithProgress[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const t = useTranslations('learn');
   const locale = useLocale();
   const router = useRouter();
 
-  // Mock topics data - will be replaced with real data from database
-  const topics = [
+  // Load real topic progress from API
+  useEffect(() => {
+    async function loadTopicProgress() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/topics/progress');
+        const data = await response.json();
+        
+        if (data.success) {
+          setTopics(data.topics);
+        } else {
+          throw new Error(data.error || 'Failed to load topics');
+        }
+      } catch (err) {
+        console.error('Error loading topic progress:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load topics');
+        // Fallback to basic topic data without progress
+        setTopics(mockTopicsFallback);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadTopicProgress();
+  }, []);
+
+  // Fallback topics if API fails
+  const mockTopicsFallback: TopicWithProgress[] = [
     {
       id: '1',
-      slug: 'grundlagen',
+      slug: 'grundlagen', 
       title: 'Pflegegrundlagen',
       description: 'Basiswissen für die professionelle Pflege',
-      totalQuestions: 45,
-      completedQuestions: 12,
+      totalQuestions: 2,
+      completedQuestions: 0,
+      progress: 0,
     },
     {
-      id: '2', 
+      id: '2',
       slug: 'hygiene',
-      title: 'Hygiene & Infektionsschutz',
+      title: 'Hygiene & Infektionsschutz', 
       description: 'Hygienemaßnahmen und Infektionsprävention',
-      totalQuestions: 30,
-      completedQuestions: 8,
+      totalQuestions: 2,
+      completedQuestions: 0,
+      progress: 0,
     },
     {
       id: '3',
       slug: 'medikamente',
       title: 'Medikamentengabe',
       description: 'Sichere Arzneimittelverabreichung',
-      totalQuestions: 38,
+      totalQuestions: 2,
       completedQuestions: 0,
+      progress: 0,
     },
     {
       id: '4',
       slug: 'dokumentation',
-      title: 'Pflegedokumentation',
+      title: 'Pflegedokumentation', 
       description: 'Rechtssichere Dokumentation',
-      totalQuestions: 25,
-      completedQuestions: 25,
+      totalQuestions: 2,
+      completedQuestions: 0,
+      progress: 0,
     }
   ];
 
@@ -57,6 +102,20 @@ export function LearnPage() {
   const handleRandomQuiz = () => {
     router.push(createLocalizedPath(locale, '/quiz/random'));
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-4">
+            <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
+            <p className="text-muted-foreground">Lade Themen...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -92,7 +151,7 @@ export function LearnPage() {
         {/* Topic List */}
         <div className="space-y-3">
           {topics.map((topic) => {
-            const progressPercent = Math.round(
+            const progressPercent = topic.progress || Math.round(
               (topic.completedQuestions / topic.totalQuestions) * 100
             );
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/providers/auth-provider';
 import { MainLayout } from '@/components/layout/main-layout';
@@ -11,18 +12,58 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp } from 'lucide-react';
 
+interface UserStats {
+  totalXP: number;
+  currentStreak: number;
+  totalQuestions: number;
+  accuracy: number;
+  displayName: string;
+}
+
 export function ProfilePage() {
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  
   const t = useTranslations('profile');
   const { user, signOut } = useAuth();
   
-  // Mock user data - will be replaced with real data
-  const userStats = {
-    totalXP: 1250,
-    currentStreak: 5,
-    totalQuestions: 89,
-    accuracy: 78,
-    displayName: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
-  };
+  // Load real user statistics from API
+  useEffect(() => {
+    async function loadUserStats() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/user/progress');
+        const data = await response.json();
+        
+        if (data.success) {
+          const progress = data.user_progress;
+          setUserStats({
+            totalXP: progress.xp || 0,
+            currentStreak: progress.streak_days || 0,
+            totalQuestions: progress.total_questions || 0,
+            accuracy: progress.accuracy || 0,
+            displayName: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
+          });
+        } else {
+          throw new Error(data.error || 'Failed to load user stats');
+        }
+      } catch (err) {
+        console.error('Error loading user stats:', err);
+        // Fallback to basic data
+        setUserStats({
+          totalXP: 0,
+          currentStreak: 0,
+          totalQuestions: 0,
+          accuracy: 0,
+          displayName: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadUserStats();
+  }, [user]);
 
   const handleLanguageChange = (locale: string) => {
     // Will implement locale switching
@@ -56,7 +97,7 @@ export function ProfilePage() {
               <Label htmlFor="displayName">{t('displayName')}</Label>
               <Input
                 id="displayName"
-                value={userStats.displayName}
+                value={userStats?.displayName || ''}
                 placeholder="Ihr Anzeigename"
                 readOnly
               />
@@ -86,25 +127,25 @@ export function ProfilePage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center space-y-2">
                 <Star className="h-6 w-6 mx-auto text-yellow-500" />
-                <div className="text-xl font-bold">{userStats.totalXP.toLocaleString()}</div>
+                <div className="text-xl font-bold">{(userStats?.totalXP || 0).toLocaleString()}</div>
                 <div className="text-xs text-muted-foreground">{t('totalXP')}</div>
               </div>
 
               <div className="text-center space-y-2">
                 <Flame className="h-6 w-6 mx-auto text-orange-500" />
-                <div className="text-xl font-bold">{userStats.currentStreak}</div>
+                <div className="text-xl font-bold">{userStats?.currentStreak || 0}</div>
                 <div className="text-xs text-muted-foreground">{t('currentStreak')}</div>
               </div>
 
               <div className="text-center space-y-2">
                 <Target className="h-6 w-6 mx-auto text-blue-500" />
-                <div className="text-xl font-bold">{userStats.totalQuestions}</div>
+                <div className="text-xl font-bold">{userStats?.totalQuestions || 0}</div>
                 <div className="text-xs text-muted-foreground">{t('totalQuestions')}</div>
               </div>
 
               <div className="text-center space-y-2">
                 <TrendingUp className="h-6 w-6 mx-auto text-green-500" />
-                <div className="text-xl font-bold">{userStats.accuracy}%</div>
+                <div className="text-xl font-bold">{userStats?.accuracy || 0}%</div>
                 <div className="text-xs text-muted-foreground">{t('accuracy')}</div>
               </div>
             </div>

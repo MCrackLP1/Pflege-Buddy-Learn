@@ -1,51 +1,73 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 
+interface ReviewItem {
+  id: string;
+  question: string;
+  userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+  explanation: string;
+  topic: string;
+  completedAt: Date;
+  citations: {
+    id: string;
+    url: string;
+    title: string;
+  }[];
+}
+
 export function ReviewPage() {
+  const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const t = useTranslations('review');
   
-  // Mock review data - will be replaced with real data from database
-  const reviewItems = [
-    {
-      id: '1',
-      question: 'Was ist die normale Körpertemperatur eines gesunden Erwachsenen?',
-      userAnswer: '36,1°C - 37,2°C',
-      correctAnswer: '36,1°C - 37,2°C',
-      isCorrect: true,
-      explanation: 'Die normale Körpertemperatur liegt zwischen 36,1°C und 37,2°C.',
-      topic: 'Pflegegrundlagen',
-      completedAt: new Date('2024-01-15T10:30:00'),
-      citations: [
-        {
-          id: 'c1',
-          url: 'https://www.rki.de/DE/Content/InfAZ/F/Fieber/Fieber_node.html',
-          title: 'RKI - Fieber',
+  // Load real review data from API
+  useEffect(() => {
+    async function loadReviewData() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/user/attempts');
+        const data = await response.json();
+        
+        if (data.success) {
+          setReviewItems(data.review_items);
+        } else {
+          throw new Error(data.error || 'Failed to load review data');
         }
-      ]
-    },
-    {
-      id: '2',
-      question: 'Händedesinfektion sollte mindestens 30 Sekunden dauern.',
-      userAnswer: 'Falsch',
-      correctAnswer: 'Wahr',
-      isCorrect: false,
-      explanation: 'Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden.',
-      topic: 'Hygiene & Infektionsschutz',
-      completedAt: new Date('2024-01-15T10:25:00'),
-      citations: [
-        {
-          id: 'c2',
-          url: 'https://www.who.int/gpsc/5may/Hand_Hygiene_Why_How_and_When_Brochure.pdf',
-          title: 'WHO Hand Hygiene Guidelines',
-        }
-      ]
+      } catch (err) {
+        console.error('Error loading review data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load review data');
+        setReviewItems([]); // Empty state
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+    
+    loadReviewData();
+  }, []);
+  
+  // Loading state
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-4">
+            <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
+            <p className="text-muted-foreground">Lade Verlauf...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (reviewItems.length === 0) {
     return (
