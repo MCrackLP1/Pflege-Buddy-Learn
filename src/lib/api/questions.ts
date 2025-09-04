@@ -48,7 +48,7 @@ export async function getQuestionsByTopic(
       (correctAttempts || []).map(a => a.question_id)
     );
 
-    // First get ALL questions for this topic to properly filter
+    // Get ALL questions for this topic
     const { data: allQuestionsData, error: allQuestionsError } = await supabase
       .from('questions')
       .select(`
@@ -56,23 +56,18 @@ export async function getQuestionsByTopic(
         choices (*),
         citations (*)
       `)
-      .eq('topic_id', topic.id)
-      .order('created_at', { ascending: false });
+      .eq('topic_id', topic.id);
 
     if (allQuestionsError) throw allQuestionsError;
 
-    // Filter out questions user has already answered correctly
-    const unansweredQuestions = (allQuestionsData || []).filter(q =>
-      !answeredQuestionIds.has(q.id)
-    );
+    // Shuffle all questions and take the first 'limit' questions
+    // This ensures randomness and reduces duplicate chances
+    const shuffledQuestions = (allQuestionsData || [])
+      .sort(() => Math.random() - 0.5) // Random shuffle
+      .slice(0, limit); // Take only the requested number
 
-    // Apply pagination to the filtered results
-    const paginatedQuestions = unansweredQuestions.slice(offset, offset + limit);
-
-    // If no unanswered questions, return a few for review/practice
-    const finalQuestions = unansweredQuestions.length > 0
-      ? paginatedQuestions
-      : (allQuestionsData || []).slice(0, 3); // Show 3 for review
+    // Return the randomized selection
+    const finalQuestions = shuffledQuestions;
     
     // Transform to QuestionWithChoices format
     const questionsWithRelations: QuestionWithChoices[] = finalQuestions.map(q => ({
@@ -156,14 +151,9 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
       !answeredQuestionIds.has(q.id)
     );
 
-    // If no unanswered questions, use all questions for review
-    const availableQuestions = unansweredQuestions.length > 0
-      ? unansweredQuestions
-      : allQuestionsData || [];
-
-    // Get random questions from the available ones
-    const randomQuestions = availableQuestions
-      .sort(() => Math.random() - 0.5) // Randomize
+    // Get truly random questions from all available questions
+    const randomQuestions = (allQuestionsData || [])
+      .sort(() => Math.random() - 0.5) // Randomize all questions
       .slice(0, count); // Take only requested count
     
     // Transform to QuestionWithChoices format

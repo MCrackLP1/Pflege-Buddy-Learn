@@ -73,67 +73,23 @@ const mockQuestionsFallback: QuestionWithChoices[] = [
   }
 ];
 
-// Storage keys for persisting quiz state
-const QUIZ_STORAGE_KEYS = {
-  questions: (topic: string) => `quiz_questions_${topic}`,
-  answers: (topic: string) => `quiz_answers_${topic}`,
-  hints: (topic: string) => `quiz_hints_${topic}`,
-  index: (topic: string) => `quiz_index_${topic}`,
-  loaded: (topic: string) => `quiz_loaded_${topic}`,
-};
-
 export function QuizPage({ topic }: QuizPageProps) {
   // API Data loading
   const [questions, setQuestions] = useState<QuestionWithChoices[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Quiz State - load from sessionStorage if available
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.index(topic));
-      return saved ? parseInt(saved, 10) : 0;
-    }
-    return 0;
-  });
-
-  const [answers, setAnswers] = useState<Record<string, string | boolean>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.answers(topic));
-      return saved ? JSON.parse(saved) : {};
-    }
-    return {};
-  });
-
-  const [usedHints, setUsedHints] = useState<Record<string, number>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.hints(topic));
-      return saved ? JSON.parse(saved) : {};
-    }
-    return {};
-  });
-
+  // Quiz State - simple state management
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
+  const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [startTime] = useState(Date.now());
   
-  // Load questions from sessionStorage or API
+  // Load questions from API - always fresh and random
   useEffect(() => {
     const loadQuestions = async () => {
-      // First check sessionStorage
-      if (typeof window !== 'undefined') {
-        const savedQuestions = sessionStorage.getItem(QUIZ_STORAGE_KEYS.questions(topic));
-        const savedLoaded = sessionStorage.getItem(QUIZ_STORAGE_KEYS.loaded(topic));
-
-        if (savedQuestions && savedLoaded === 'true') {
-          console.log('Loading questions from sessionStorage for topic:', topic);
-          setQuestions(JSON.parse(savedQuestions));
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Load from API if not in sessionStorage
-      console.log('Loading questions from API for topic:', topic);
+      console.log('Loading fresh random questions for topic:', topic);
 
       try {
         setLoading(true);
@@ -141,14 +97,8 @@ export function QuizPage({ topic }: QuizPageProps) {
         const data = await response.json();
 
         if (data.success && data.questions) {
-          console.log(`Loaded ${data.questions.length} questions for topic: ${topic}`);
+          console.log(`Loaded ${data.questions.length} fresh random questions for topic: ${topic}`);
           setQuestions(data.questions);
-
-          // Save to sessionStorage
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem(QUIZ_STORAGE_KEYS.questions(topic), JSON.stringify(data.questions));
-            sessionStorage.setItem(QUIZ_STORAGE_KEYS.loaded(topic), 'true');
-          }
         } else {
           throw new Error(data.error || 'Failed to load questions');
         }
@@ -157,10 +107,6 @@ export function QuizPage({ topic }: QuizPageProps) {
         setError(err instanceof Error ? err.message : 'Failed to load questions');
         // Fallback to mock data for development
         setQuestions(mockQuestionsFallback);
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem(QUIZ_STORAGE_KEYS.questions(topic), JSON.stringify(mockQuestionsFallback));
-          sessionStorage.setItem(QUIZ_STORAGE_KEYS.loaded(topic), 'true');
-        }
       } finally {
         setLoading(false);
       }
@@ -168,27 +114,6 @@ export function QuizPage({ topic }: QuizPageProps) {
 
     loadQuestions();
   }, [topic]);
-
-  // Save answers to sessionStorage whenever they change
-  useEffect(() => {
-    if (typeof window !== 'undefined' && Object.keys(answers).length > 0) {
-      sessionStorage.setItem(QUIZ_STORAGE_KEYS.answers(topic), JSON.stringify(answers));
-    }
-  }, [answers, topic]);
-
-  // Save hints to sessionStorage whenever they change
-  useEffect(() => {
-    if (typeof window !== 'undefined' && Object.keys(usedHints).length > 0) {
-      sessionStorage.setItem(QUIZ_STORAGE_KEYS.hints(topic), JSON.stringify(usedHints));
-    }
-  }, [usedHints, topic]);
-
-  // Save current question index to sessionStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem(QUIZ_STORAGE_KEYS.index(topic), currentQuestionIndex.toString());
-    }
-  }, [currentQuestionIndex, topic]);
 
   // Removed unused useTranslations import
   const locale = useLocale();
@@ -295,16 +220,7 @@ export function QuizPage({ topic }: QuizPageProps) {
     }
   };
 
-  // Clear quiz session data when quiz is completed or reset
-  const clearQuizSession = () => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.questions(topic));
-      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.answers(topic));
-      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.hints(topic));
-      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.index(topic));
-      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.loaded(topic));
-    }
-  };
+  // Quiz session is now stateless - no cleanup needed
 
   const calculateResults = () => {
     let correct = 0;
@@ -337,9 +253,6 @@ export function QuizPage({ topic }: QuizPageProps) {
 
   if (showResults) {
     const results = calculateResults();
-
-    // Clear session data when showing results (quiz completed)
-    clearQuizSession();
 
     return (
       <MainLayout>
