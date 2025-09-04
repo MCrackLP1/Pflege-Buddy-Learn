@@ -1,5 +1,5 @@
 import { createServerClient } from '../src/lib/supabase/server';
-import type { Database } from '../src/lib/db/schema';
+import type { Database } from '../src/types/database.types';
 
 type StreakMilestoneInsert = Database['public']['Tables']['streak_milestones']['Insert'];
 
