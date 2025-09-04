@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { ApiResponse, ReviewItemData, SupabaseChoice, SupabaseCitation } from '@/types/api.types';
 
+
 export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: ReviewItemData[] }>>> {
   try {
     // Get user from auth
@@ -79,7 +80,8 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
     console.error('Error fetching user attempts:', error);
         return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch attempts' 
+      error: error instanceof Error ? error.message : 'Failed to fetch attempts'
     }, { status: 500 });
   }
 }
+

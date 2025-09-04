@@ -205,6 +205,17 @@ export function LearnPage() {
           })}
         </div>
       </div>
+
+      {/* Floating CTA Button */}
+      <div className="fixed bottom-20 left-4 right-4 z-50">
+        <Button
+          onClick={() => handleTopicSelect('random')}
+          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg"
+          size="lg"
+        >
+          🎯 Schnell-Start Session
+        </Button>
+      </div>
     </MainLayout>
   );
 }

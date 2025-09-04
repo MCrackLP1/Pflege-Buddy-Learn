@@ -1,10 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Star, Flame, RotateCcw, Eye } from 'lucide-react';
+import { Trophy, Star, Flame, RotateCcw, Eye, X } from 'lucide-react';
 
 interface QuizResultsProps {
   correct: number;
@@ -18,10 +19,37 @@ export function QuizResults({ correct, total, xp, onRestart, onReview }: QuizRes
   const t = useTranslations('results');
   const scorePercent = (correct / total) * 100;
   const isPerfectScore = correct === total;
-  
+
   // Mock data for streak
   const newStreak = 6;
   const streakContinued = true;
+
+  // Smart Continue: Auto-redirect after 3 seconds
+  const [timeLeft, setTimeLeft] = useState(3);
+  const [cancelled, setCancelled] = useState(false);
+
+  useEffect(() => {
+    if (cancelled) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Auto-redirect when timer reaches 0
+          clearInterval(timer);
+          onRestart();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [onRestart, cancelled]);
+
+  const handleCancel = () => {
+    setCancelled(true);
+    setTimeLeft(0);
+  };
 
   return (
     <div className="space-y-6">
@@ -74,16 +102,36 @@ export function QuizResults({ correct, total, xp, onRestart, onReview }: QuizRes
         </Card>
       </div>
 
+      {/* Smart Continue Banner */}
+      {!cancelled && timeLeft > 0 && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="p-4 text-center">
+            <p className="text-sm text-blue-800 mb-3">
+              🚀 Nächste Session startet automatisch in {timeLeft}s...
+            </p>
+            <Button
+              onClick={handleCancel}
+              variant="outline"
+              size="sm"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Hier bleiben
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button onClick={onReview} variant="outline" className="w-full" size="lg">
           <Eye className="h-4 w-4 mr-2" />
           {t('reviewAnswers')}
         </Button>
-        
+
         <Button onClick={onRestart} className="w-full" size="lg">
           <RotateCcw className="h-4 w-4 mr-2" />
-          {t('startNew')}
+          {cancelled ? t('startNew') : 'Neue Session starten'}
         </Button>
       </div>
     </div>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
-import { Flame, Star, Target } from 'lucide-react';
+import { Flame, Star, Target, CheckCircle, XCircle } from 'lucide-react';
 
 interface UserProgress {
   xp: number;
@@ -18,10 +18,18 @@ interface UserProgress {
   today_attempts: number;
 }
 
+interface RecentAnswer {
+  id: string;
+  isCorrect: boolean;
+  topic: string;
+  createdAt: string;
+}
+
 export function DashboardCard() {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [recentAnswers, setRecentAnswers] = useState<RecentAnswer[]>([]);
   const [, setLoading] = useState(true);
-  
+
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
@@ -33,7 +41,7 @@ export function DashboardCard() {
         setLoading(true);
         const response = await fetch('/api/user/progress');
         const data = await response.json();
-        
+
         if (data.success) {
           setUserProgress(data.user_progress);
         } else {
@@ -53,8 +61,28 @@ export function DashboardCard() {
         setLoading(false);
       }
     }
-    
+
     loadUserProgress();
+  }, []);
+
+  // Load recent answers for carousel
+  useEffect(() => {
+    async function loadRecentAnswers() {
+      try {
+        const response = await fetch('/api/user/recent-answers');
+        const data = await response.json();
+
+        if (data.success) {
+          setRecentAnswers(data.recent_answers);
+        }
+      } catch (err) {
+        console.error('Error loading recent answers:', err);
+        // Fallback to mock data
+        setRecentAnswers([]);
+      }
+    }
+
+    loadRecentAnswers();
   }, []);
 
   // Calculate today's progress (simple goal: 5 questions per day)
@@ -63,19 +91,30 @@ export function DashboardCard() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Main CTA */}
+        {/* Main CTA - 1-Tap-Start */}
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">{t('home.title')}</CardTitle>
             <p className="text-muted-foreground">{t('home.subtitle')}</p>
           </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
-              className="w-full"
+          <CardContent className="space-y-3">
+            {/* 1-Tap-Start: Direkter Quiz-Start */}
+            <Button
+              onClick={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
               size="lg"
             >
-              {t('home.title')}
+              🚀 {t('home.quickStart') || 'Weiterlernen'}
+            </Button>
+
+            {/* Alternative: Topic-Auswahl */}
+            <Button
+              onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
+              variant="outline"
+              className="w-full"
+              size="sm"
+            >
+              📚 Themen auswählen
             </Button>
           </CardContent>
         </Card>
@@ -122,6 +161,44 @@ export function DashboardCard() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Review Light - Recent Answers Carousel */}
+        {recentAnswers.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">📚 Letzte Antworten</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+                {recentAnswers.map((answer, index) => (
+                  <div
+                    key={answer.id}
+                    className="flex-shrink-0 w-32 bg-card border border-border rounded-lg p-3 text-center hover:bg-accent/50 transition-colors cursor-pointer"
+                    onClick={() => router.push(createLocalizedPath(locale, '/review'))}
+                  >
+                    <div className={`text-lg mb-2 ${
+                      answer.isCorrect ? 'text-green-500' : 'text-red-500'
+                    }`}>
+                      {answer.isCorrect ? <CheckCircle className="h-6 w-6 mx-auto" /> : <XCircle className="h-6 w-6 mx-auto" />}
+                    </div>
+                    <div className="text-xs text-muted-foreground mb-1">
+                      {answer.topic}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(answer.createdAt).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 text-center">
+                Tippe auf eine Antwort für Details
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Disclaimer */}
         <Card className="border-yellow-500/20 bg-yellow-500/5">
