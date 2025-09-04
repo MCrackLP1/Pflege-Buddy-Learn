@@ -135,35 +135,56 @@ export function DashboardCard() {
     loadRecentAnswers();
   }, []);
 
-  // Auto-scroll carousel
+  // Auto-scroll carousel - improved version
   useEffect(() => {
     if (recentAnswers.length <= 1) return;
 
     const scrollContainer = document.getElementById('recent-answers-carousel');
     if (!scrollContainer) return;
 
-    const scrollSpeed = 1; // pixels per frame
+    const scrollSpeed = 0.5; // Slower: 0.5px per frame instead of 1px
     let animationId: number;
+    let isResetting = false;
 
     const autoScroll = () => {
-      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
-        // Reset to beginning when reaching the end
-        scrollContainer.scrollLeft = 0;
+      if (isResetting) return;
+
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      const currentScroll = scrollContainer.scrollLeft;
+
+      // Check if we're close to the end (within 50px buffer)
+      if (currentScroll >= maxScroll - 50) {
+        isResetting = true;
+
+        // Smooth reset to beginning
+        const resetScroll = () => {
+          if (scrollContainer.scrollLeft > 0) {
+            scrollContainer.scrollLeft -= 2; // Faster reset
+            requestAnimationFrame(resetScroll);
+          } else {
+            isResetting = false;
+            // Continue normal scrolling after reset
+            animationId = requestAnimationFrame(autoScroll);
+          }
+        };
+        resetScroll();
       } else {
+        // Normal scrolling
         scrollContainer.scrollLeft += scrollSpeed;
+        animationId = requestAnimationFrame(autoScroll);
       }
-      animationId = requestAnimationFrame(autoScroll);
     };
 
     // Pause on hover
     const pauseScroll = () => {
       if (animationId) {
         cancelAnimationFrame(animationId);
+        animationId = 0;
       }
     };
 
     const resumeScroll = () => {
-      if (!animationId) {
+      if (!animationId && !isResetting) {
         autoScroll();
       }
     };
