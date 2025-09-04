@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw, Shield, FileText, Cookie } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw, Shield, FileText, Cookie, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { LEGAL_CONFIG } from '@/lib/constants';
 import { createLocalizedPath } from '@/lib/navigation';
+import { useRouter } from 'next/navigation';
 
 interface UserStats {
   totalXP: number;
@@ -28,10 +30,15 @@ export function ProfilePage() {
   const [, setLoading] = useState(true);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const t = useTranslations('profile');
   const locale = useLocale();
   const { user, signOut } = useAuth();
+  const router = useRouter();
   
   // Load real user statistics from API
   useEffect(() => {
@@ -81,9 +88,50 @@ export function ProfilePage() {
     console.log('Export user data');
   };
 
-  const handleDeleteAccount = () => {
-    // Will implement account deletion
-    console.log('Delete account');
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    try {
+      setDeleteLoading(true);
+      setDeleteError(null);
+
+      const response = await fetch('/api/user/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Clear local storage and cache
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Clear any cached data
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames.map(cacheName => caches.delete(cacheName))
+          );
+        }
+
+        // Show success message
+        alert(t('deleteAccountSuccess'));
+
+        // Sign out and redirect to home
+        await signOut();
+        router.push('/');
+      } else {
+        throw new Error(data.error || 'Unbekannter Fehler');
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      setDeleteError(t('deleteAccountError'));
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const handleResetQuiz = async () => {
@@ -289,7 +337,7 @@ export function ProfilePage() {
             </Button>
 
             <Button
-              onClick={handleDeleteAccount}
+              onClick={() => setShowDeleteDialog(true)}
               variant="destructive"
               className="w-full justify-start"
             >
@@ -335,6 +383,82 @@ export function ProfilePage() {
                 disabled={resetLoading}
               >
                 {resetLoading ? 'Zurücksetzen...' : 'Zurücksetzen'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-500 mr-2 flex-shrink-0" />
+              <h3 className="text-lg font-semibold text-red-600">{t('deleteAccountConfirmTitle')}</h3>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                {t('deleteAccountConfirmMessage')}
+              </p>
+
+              <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                <pre className="text-sm text-red-800 whitespace-pre-line">
+                  {t('deleteAccountDataList')}
+                </pre>
+              </div>
+
+              <Alert className="border-blue-200 bg-blue-50">
+                <AlertTriangle className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
+                  {t('deleteAccountStripeNote')}
+                </AlertDescription>
+              </Alert>
+
+              <div className="space-y-2">
+                <Label htmlFor="deleteConfirmation" className="text-sm font-medium">
+                  {t('deleteAccountPlaceholder')}
+                </Label>
+                <Input
+                  id="deleteConfirmation"
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  placeholder={t('deleteAccountTypeDelete')}
+                  className="font-mono"
+                />
+              </div>
+
+              {deleteError && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
+                    {deleteError}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <Button
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setDeleteConfirmation('');
+                  setDeleteError(null);
+                }}
+                variant="outline"
+                className="flex-1"
+                disabled={deleteLoading}
+              >
+                Abbrechen
+              </Button>
+              <Button
+                onClick={handleDeleteAccount}
+                variant="destructive"
+                className="flex-1"
+                disabled={deleteLoading || deleteConfirmation !== t('deleteAccountTypeDelete')}
+              >
+                {deleteLoading ? t('deleteAccountDeleting') : t('deleteAccount')}
               </Button>
             </div>
           </div>

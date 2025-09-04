@@ -109,7 +109,16 @@
     "accuracy": "Genauigkeit",
     "exportData": "Daten exportieren",
     "deleteAccount": "Konto löschen",
-    "deleteAccountWarning": "Diese Aktion kann nicht rückgängig gemacht werden."
+    "deleteAccountWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteAccountConfirmTitle": "Konto endgültig löschen?",
+    "deleteAccountConfirmMessage": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion ist irreversibel und führt zum Verlust aller Ihrer Daten:",
+    "deleteAccountDataList": "• Alle Quiz-Fortschritte und -Versuche\n• Ihre XP und Serien-Statistiken\n• Erreichte Meilensteine und Belohnungen\n• Hint-Balance und Kaufhistorie\n• Persönliche Einstellungen und Profil",
+    "deleteAccountStripeNote": "Hinweis: Aus rechtlichen Gründen werden Kauftransaktionen nicht gelöscht, sondern anonymisiert.",
+    "deleteAccountTypeDelete": "LÖSCHEN",
+    "deleteAccountPlaceholder": "Geben Sie 'LÖSCHEN' ein, um zu bestätigen",
+    "deleteAccountDeleting": "Konto wird gelöscht...",
+    "deleteAccountSuccess": "Ihr Konto wurde erfolgreich gelöscht.",
+    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
   },
   "store": {
     "title": "Hinweis-Packs",
