@@ -4,6 +4,7 @@ import { AttemptRequestSchema } from '@/lib/validation';
 import { rateLimiter, RATE_LIMITS } from '@/middleware/rate-limiter';
 import { invalidateUserCache } from '@/lib/api/performance';
 import { calculateXP } from '@/lib/utils/quiz';
+import { updateUserStreak, getActiveXPBoost, calculateXPWithBoost } from '@/lib/streak-utils';
 import type { ApiResponse } from '@/types/api.types';
 
 export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>> {
@@ -81,8 +82,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
     // Calculate and update XP if correct
     if (validatedData.isCorrect) {
       // Use the standardized calculateXP function
-      const xpGained = calculateXP(question.difficulty, validatedData.usedHints, validatedData.timeMs);
-      console.log(`XP gained: ${xpGained} (difficulty: ${question.difficulty}, hints: ${validatedData.usedHints}, time: ${validatedData.timeMs}ms)`);
+      const baseXPGained = calculateXP(question.difficulty, validatedData.usedHints, validatedData.timeMs);
+
+      // Get active XP boost for user
+      const xpBoostInfo = await getActiveXPBoost(user.id);
+      const finalXPGained = calculateXPWithBoost(baseXPGained, xpBoostInfo.multiplier);
+
+      console.log(`XP gained: ${baseXPGained} (base) x ${xpBoostInfo.multiplier} (boost) = ${finalXPGained} (final)`);
 
       // Get current XP first, then add the new XP
       const { data: currentProgress, error: fetchError } = await supabase
@@ -96,7 +102,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       }
 
       const currentXP = currentProgress?.xp || 0;
-      const newTotalXP = currentXP + xpGained;
+      const newTotalXP = currentXP + finalXPGained;
 
       // Update with the new total XP
       const { error: xpError } = await supabase
@@ -111,8 +117,16 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         console.error('Failed to update XP:', xpError);
         // Don't fail the request if XP update fails
       } else {
-        console.log(`XP updated: ${currentXP} + ${xpGained} = ${newTotalXP}`);
+        console.log(`XP updated: ${currentXP} + ${finalXPGained} = ${newTotalXP}`);
       }
+    }
+
+    // Update user streak after attempt (this handles daily streak tracking)
+    try {
+      await updateUserStreak(user.id);
+    } catch (streakError) {
+      console.error('Failed to update user streak:', streakError);
+      // Don't fail the request if streak update fails
     }
 
     // Invalidate user cache for fresh data

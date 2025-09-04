@@ -57,6 +57,32 @@ export const userProgress = pgTable('user_progress', {
   xp: integer('xp').notNull().default(0),
   streakDays: integer('streak_days').notNull().default(0),
   lastSeen: date('last_seen'),
+  longestStreak: integer('longest_streak').notNull().default(0),
+  currentStreakStart: date('current_streak_start'),
+  lastMilestoneAchieved: integer('last_milestone_achieved').notNull().default(0),
+  xpBoostMultiplier: integer('xp_boost_multiplier').notNull().default(1),
+  xpBoostExpiry: timestamp('xp_boost_expiry'),
+});
+
+// Streak milestones
+export const streakMilestones = pgTable('streak_milestones', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  daysRequired: integer('days_required').notNull().unique(),
+  xpBoostMultiplier: integer('xp_boost_multiplier').notNull().default(1),
+  boostDurationHours: integer('boost_duration_hours').notNull().default(24),
+  rewardDescription: text('reward_description').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// User milestone achievements
+export const userMilestoneAchievements = pgTable('user_milestone_achievements', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull(),
+  milestoneId: uuid('milestone_id').references(() => streakMilestones.id).notNull(),
+  achievedAt: timestamp('achieved_at').defaultNow().notNull(),
+  xpBoostMultiplier: integer('xp_boost_multiplier').notNull(),
+  boostExpiry: timestamp('boost_expiry').notNull(),
 });
 
 // User profiles
@@ -120,6 +146,14 @@ export const citationsRelations = relations(citations, ({ one }) => ({
   question: one(questions, { fields: [citations.questionId], references: [questions.id] }),
 }));
 
+export const streakMilestonesRelations = relations(streakMilestones, ({ many }) => ({
+  achievements: many(userMilestoneAchievements),
+}));
+
+export const userMilestoneAchievementsRelations = relations(userMilestoneAchievements, ({ one }) => ({
+  milestone: one(streakMilestones, { fields: [userMilestoneAchievements.milestoneId], references: [streakMilestones.id] }),
+}));
+
 // Types
 export type Topic = typeof topics.$inferSelect;
 export type Question = typeof questions.$inferSelect;
@@ -130,6 +164,8 @@ export type Profile = typeof profiles.$inferSelect;
 export type UserWallet = typeof userWallet.$inferSelect;
 export type Purchase = typeof purchases.$inferSelect;
 export type Citation = typeof citations.$inferSelect;
+export type StreakMilestone = typeof streakMilestones.$inferSelect;
+export type UserMilestoneAchievement = typeof userMilestoneAchievements.$inferSelect;
 
 export type QuestionWithChoices = Question & {
   choices: Choice[];

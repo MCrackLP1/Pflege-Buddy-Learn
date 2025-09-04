@@ -34,6 +34,27 @@
     "tapForDetails": "Tap for details",
     "disclaimer": "PflegeBuddy Learn is not a substitute for medical advice or professional training."
   },
+  "streak": {
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "days": "days",
+    "daysToGo": "days to go",
+    "nextMilestone": "Next Milestone",
+    "rewardPreview": "Reward",
+    "xpBoostActive": "{multiplier}x XP Boost active",
+    "remaining": "remaining",
+    "championStatus": "Nursing Champion! 🏆",
+    "startStreak": "Start your learning streak today!",
+    "keepGoing": "Keep going! Every day counts.",
+    "greatStart": "Great start! Stay on track!",
+    "amazingStreak": "Amazing streak! You're on the right path.",
+    "milestoneAchieved": "Milestone achieved!",
+    "newXPBoost": "New XP Boost unlocked!",
+    "streakBroken": "Streak broken",
+    "streakContinued": "Streak continued",
+    "dailyLogin": "Daily login",
+    "consecutiveDays": "consecutive days"
+  },
   "learn": {
     "title": "Learning Topics",
     "selectTopic": "Choose a topic",

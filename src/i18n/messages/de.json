@@ -34,6 +34,27 @@
     "tapForDetails": "Tippe auf eine Antwort für Details",
     "disclaimer": "PflegeBuddy Learn ist kein Ersatz für medizinische Beratung oder professionelle Ausbildung."
   },
+  "streak": {
+    "currentStreak": "Aktuelle Serie",
+    "longestStreak": "Längste Serie",
+    "days": "Tage",
+    "daysToGo": "Tage übrig",
+    "nextMilestone": "Nächster Meilenstein",
+    "rewardPreview": "Belohnung",
+    "xpBoostActive": "{multiplier}x XP-Boost aktiv",
+    "remaining": "verbleibend",
+    "championStatus": "Pflege-Champion! 🏆",
+    "startStreak": "Starte deine Lernserie heute!",
+    "keepGoing": "Halte durch! Jeder Tag zählt.",
+    "greatStart": "Super Start! Bleib dran!",
+    "amazingStreak": "Fantastische Serie! Du bist auf dem richtigen Weg.",
+    "milestoneAchieved": "Meilenstein erreicht!",
+    "newXPBoost": "Neuer XP-Boost freigeschaltet!",
+    "streakBroken": "Serie unterbrochen",
+    "streakContinued": "Serie fortgesetzt",
+    "dailyLogin": "Tägliches Login",
+    "consecutiveDays": "aufeinanderfolgende Tage"
+  },
   "learn": {
     "title": "Lernthemen",
     "selectTopic": "Wählen Sie ein Thema",

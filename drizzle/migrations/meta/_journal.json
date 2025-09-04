@@ -15,6 +15,13 @@
       "when": 1756978543341,
       "tag": "0001_amused_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757025808661,
+      "tag": "0002_sad_ogun",
+      "breakpoints": true
     }
   ]
 }

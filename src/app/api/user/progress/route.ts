@@ -1,42 +1,30 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { updateUserStreak, getNextMilestone, getActiveXPBoost } from '@/lib/streak-utils';
 import type { ApiResponse, UserProgressData } from '@/types/api.types';
+import type { StreakMilestone } from '@/lib/db/schema';
 
-export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: UserProgressData }>>> {
+export async function GET(): Promise<NextResponse<ApiResponse<{
+  user_progress: UserProgressData & {
+    longest_streak: number;
+    current_streak_start?: string;
+    xp_boost_active: boolean;
+    xp_boost_multiplier: number;
+    xp_boost_expiry?: string;
+    next_milestone?: StreakMilestone;
+  }
+}>>> {
   try {
     // Get user from auth
     const supabase = createServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get or create user progress
-    let { data: progress, error: progressError } = await supabase
-      .from('user_progress')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-
-    if (progressError && progressError.code === 'PGRST116') {
-      // User progress doesn't exist, create it
-      const { data: newProgress, error: createError } = await supabase
-        .from('user_progress')
-        .insert({
-          user_id: user.id,
-          xp: 0,
-          streak_days: 0,
-          last_seen: new Date().toISOString().split('T')[0]
-        })
-        .select()
-        .single();
-        
-      if (createError) throw createError;
-      progress = newProgress;
-    } else if (progressError) {
-      throw progressError;
-    }
+    // Update user streak (this will create progress record if it doesn't exist)
+    const streakResult = await updateUserStreak(user.id);
 
     // Get user statistics from attempts
     const { data: attemptStats, error: attemptsError } = await supabase
@@ -52,25 +40,33 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: U
 
     // Calculate today's progress (attempts made today)
     const today = new Date().toISOString().split('T')[0];
-    const todayAttempts = attemptStats?.filter(a => 
+    const todayAttempts = attemptStats?.filter(a =>
       a.created_at.startsWith(today)
     ).length || 0;
 
-    // Get topic progress (remove unused for now)
-    // const { data: topicStats } = await supabase
-    //   .rpc('get_topic_progress', { p_user_id: user.id });
+    // Get next milestone
+    const nextMilestone = await getNextMilestone(user.id);
+
+    // Get active XP boost info
+    const xpBoostInfo = await getActiveXPBoost(user.id);
 
     return NextResponse.json({
       user_progress: {
-        xp: progress?.xp || 0,
-        streak_days: progress?.streak_days || 0,
-        last_seen: progress?.last_seen || today,
+        xp: streakResult.updatedProgress.xp,
+        streak_days: streakResult.updatedProgress.streak_days,
+        longest_streak: streakResult.updatedProgress.longest_streak,
+        last_seen: streakResult.updatedProgress.last_seen || today,
+        current_streak_start: streakResult.updatedProgress.current_streak_start || undefined,
         total_questions: totalAttempts,
         correct_answers: correctAttempts,
         accuracy: accuracy,
         today_attempts: todayAttempts,
+        xp_boost_active: xpBoostInfo.isActive,
+        xp_boost_multiplier: xpBoostInfo.multiplier,
+        xp_boost_expiry: xpBoostInfo.expiry?.toISOString(),
+        next_milestone: nextMilestone || undefined,
       },
-      topic_progress: [], // topicStats removed for now
+      topic_progress: [],
       success: true
     });
 
@@ -78,7 +74,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: U
     console.error('Error fetching user progress:', error);
         return NextResponse.json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch progress' 
+      error: error instanceof Error ? error.message : 'Failed to fetch progress'
     }, { status: 500 });
   }
 }

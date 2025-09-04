@@ -8,14 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
+import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
 import { Flame, Star, Target, CheckCircle, XCircle } from 'lucide-react';
+import type { StreakMilestone } from '@/lib/db/schema';
 
 interface UserProgress {
   xp: number;
   streak_days: number;
+  longest_streak: number;
   total_questions: number;
   accuracy: number;
   today_attempts: number;
+  xp_boost_active: boolean;
+  xp_boost_multiplier: number;
+  xp_boost_expiry?: string;
+  next_milestone?: StreakMilestone;
 }
 
 interface RecentAnswer {
@@ -57,9 +64,12 @@ export function DashboardCard() {
         setUserProgress({
           xp: 0,
           streak_days: 0,
+          longest_streak: 0,
           total_questions: 0,
           accuracy: 0,
           today_attempts: 0,
+          xp_boost_active: false,
+          xp_boost_multiplier: 1,
         });
       } finally {
         setLoading(false);
@@ -218,18 +228,16 @@ export function DashboardCard() {
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Streak */}
-          <Card>
-            <CardContent className="p-4 text-center space-y-2">
-              <Flame className="h-8 w-8 mx-auto text-orange-500" />
-              <div>
-                <div className="text-2xl font-bold">{userProgress?.streak_days || 0}</div>
-                <div className="text-sm text-muted-foreground">{t('home.days')}</div>
-              </div>
-              <div className="text-xs font-medium">{t('home.currentStreak')}</div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Enhanced Streak with Milestones */}
+          <StreakMilestoneCard
+            currentStreak={userProgress?.streak_days || 0}
+            longestStreak={userProgress?.longest_streak || 0}
+            xpBoostActive={userProgress?.xp_boost_active || false}
+            xpBoostMultiplier={userProgress?.xp_boost_multiplier || 1}
+            xpBoostExpiry={userProgress?.xp_boost_expiry ? new Date(userProgress.xp_boost_expiry) : undefined}
+            nextMilestone={userProgress?.next_milestone}
+          />
 
           {/* Total XP */}
           <Card>
@@ -240,6 +248,11 @@ export function DashboardCard() {
                 <div className="text-sm text-muted-foreground">XP</div>
               </div>
               <div className="text-xs font-medium">{t('home.totalXP')}</div>
+              {userProgress?.xp_boost_active && (
+                <div className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                  {userProgress.xp_boost_multiplier}x Boost aktiv
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

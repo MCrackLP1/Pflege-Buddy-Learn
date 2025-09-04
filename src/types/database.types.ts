@@ -178,6 +178,7 @@ export type Database = {
           source_title: string | null
           source_url: string | null
           stem: string
+          tf_correct_answer: boolean | null
           topic_id: string
           type: Database["public"]["Enums"]["question_type"]
         }
@@ -191,6 +192,7 @@ export type Database = {
           source_title?: string | null
           source_url?: string | null
           stem: string
+          tf_correct_answer?: boolean | null
           topic_id: string
           type: Database["public"]["Enums"]["question_type"]
         }
@@ -204,6 +206,7 @@ export type Database = {
           source_title?: string | null
           source_url?: string | null
           stem?: string
+          tf_correct_answer?: boolean | null
           topic_id?: string
           type?: Database["public"]["Enums"]["question_type"]
         }
@@ -216,6 +219,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      streak_milestones: {
+        Row: {
+          boost_duration_hours: number
+          created_at: string
+          days_required: number
+          id: string
+          is_active: boolean
+          reward_description: string
+          xp_boost_multiplier: number
+        }
+        Insert: {
+          boost_duration_hours?: number
+          created_at?: string
+          days_required: number
+          id?: string
+          is_active?: boolean
+          reward_description: string
+          xp_boost_multiplier?: number
+        }
+        Update: {
+          boost_duration_hours?: number
+          created_at?: string
+          days_required?: number
+          id?: string
+          is_active?: boolean
+          reward_description?: string
+          xp_boost_multiplier?: number
+        }
+        Relationships: []
       }
       topics: {
         Row: {
@@ -241,24 +274,74 @@ export type Database = {
         }
         Relationships: []
       }
+      user_milestone_achievements: {
+        Row: {
+          achieved_at: string
+          boost_expiry: string
+          id: string
+          milestone_id: string
+          user_id: string
+          xp_boost_multiplier: number
+        }
+        Insert: {
+          achieved_at?: string
+          boost_expiry: string
+          id?: string
+          milestone_id: string
+          user_id: string
+          xp_boost_multiplier: number
+        }
+        Update: {
+          achieved_at?: string
+          boost_expiry?: string
+          id?: string
+          milestone_id?: string
+          user_id?: string
+          xp_boost_multiplier?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_milestone_achievements_milestone_id_streak_milestones_id_f"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "streak_milestones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_progress: {
         Row: {
+          current_streak_start: string | null
+          last_milestone_achieved: number
           last_seen: string | null
+          longest_streak: number
           streak_days: number
           user_id: string
           xp: number
+          xp_boost_expiry: string | null
+          xp_boost_multiplier: number
         }
         Insert: {
+          current_streak_start?: string | null
+          last_milestone_achieved?: number
           last_seen?: string | null
+          longest_streak?: number
           streak_days?: number
           user_id: string
           xp?: number
+          xp_boost_expiry?: string | null
+          xp_boost_multiplier?: number
         }
         Update: {
+          current_streak_start?: string | null
+          last_milestone_achieved?: number
           last_seen?: string | null
+          longest_streak?: number
           streak_days?: number
           user_id?: string
           xp?: number
+          xp_boost_expiry?: string | null
+          xp_boost_multiplier?: number
         }
         Relationships: []
       }
@@ -288,7 +371,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_stats_optimized: {
+        Args: { p_user_id: string }
+        Returns: {
+          accuracy: number
+          correct_answers: number
+          last_seen: string
+          streak_days: number
+          today_attempts: number
+          total_questions: number
+          xp: number
+        }[]
+      }
     }
     Enums: {
       purchase_status: "pending" | "succeeded" | "failed"
@@ -353,10 +447,10 @@ export type TablesInsert<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+      Insert: infer I
+    }
+    ? I
+    : never
     : never
 
 export type TablesUpdate<
@@ -378,10 +472,10 @@ export type TablesUpdate<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+      Update: infer U
+    }
+    ? U
+    : never
     : never
 
 export type Enums<
@@ -393,7 +487,7 @@ export type Enums<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
+> = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
