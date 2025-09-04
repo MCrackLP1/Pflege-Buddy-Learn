@@ -27,6 +27,7 @@ const mockQuestionsFallback: QuestionWithChoices[] = [
     sourceDate: '2024-01-01',
     difficulty: 2,
     hints: ['Die Temperatur wird meist rektal gemessen', 'Normal liegt zwischen 36-37°C'],
+    tfCorrectAnswer: null, // MC questions don't use this field
     createdAt: new Date(),
     choices: [
       { id: '1a', questionId: '1', label: '35,0°C - 36,0°C', isCorrect: false },
