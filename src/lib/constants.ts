@@ -1,3 +1,14 @@
+// Application configuration
+export const APP_CONFIG = {
+  GAMIFICATION: {
+    XP_PER_DIFFICULTY: 10, // Base XP per difficulty level
+    XP_PENALTY_PER_HINT: 5, // XP reduction per hint used
+    MIN_XP_PER_QUESTION: 1, // Minimum XP per question
+    STREAK_RESET_HOURS: 48, // Hours before streak resets
+    DAILY_QUESTION_GOAL: 5, // Questions needed for daily goal
+  },
+};
+
 // Legal and compliance constants for DE/BY GDPR compliance
 
 export const LEGAL_CONFIG = {

@@ -3,7 +3,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
 import { legalConsentEvents, purchases } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 
@@ -75,13 +75,17 @@ export async function getUserConsentHistory(userId: string) {
 /**
  * Check if user has given consent for a specific type and version
  */
-export async function checkUserConsent(userId: string, type: string, version: string) {
+export async function checkUserConsent(userId: string, type: 'terms' | 'privacy' | 'cookie' | 'withdrawal', version: string) {
   try {
+    // Use a more explicit type assertion to help TypeScript
+    const typeValue = type as typeof type;
     const latestConsent = await db
       .select()
       .from(legalConsentEvents)
-      .where(eq(legalConsentEvents.userId, userId))
-      .where(eq(legalConsentEvents.type, type))
+      .where(and(
+        eq(legalConsentEvents.userId, userId),
+        eq(legalConsentEvents.type, typeValue)
+      ))
       .orderBy(legalConsentEvents.createdAt)
       .limit(1);
 

@@ -73,7 +73,7 @@ export function Footer({ showFullFooter = true }: FooterProps) {
                 <p className="font-medium">{LEGAL_CONFIG.provider.name}</p>
                 <p>{LEGAL_CONFIG.provider.brand}</p>
                 <p className="text-xs mt-1">
-                  {LEGAL_CONFIG.provider.address.line1}, {LEGAL_CONFIG.provider.postcode} {LEGAL_CONFIG.provider.city}
+                  {LEGAL_CONFIG.provider.address.line1}, {LEGAL_CONFIG.provider.address.postcode} {LEGAL_CONFIG.provider.address.city}
                 </p>
                 <p className="text-xs">
                   E-Mail: {LEGAL_CONFIG.provider.email}
