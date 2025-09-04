@@ -65,10 +65,11 @@ export function StorePage() {
       const packInfo = hintPacks.find(p => p.id === packId);
       
       // Check if it's a demo mode error
-      if (error?.message?.includes('Demo mode') || error?.message?.includes('demo')) {
-        alert(`Demo-Modus: ${packInfo?.hints || 'X'} Hints für ${packInfo?.price || 'X'} würden gekauft werden.\n\nFür echte Käufe: Test-Mode Price IDs in Stripe erstellen.`);
+      if (error?.message?.includes('Demo mode') || error?.message?.includes('demo') || error?.message?.includes('Failed to create checkout session')) {
+        alert(`🎮 Demo-Modus aktiv!\n\n${packInfo?.hints || 'X'} Hints für ${packInfo?.price || 'X'} würden gekauft werden.\n\nDies ist nur eine Demo - keine echte Zahlung wird verarbeitet.\n\nFür echte Käufe müssen Stripe-Credentials konfiguriert werden.`);
       } else {
-        alert('Kaufvorgang fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        alert('Unerwarteter Fehler beim Kaufvorgang. Bitte versuchen Sie es erneut.');
+        console.error('Purchase error:', error);
       }
     } finally {
       setLoading(null);
@@ -81,6 +82,17 @@ export function StorePage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold">{t('title')}</h1>
         </div>
+
+        {/* Demo Mode Banner */}
+        <Card className="border-blue-500/30 bg-blue-500/10">
+          <CardContent className="p-4 text-center">
+            <p className="text-sm font-medium text-blue-400 mb-1">🎮 Demo-Modus aktiv</p>
+            <p className="text-xs text-blue-300/80 leading-relaxed">
+              Klicken Sie auf "Kaufen" um die Demo-Kaufabwicklung zu testen. 
+              Keine echten Zahlungen werden verarbeitet.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Current Balance */}
         <Card className="border-primary/20 bg-primary/5">
