@@ -22,7 +22,7 @@ interface UserStats {
 
 export function ProfilePage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   
   const t = useTranslations('profile');
   const { user, signOut } = useAuth();

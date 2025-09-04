@@ -20,7 +20,7 @@ interface UserProgress {
 
 export function DashboardCard() {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   
   const t = useTranslations();
   const locale = useLocale();

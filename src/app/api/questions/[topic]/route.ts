@@ -1,27 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getQuestionsByTopic, getRandomQuestions } from '@/lib/api/questions';
+import type { ApiResponse } from '@/types/api.types';
+
+// Add caching headers for better performance
+const CACHE_MAX_AGE = 300; // 5 minutes
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { topic: string } }
-) {
+): Promise<NextResponse<ApiResponse>> {
   try {
     const { topic } = params;
+    const url = new URL(req.url);
+    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const offset = parseInt(url.searchParams.get('offset') || '0');
     
     let questions;
     
     if (topic === 'random') {
-      // Get random questions from all topics
-      questions = await getRandomQuestions(10);
+      // Get random questions from all topics with pagination
+      questions = await getRandomQuestions(limit);
     } else {
-      // Get questions for specific topic
-      questions = await getQuestionsByTopic(topic);
+      // Get questions for specific topic with pagination
+      questions = await getQuestionsByTopic(topic, limit, offset);
     }
     
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       questions,
+      count: questions.length,
       success: true 
     });
+
+    // Add caching headers for performance
+    response.headers.set('Cache-Control', `public, max-age=${CACHE_MAX_AGE}`);
+    response.headers.set('CDN-Cache-Control', `max-age=${CACHE_MAX_AGE}`);
+    
+    return response;
     
   } catch (error) {
     console.error('Error fetching questions:', error);

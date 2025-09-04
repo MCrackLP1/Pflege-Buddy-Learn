@@ -36,7 +36,7 @@ export function StorePage() {
     },
   ];
 
-  const handlePurchase = async (packId: string, price: string) => {
+  const handlePurchase = async (packId: string) => {
     setLoading(packId);
     
     try {
@@ -58,7 +58,7 @@ export function StorePage() {
       } else {
         throw new Error(data.error || 'Failed to create checkout session');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Purchase failed:', error);
       
       // Get pack info for error message
@@ -88,7 +88,7 @@ export function StorePage() {
           <CardContent className="p-4 text-center">
             <p className="text-sm font-medium text-blue-400 mb-1">🎮 Demo-Modus aktiv</p>
             <p className="text-xs text-blue-300/80 leading-relaxed">
-              Klicken Sie auf "Kaufen" um die Demo-Kaufabwicklung zu testen. 
+              Klicken Sie auf &quot;Kaufen&quot; um die Demo-Kaufabwicklung zu testen. 
               Keine echten Zahlungen werden verarbeitet.
             </p>
           </CardContent>
@@ -137,7 +137,7 @@ export function StorePage() {
                   </div>
                   
                   <Button
-                    onClick={() => handlePurchase(pack.id, pack.price)}
+                    onClick={() => handlePurchase(pack.id)}
                     disabled={loading === pack.id}
                     className="w-full"
                     size="lg"

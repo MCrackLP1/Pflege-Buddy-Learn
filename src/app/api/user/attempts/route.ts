@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import type { ApiResponse, ReviewItemData, SupabaseChoice, SupabaseCitation } from '@/types/api.types';
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: ReviewItemData[] }>>> {
   try {
     // Get user from auth
     const supabase = createServerClient();
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
         // For MC questions, we need to reconstruct which choice was selected
         // This is complex, so for now we'll show simplified version
         userAnswer = attempt.is_correct ? 'Richtig beantwortet' : 'Falsch beantwortet';
-        const correctChoice = question.choices?.find((c: any) => c.is_correct);
+        const correctChoice = question.choices?.find((c: SupabaseChoice) => c.is_correct);
         correctAnswer = correctChoice?.label || 'Unbekannt';
       }
 
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
         explanation: question.explanation_md,
         topic: question.topics?.title || 'Unbekannt',
         completedAt: attempt.created_at, // Keep as string, convert in frontend
-        citations: (question.citations || []).map((c: any) => ({
+        citations: (question.citations || []).map((c: SupabaseCitation) => ({
           id: c.id,
           url: c.url,
           title: c.title,

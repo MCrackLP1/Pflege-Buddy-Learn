@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
@@ -112,7 +112,7 @@ export function QuizPage({ topic }: QuizPageProps) {
     loadQuestions();
   }, [topic]);
   
-  const t = useTranslations();
+  // Removed unused useTranslations import
   const locale = useLocale();
   const router = useRouter();
 

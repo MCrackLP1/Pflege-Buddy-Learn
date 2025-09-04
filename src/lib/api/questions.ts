@@ -4,8 +4,13 @@ import type { QuestionWithChoices } from '@/lib/db/schema';
 /**
  * Fetch questions for a specific topic from database using Supabase client
  * Excludes questions that user has already answered correctly
+ * Supports pagination for large question sets
  */
-export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWithChoices[]> {
+export async function getQuestionsByTopic(
+  topicSlug: string, 
+  limit: number = 10, 
+  offset: number = 0
+): Promise<QuestionWithChoices[]> {
   try {
     const supabase = createServerClient();
     
@@ -43,7 +48,7 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
       (correctAttempts || []).map(a => a.question_id)
     );
     
-    // Get questions for this topic with all related data
+    // Get questions for this topic with all related data (with pagination)
     const { data: questionsData, error: questionsError } = await supabase
       .from('questions')
       .select(`
@@ -51,7 +56,9 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
         choices (*),
         citations (*)
       `)
-      .eq('topic_id', topic.id);
+      .eq('topic_id', topic.id)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
     
     if (questionsError) throw questionsError;
     
@@ -105,6 +112,7 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
 
 /**
  * Get random questions from all topics (for mixed quiz)
+ * Optimized for performance with single query
  */
 export async function getRandomQuestions(count: number = 10): Promise<QuestionWithChoices[]> {
   try {

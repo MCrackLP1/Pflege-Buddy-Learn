@@ -41,11 +41,11 @@ export function Navigation() {
                 "flex flex-col items-center gap-1 h-auto py-2 px-3 min-h-[44px]",
                 isActive && "text-primary"
               )}
-              aria-label={t(`nav.${key}` as any) || key}
+              aria-label={t(`nav.${key}` as keyof typeof t) || key}
             >
               <Icon className="h-5 w-5" />
               <span className="text-xs font-medium">
-                {t(`nav.${key}` as any) || key}
+                {t(`nav.${key}` as keyof typeof t) || key}
               </span>
             </Button>
           );

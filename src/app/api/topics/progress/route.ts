@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import type { Database } from '@/types/database.types';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const supabase = createServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -42,15 +43,15 @@ export async function GET(req: NextRequest) {
       const totalQuestions = topic.questions?.length || 0;
       
       // Get user attempts for this topic
-      const topicAttempts = (attempts || []).filter((attempt: any) => 
+      const topicAttempts = (attempts || []).filter((attempt: Database['public']['Tables']['attempts']['Row'] & { questions?: { topic_id: string } }) => 
         attempt.questions?.topic_id === topic.id
       );
 
       // Get unique correct questions (user might have attempted same question multiple times)
       const uniqueCorrectQuestions = new Set(
         topicAttempts
-          .filter((a: any) => a.is_correct)
-          .map((a: any) => a.question_id)
+          .filter(a => a.is_correct)
+          .map(a => a.question_id)
       );
 
       const completedQuestions = uniqueCorrectQuestions.size;

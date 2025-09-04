@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { MainLayout } from '@/components/layout/main-layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 
@@ -26,7 +26,7 @@ interface ReviewItem {
 export function ReviewPage() {
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   
   const t = useTranslations('review');
   

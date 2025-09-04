@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import type { ApiResponse, UserProgressData } from '@/types/api.types';
 
-export async function GET(req: NextRequest) {
+export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: UserProgressData }>>> {
   try {
     // Get user from auth
     const supabase = createServerClient();
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get or create user progress
-    let { data: progress, error: progressError } = await supabase
+    const { data: progress, error: progressError } = await supabase
       .from('user_progress')
       .select('*')
       .eq('user_id', user.id)
@@ -55,9 +56,9 @@ export async function GET(req: NextRequest) {
       a.created_at.startsWith(today)
     ).length || 0;
 
-    // Get topic progress
-    const { data: topicStats, error: topicError } = await supabase
-      .rpc('get_topic_progress', { p_user_id: user.id });
+    // Get topic progress (remove unused for now)
+    // const { data: topicStats } = await supabase
+    //   .rpc('get_topic_progress', { p_user_id: user.id });
 
     return NextResponse.json({
       user_progress: {

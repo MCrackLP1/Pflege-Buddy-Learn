@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { LoadingState } from '@/components/ui/loading-spinner';
+import { ErrorState } from '@/components/ui/error-state';
 import { Shuffle, ChevronRight } from 'lucide-react';
 
 interface TopicWithProgress {
@@ -23,77 +25,76 @@ interface TopicWithProgress {
 export function LearnPage() {
   const [topics, setTopics] = useState<TopicWithProgress[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   
   const t = useTranslations('learn');
   const locale = useLocale();
   const router = useRouter();
 
   // Load real topic progress from API
-  useEffect(() => {
-    async function loadTopicProgress() {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/topics/progress');
-        const data = await response.json();
-        
-        if (data.success) {
-          setTopics(data.topics);
-        } else {
-          throw new Error(data.error || 'Failed to load topics');
-        }
-      } catch (err) {
-        console.error('Error loading topic progress:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load topics');
-        // Fallback to basic topic data without progress
-        setTopics(mockTopicsFallback);
-      } finally {
-        setLoading(false);
+  const loadTopicProgress = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch('/api/topics/progress');
+      const data = await response.json();
+      
+      if (data.success) {
+        setTopics(data.topics);
+      } else {
+        throw new Error(data.error || 'Failed to load topics');
       }
+    } catch (err) {
+      console.error('Error loading topic progress:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load topics');
+      // Fallback to basic topic data without progress
+      const fallback: TopicWithProgress[] = [
+        {
+          id: '1',
+          slug: 'grundlagen', 
+          title: 'Pflegegrundlagen',
+          description: 'Basiswissen für die professionelle Pflege',
+          totalQuestions: 2,
+          completedQuestions: 0,
+          progress: 0,
+        },
+        {
+          id: '2',
+          slug: 'hygiene',
+          title: 'Hygiene & Infektionsschutz', 
+          description: 'Hygienemaßnahmen und Infektionsprävention',
+          totalQuestions: 2,
+          completedQuestions: 0,
+          progress: 0,
+        },
+        {
+          id: '3',
+          slug: 'medikamente',
+          title: 'Medikamentengabe',
+          description: 'Sichere Arzneimittelverabreichung',
+          totalQuestions: 2,
+          completedQuestions: 0,
+          progress: 0,
+        },
+        {
+          id: '4',
+          slug: 'dokumentation',
+          title: 'Pflegedokumentation', 
+          description: 'Rechtssichere Dokumentation',
+          totalQuestions: 2,
+          completedQuestions: 0,
+          progress: 0,
+        }
+      ];
+      setTopics(fallback);
+    } finally {
+      setLoading(false);
     }
-    
-    loadTopicProgress();
   }, []);
 
-  // Fallback topics if API fails
-  const mockTopicsFallback: TopicWithProgress[] = [
-    {
-      id: '1',
-      slug: 'grundlagen', 
-      title: 'Pflegegrundlagen',
-      description: 'Basiswissen für die professionelle Pflege',
-      totalQuestions: 2,
-      completedQuestions: 0,
-      progress: 0,
-    },
-    {
-      id: '2',
-      slug: 'hygiene',
-      title: 'Hygiene & Infektionsschutz', 
-      description: 'Hygienemaßnahmen und Infektionsprävention',
-      totalQuestions: 2,
-      completedQuestions: 0,
-      progress: 0,
-    },
-    {
-      id: '3',
-      slug: 'medikamente',
-      title: 'Medikamentengabe',
-      description: 'Sichere Arzneimittelverabreichung',
-      totalQuestions: 2,
-      completedQuestions: 0,
-      progress: 0,
-    },
-    {
-      id: '4',
-      slug: 'dokumentation',
-      title: 'Pflegedokumentation', 
-      description: 'Rechtssichere Dokumentation',
-      totalQuestions: 2,
-      completedQuestions: 0,
-      progress: 0,
-    }
-  ];
+  useEffect(() => {
+    loadTopicProgress();
+  }, [loadTopicProgress]);
 
   const handleTopicSelect = (slug: string) => {
     router.push(createLocalizedPath(locale, `/quiz/${slug}`));
@@ -107,12 +108,20 @@ export function LearnPage() {
   if (loading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center space-y-4">
-            <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-muted-foreground">Lade Themen...</p>
-          </div>
-        </div>
+        <LoadingState message="Lade Themen..." />
+      </MainLayout>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <MainLayout>
+        <ErrorState 
+          title="Fehler beim Laden der Themen"
+          message={error}
+          onRetry={() => window.location.reload()}
+        />
       </MainLayout>
     );
   }
