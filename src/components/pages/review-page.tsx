@@ -15,7 +15,7 @@ interface ReviewItem {
   isCorrect: boolean;
   explanation: string;
   topic: string;
-  completedAt: Date;
+  completedAt: string;
   citations: {
     id: string;
     url: string;
@@ -109,7 +109,7 @@ export function ReviewPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{item.topic}</Badge>
                       <span className="text-xs text-muted-foreground">
-                        {item.completedAt.toLocaleDateString('de-DE')}
+                        {new Date(item.completedAt).toLocaleDateString('de-DE')}
                       </span>
                     </div>
                   </div>

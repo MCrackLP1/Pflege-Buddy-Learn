@@ -85,7 +85,7 @@ export function QuizQuestion({
           {/* Answer Options */}
           {question.type === 'mc' ? (
             <RadioGroup 
-              value={answer as string} 
+              value={answer as string || ""} 
               onValueChange={(value) => onAnswer(question.id, value)}
               className="space-y-3"
             >

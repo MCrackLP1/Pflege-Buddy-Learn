@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
         isCorrect: attempt.is_correct,
         explanation: question.explanation_md,
         topic: question.topics?.title || 'Unbekannt',
-        completedAt: new Date(attempt.created_at),
+        completedAt: attempt.created_at, // Keep as string, convert in frontend
         citations: (question.citations || []).map((c: any) => ({
           id: c.id,
           url: c.url,
