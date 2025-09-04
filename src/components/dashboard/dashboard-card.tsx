@@ -80,7 +80,7 @@ export function DashboardCard() {
           setRecentAnswers(data.recent_answers);
         } else {
           console.error('API returned error:', data.error);
-          // Fallback to mock data for debugging
+          // Fallback to mock data for debugging - 10 answers for continuous scrolling
           setRecentAnswers([
             {
               id: 'mock-1',
@@ -101,12 +101,92 @@ export function DashboardCard() {
               userAnswer: '10 Sekunden',
               correctAnswer: '20-30 Sekunden',
               explanation: 'Hände sollten mindestens 20-30 Sekunden gewaschen werden.'
+            },
+            {
+              id: 'mock-3',
+              isCorrect: true,
+              topic: 'Medikamente',
+              createdAt: new Date(Date.now() - 7200000).toISOString(),
+              question: 'Was bedeutet die 5-R-Regel bei der Medikamentenverabreichung?',
+              userAnswer: 'Richtiger Patient, richtiges Medikament, richtige Dosis, richtige Zeit, richtige Applikation',
+              correctAnswer: 'Richtiger Patient, richtiges Medikament, richtige Dosis, richtige Zeit, richtige Applikation',
+              explanation: 'Die 5-R-Regel stellt sicher, dass Medikamente korrekt verabreicht werden.'
+            },
+            {
+              id: 'mock-4',
+              isCorrect: false,
+              topic: 'Dokumentation',
+              createdAt: new Date(Date.now() - 10800000).toISOString(),
+              question: 'Wie lange müssen Pflegedokumentationen aufbewahrt werden?',
+              userAnswer: '5 Jahre',
+              correctAnswer: '10 Jahre',
+              explanation: 'Pflegedokumentationen müssen mindestens 10 Jahre aufbewahrt werden.'
+            },
+            {
+              id: 'mock-5',
+              isCorrect: true,
+              topic: 'Grundlagen',
+              createdAt: new Date(Date.now() - 14400000).toISOString(),
+              question: 'Was ist der normale Blutdruckbereich für Erwachsene?',
+              userAnswer: '120/80 mmHg',
+              correctAnswer: '120/80 mmHg',
+              explanation: 'Der optimale Blutdruck liegt bei 120/80 mmHg oder niedriger.'
+            },
+            {
+              id: 'mock-6',
+              isCorrect: true,
+              topic: 'Hygiene',
+              createdAt: new Date(Date.now() - 18000000).toISOString(),
+              question: 'Wann sollte man Handschuhe tragen?',
+              userAnswer: 'Bei Kontakt mit Körperflüssigkeiten',
+              correctAnswer: 'Bei Kontakt mit Körperflüssigkeiten',
+              explanation: 'Handschuhe schützen vor Infektionen bei Kontakt mit Körperflüssigkeiten.'
+            },
+            {
+              id: 'mock-7',
+              isCorrect: false,
+              topic: 'Medikamente',
+              createdAt: new Date(Date.now() - 21600000).toISOString(),
+              question: 'Wie werden Insulin-Pens aufbewahrt?',
+              userAnswer: 'Im Kühlschrank',
+              correctAnswer: 'Bei Raumtemperatur nach Anbruch',
+              explanation: 'Insulin-Pens werden nach Anbruch bei Raumtemperatur aufbewahrt.'
+            },
+            {
+              id: 'mock-8',
+              isCorrect: true,
+              topic: 'Dokumentation',
+              createdAt: new Date(Date.now() - 25200000).toISOString(),
+              question: 'Was muss in der Pflegedokumentation stehen?',
+              userAnswer: 'Alle durchgeführten Maßnahmen und Beobachtungen',
+              correctAnswer: 'Alle durchgeführten Maßnahmen und Beobachtungen',
+              explanation: 'Die Dokumentation muss alle pflegerischen Maßnahmen und Beobachtungen enthalten.'
+            },
+            {
+              id: 'mock-9',
+              isCorrect: true,
+              topic: 'Grundlagen',
+              createdAt: new Date(Date.now() - 28800000).toISOString(),
+              question: 'Was ist der Sauerstoffsättigung Normalwert?',
+              userAnswer: '95-100%',
+              correctAnswer: '95-100%',
+              explanation: 'Eine Sauerstoffsättigung von 95-100% gilt als normal.'
+            },
+            {
+              id: 'mock-10',
+              isCorrect: false,
+              topic: 'Hygiene',
+              createdAt: new Date(Date.now() - 32400000).toISOString(),
+              question: 'Wie oft sollte Bettwäsche gewechselt werden?',
+              userAnswer: 'Jede Woche',
+              correctAnswer: 'Bei Verschmutzung oder nach 7 Tagen',
+              explanation: 'Bettwäsche wird bei Verschmutzung oder mindestens alle 7 Tage gewechselt.'
             }
           ]);
         }
       } catch (err) {
         console.error('Error loading recent answers:', err);
-        // Fallback to mock data for debugging
+        // Fallback to mock data for debugging - 10 answers for continuous scrolling
         setRecentAnswers([
           {
             id: 'mock-1',
@@ -127,6 +207,86 @@ export function DashboardCard() {
             userAnswer: '10 Sekunden',
             correctAnswer: '20-30 Sekunden',
             explanation: 'Hände sollten mindestens 20-30 Sekunden gewaschen werden.'
+          },
+          {
+            id: 'mock-3',
+            isCorrect: true,
+            topic: 'Medikamente',
+            createdAt: new Date(Date.now() - 7200000).toISOString(),
+            question: 'Was bedeutet die 5-R-Regel bei der Medikamentenverabreichung?',
+            userAnswer: 'Richtiger Patient, richtiges Medikament, richtige Dosis, richtige Zeit, richtige Applikation',
+            correctAnswer: 'Richtiger Patient, richtiges Medikament, richtige Dosis, richtige Zeit, richtige Applikation',
+            explanation: 'Die 5-R-Regel stellt sicher, dass Medikamente korrekt verabreicht werden.'
+          },
+          {
+            id: 'mock-4',
+            isCorrect: false,
+            topic: 'Dokumentation',
+            createdAt: new Date(Date.now() - 10800000).toISOString(),
+            question: 'Wie lange müssen Pflegedokumentationen aufbewahrt werden?',
+            userAnswer: '5 Jahre',
+            correctAnswer: '10 Jahre',
+            explanation: 'Pflegedokumentationen müssen mindestens 10 Jahre aufbewahrt werden.'
+          },
+          {
+            id: 'mock-5',
+            isCorrect: true,
+            topic: 'Grundlagen',
+            createdAt: new Date(Date.now() - 14400000).toISOString(),
+            question: 'Was ist der normale Blutdruckbereich für Erwachsene?',
+            userAnswer: '120/80 mmHg',
+            correctAnswer: '120/80 mmHg',
+            explanation: 'Der optimale Blutdruck liegt bei 120/80 mmHg oder niedriger.'
+          },
+          {
+            id: 'mock-6',
+            isCorrect: true,
+            topic: 'Hygiene',
+            createdAt: new Date(Date.now() - 18000000).toISOString(),
+            question: 'Wann sollte man Handschuhe tragen?',
+            userAnswer: 'Bei Kontakt mit Körperflüssigkeiten',
+            correctAnswer: 'Bei Kontakt mit Körperflüssigkeiten',
+            explanation: 'Handschuhe schützen vor Infektionen bei Kontakt mit Körperflüssigkeiten.'
+          },
+          {
+            id: 'mock-7',
+            isCorrect: false,
+            topic: 'Medikamente',
+            createdAt: new Date(Date.now() - 21600000).toISOString(),
+            question: 'Wie werden Insulin-Pens aufbewahrt?',
+            userAnswer: 'Im Kühlschrank',
+            correctAnswer: 'Bei Raumtemperatur nach Anbruch',
+            explanation: 'Insulin-Pens werden nach Anbruch bei Raumtemperatur aufbewahrt.'
+          },
+          {
+            id: 'mock-8',
+            isCorrect: true,
+            topic: 'Dokumentation',
+            createdAt: new Date(Date.now() - 25200000).toISOString(),
+            question: 'Was muss in der Pflegedokumentation stehen?',
+            userAnswer: 'Alle durchgeführten Maßnahmen und Beobachtungen',
+            correctAnswer: 'Alle durchgeführten Maßnahmen und Beobachtungen',
+            explanation: 'Die Dokumentation muss alle pflegerischen Maßnahmen und Beobachtungen enthalten.'
+          },
+          {
+            id: 'mock-9',
+            isCorrect: true,
+            topic: 'Grundlagen',
+            createdAt: new Date(Date.now() - 28800000).toISOString(),
+            question: 'Was ist der Sauerstoffsättigung Normalwert?',
+            userAnswer: '95-100%',
+            correctAnswer: '95-100%',
+            explanation: 'Eine Sauerstoffsättigung von 95-100% gilt als normal.'
+          },
+          {
+            id: 'mock-10',
+            isCorrect: false,
+            topic: 'Hygiene',
+            createdAt: new Date(Date.now() - 32400000).toISOString(),
+            question: 'Wie oft sollte Bettwäsche gewechselt werden?',
+            userAnswer: 'Jede Woche',
+            correctAnswer: 'Bei Verschmutzung oder nach 7 Tagen',
+            explanation: 'Bettwäsche wird bei Verschmutzung oder mindestens alle 7 Tage gewechselt.'
           }
         ]);
       }
@@ -135,70 +295,90 @@ export function DashboardCard() {
     loadRecentAnswers();
   }, []);
 
-  // Auto-scroll carousel - improved version
+  // Auto-scroll carousel with pauses - new implementation
   useEffect(() => {
     if (recentAnswers.length <= 1) return;
 
     const scrollContainer = document.getElementById('recent-answers-carousel');
     if (!scrollContainer) return;
 
-    const scrollSpeed = 0.5; // Slower: 0.5px per frame instead of 1px
+    const cardWidth = 320 + 16; // Card width + gap
+    const scrollSpeed = 1; // pixels per frame for smooth movement
+    let currentCardIndex = 0;
     let animationId: number;
-    let isResetting = false;
+    let isPaused = false;
+    let pauseTimeout: NodeJS.Timeout;
 
-    const autoScroll = () => {
-      if (isResetting) return;
-
-      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    const scrollToCard = (cardIndex: number) => {
+      const targetScroll = cardIndex * cardWidth;
       const currentScroll = scrollContainer.scrollLeft;
+      const distance = targetScroll - currentScroll;
 
-      // Check if we're close to the end (within 50px buffer)
-      if (currentScroll >= maxScroll - 50) {
-        isResetting = true;
-
-        // Smooth reset to beginning
-        const resetScroll = () => {
-          if (scrollContainer.scrollLeft > 0) {
-            scrollContainer.scrollLeft -= 2; // Faster reset
-            requestAnimationFrame(resetScroll);
-          } else {
-            isResetting = false;
-            // Continue normal scrolling after reset
-            animationId = requestAnimationFrame(autoScroll);
-          }
-        };
-        resetScroll();
-      } else {
-        // Normal scrolling
-        scrollContainer.scrollLeft += scrollSpeed;
-        animationId = requestAnimationFrame(autoScroll);
+      if (Math.abs(distance) < 1) {
+        // Reached target - pause for reading
+        startPause(cardIndex);
+        return;
       }
+
+      // Smooth scroll towards target
+      const step = Math.sign(distance) * Math.min(scrollSpeed, Math.abs(distance));
+      scrollContainer.scrollLeft += step;
+      animationId = requestAnimationFrame(() => scrollToCard(cardIndex));
+    };
+
+    const startPause = (cardIndex: number) => {
+      isPaused = true;
+      // Pause for 4 seconds to allow reading
+      pauseTimeout = setTimeout(() => {
+        isPaused = false;
+        // Move to next card
+        currentCardIndex = (cardIndex + 1) % recentAnswers.length;
+        scrollToCard(currentCardIndex);
+      }, 4000); // 4 seconds pause
+    };
+
+    const startCarousel = () => {
+      currentCardIndex = 0;
+      scrollContainer.scrollLeft = 0; // Start at beginning
+      scrollToCard(0);
     };
 
     // Pause on hover
     const pauseScroll = () => {
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+      }
       if (animationId) {
         cancelAnimationFrame(animationId);
-        animationId = 0;
       }
+      isPaused = true;
     };
 
     const resumeScroll = () => {
-      if (!animationId && !isResetting) {
-        autoScroll();
-      }
+      if (!isPaused) return;
+
+      isPaused = false;
+      // Resume from current position
+      const currentScroll = scrollContainer.scrollLeft;
+      const nearestCardIndex = Math.round(currentScroll / cardWidth);
+
+      // Start pause for current card
+      startPause(nearestCardIndex % recentAnswers.length);
     };
 
     scrollContainer.addEventListener('mouseenter', pauseScroll);
     scrollContainer.addEventListener('mouseleave', resumeScroll);
 
-    // Start scrolling after a delay
+    // Start carousel after 2 seconds
     const startDelay = setTimeout(() => {
-      autoScroll();
+      startCarousel();
     }, 2000);
 
     return () => {
       clearTimeout(startDelay);
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+      }
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
@@ -385,7 +565,7 @@ export function DashboardCard() {
               }} />
 
               <p className="text-xs text-muted-foreground mt-4 text-center">
-                🎯 Hover für Pause • Klick für Details
+                ⏸️ 4s Pause pro Frage • Hover für Pause • Klick für Details
               </p>
             </CardContent>
           </Card>
