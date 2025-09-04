@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "title": "PflegeBuddy Learn",
+    "description": "Tägliche Wissens-Drills für die Pflege. Keine medizinische Beratung."
+  },
+  "common": {
+    "loading": "Lädt...",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Erneut versuchen",
+    "continue": "Weiter",
+    "back": "Zurück",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "confirm": "Bestätigen"
+  },
+  "auth": {
+    "signIn": "Mit Google anmelden",
+    "signOut": "Abmelden",
+    "signInDescription": "Melden Sie sich mit Ihrem Google-Konto an, um fortzufahren"
+  },
+  "home": {
+    "title": "Tägliche Session starten",
+    "subtitle": "5 Minuten für Ihr Pflegewissen",
+    "currentStreak": "Aktuelle Serie",
+    "days": "Tage",
+    "totalXP": "Gesamt-XP",
+    "todaysGoal": "Heutiges Ziel",
+    "disclaimer": "PflegeBuddy Learn ist kein Ersatz für medizinische Beratung oder professionelle Ausbildung."
+  },
+  "learn": {
+    "title": "Lernthemen",
+    "selectTopic": "Wählen Sie ein Thema",
+    "randomTopic": "Zufällig (Mix)",
+    "progress": "Fortschritt",
+    "questionsCompleted": "{completed} von {total} Fragen"
+  },
+  "quiz": {
+    "question": "Frage {current} von {total}",
+    "timeRemaining": "Zeit übrig",
+    "multipleChoice": "Mehrfachauswahl",
+    "trueFalse": "Wahr/Falsch",
+    "true": "Wahr",
+    "false": "Falsch",
+    "hint": "Hinweis",
+    "freeHintsLeft": "Freie Hinweise: {count}",
+    "buyHints": "Hinweise kaufen",
+    "submit": "Antwort abgeben",
+    "correct": "Richtig!",
+    "incorrect": "Falsch!",
+    "explanation": "Erklärung",
+    "sources": "Quellen",
+    "nextQuestion": "Nächste Frage",
+    "finishQuiz": "Quiz beenden"
+  },
+  "results": {
+    "title": "Quiz abgeschlossen!",
+    "score": "Ergebnis: {correct} von {total}",
+    "xpEarned": "+{xp} XP verdient",
+    "streakContinued": "Serie fortgesetzt! {days} Tage",
+    "streakBroken": "Serie unterbrochen",
+    "reviewAnswers": "Antworten überprüfen",
+    "startNew": "Neues Quiz starten"
+  },
+  "review": {
+    "title": "Verlauf",
+    "noHistory": "Noch keine Quizzes absolviert",
+    "correctAnswer": "Richtige Antwort",
+    "yourAnswer": "Ihre Antwort",
+    "explanation": "Erklärung"
+  },
+  "profile": {
+    "title": "Profil",
+    "displayName": "Anzeigename",
+    "language": "Sprache",
+    "german": "Deutsch",
+    "english": "English",
+    "statistics": "Statistiken",
+    "totalXP": "Gesamt-XP",
+    "currentStreak": "Aktuelle Serie",
+    "totalQuestions": "Beantwortete Fragen",
+    "accuracy": "Genauigkeit",
+    "exportData": "Daten exportieren",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountWarning": "Diese Aktion kann nicht rückgängig gemacht werden."
+  },
+  "store": {
+    "title": "Hinweis-Packs",
+    "currentBalance": "Aktuelle Balance: {count} Hinweise",
+    "freeDaily": "Täglich 2 kostenlose Hinweise",
+    "pack10": "10 Hinweise",
+    "pack50": "50 Hinweise",
+    "pack200": "200 Hinweise",
+    "purchase": "Kaufen für {price}",
+    "processing": "Verarbeitung läuft..."
+  },
+  "nav": {
+    "home": "Start",
+    "learn": "Lernen",
+    "review": "Verlauf",
+    "store": "Shop",
+    "profile": "Profil"
+  },
+  "errors": {
+    "unauthorized": "Nicht autorisiert",
+    "notFound": "Nicht gefunden",
+    "serverError": "Server-Fehler",
+    "networkError": "Netzwerk-Fehler",
+    "invalidInput": "Ungültige Eingabe"
+  }
+}

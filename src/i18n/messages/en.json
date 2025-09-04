@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "title": "PflegeBuddy Learn",
+    "description": "Daily nursing knowledge drills. Not medical advice."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "continue": "Continue",
+    "back": "Back",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm"
+  },
+  "auth": {
+    "signIn": "Sign in with Google",
+    "signOut": "Sign out",
+    "signInDescription": "Sign in with your Google account to continue"
+  },
+  "home": {
+    "title": "Start Daily Session",
+    "subtitle": "5 minutes for your nursing knowledge",
+    "currentStreak": "Current Streak",
+    "days": "days",
+    "totalXP": "Total XP",
+    "todaysGoal": "Today's Goal",
+    "disclaimer": "PflegeBuddy Learn is not a substitute for medical advice or professional training."
+  },
+  "learn": {
+    "title": "Learning Topics",
+    "selectTopic": "Choose a topic",
+    "randomTopic": "Random (Mix)",
+    "progress": "Progress",
+    "questionsCompleted": "{completed} of {total} questions"
+  },
+  "quiz": {
+    "question": "Question {current} of {total}",
+    "timeRemaining": "Time remaining",
+    "multipleChoice": "Multiple Choice",
+    "trueFalse": "True/False",
+    "true": "True",
+    "false": "False",
+    "hint": "Hint",
+    "freeHintsLeft": "Free hints: {count}",
+    "buyHints": "Buy hints",
+    "submit": "Submit answer",
+    "correct": "Correct!",
+    "incorrect": "Incorrect!",
+    "explanation": "Explanation",
+    "sources": "Sources",
+    "nextQuestion": "Next question",
+    "finishQuiz": "Finish quiz"
+  },
+  "results": {
+    "title": "Quiz completed!",
+    "score": "Score: {correct} of {total}",
+    "xpEarned": "+{xp} XP earned",
+    "streakContinued": "Streak continued! {days} days",
+    "streakBroken": "Streak broken",
+    "reviewAnswers": "Review answers",
+    "startNew": "Start new quiz"
+  },
+  "review": {
+    "title": "History",
+    "noHistory": "No quizzes completed yet",
+    "correctAnswer": "Correct answer",
+    "yourAnswer": "Your answer",
+    "explanation": "Explanation"
+  },
+  "profile": {
+    "title": "Profile",
+    "displayName": "Display name",
+    "language": "Language",
+    "german": "Deutsch",
+    "english": "English",
+    "statistics": "Statistics",
+    "totalXP": "Total XP",
+    "currentStreak": "Current Streak",
+    "totalQuestions": "Questions Answered",
+    "accuracy": "Accuracy",
+    "exportData": "Export data",
+    "deleteAccount": "Delete account",
+    "deleteAccountWarning": "This action cannot be undone."
+  },
+  "store": {
+    "title": "Hint Packs",
+    "currentBalance": "Current balance: {count} hints",
+    "freeDaily": "2 free hints daily",
+    "pack10": "10 hints",
+    "pack50": "50 hints",
+    "pack200": "200 hints",
+    "purchase": "Buy for {price}",
+    "processing": "Processing..."
+  },
+  "nav": {
+    "home": "Home",
+    "learn": "Learn",
+    "review": "Review",
+    "store": "Store",
+    "profile": "Profile"
+  },
+  "errors": {
+    "unauthorized": "Unauthorized",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "networkError": "Network error",
+    "invalidInput": "Invalid input"
+  }
+}

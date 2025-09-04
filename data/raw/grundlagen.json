@@ -1,0 +1,24 @@
+{
+  "topic": "grundlagen",
+  "sources": [
+    {
+      "url": "https://www.rki.de/DE/Content/InfAZ/N/Nosokomiale_Infektionen/nosokomiale-infektionen_node.html",
+      "title": "RKI - Nosokomiale Infektionen",
+      "published_date": "2024-01-15",
+      "description": "Robert Koch-Institut Leitlinien zu Krankenhausinfektionen"
+    },
+    {
+      "url": "https://www.awmf.org/leitlinien/detail/ll/157-001.html",
+      "title": "AWMF - Grundlagen der Pflege",
+      "published_date": "2024-01-10",
+      "description": "AWMF Leitlinie zu Pflegegrundlagen"
+    },
+    {
+      "url": "https://www.who.int/publications/guidelines/nursing/en/",
+      "title": "WHO Nursing Guidelines",
+      "published_date": "2024-01-05",
+      "description": "World Health Organization nursing standards"
+    }
+  ],
+  "updated_at": "2025-09-03T22:35:28.767Z"
+}
