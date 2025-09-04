@@ -41,15 +41,15 @@ export async function getQuestionsByTopic(
       .select('question_id')
       .eq('user_id', user.id)
       .eq('is_correct', true);
-      
+
     if (attemptsError) throw attemptsError;
-    
+
     const answeredQuestionIds = new Set(
       (correctAttempts || []).map(a => a.question_id)
     );
-    
-    // Get questions for this topic with all related data (with pagination)
-    const { data: questionsData, error: questionsError } = await supabase
+
+    // First get ALL questions for this topic to properly filter
+    const { data: allQuestionsData, error: allQuestionsError } = await supabase
       .from('questions')
       .select(`
         *,
@@ -57,20 +57,22 @@ export async function getQuestionsByTopic(
         citations (*)
       `)
       .eq('topic_id', topic.id)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-    
-    if (questionsError) throw questionsError;
-    
+      .order('created_at', { ascending: false });
+
+    if (allQuestionsError) throw allQuestionsError;
+
     // Filter out questions user has already answered correctly
-    const unansweredQuestions = (questionsData || []).filter(q => 
+    const unansweredQuestions = (allQuestionsData || []).filter(q =>
       !answeredQuestionIds.has(q.id)
     );
+
+    // Apply pagination to the filtered results
+    const paginatedQuestions = unansweredQuestions.slice(offset, offset + limit);
     
     // If no unanswered questions, return a few for review/practice
-    const finalQuestions = unansweredQuestions.length > 0 
-      ? unansweredQuestions 
-      : (questionsData || []).slice(0, 3); // Show 3 for review
+    const finalQuestions = unansweredQuestions.length > 0
+      ? paginatedQuestions
+      : (allQuestionsData || []).slice(0, 3); // Show 3 for review
     
     // Transform to QuestionWithChoices format
     const questionsWithRelations: QuestionWithChoices[] = finalQuestions.map(q => ({
@@ -117,23 +119,55 @@ export async function getQuestionsByTopic(
 export async function getRandomQuestions(count: number = 10): Promise<QuestionWithChoices[]> {
   try {
     const supabase = createServerClient();
-    
-    // Get random questions from all topics with related data
-    const { data: questionsData, error: questionsError } = await supabase
+
+    // Get user from auth
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Get questions that user has already answered correctly
+    const { data: correctAttempts, error: attemptsError } = await supabase
+      .from('attempts')
+      .select('question_id')
+      .eq('user_id', user.id)
+      .eq('is_correct', true);
+
+    if (attemptsError) throw attemptsError;
+
+    const answeredQuestionIds = new Set(
+      (correctAttempts || []).map(a => a.question_id)
+    );
+
+    // Get ALL questions from all topics
+    const { data: allQuestionsData, error: allQuestionsError } = await supabase
       .from('questions')
       .select(`
         *,
         choices (*),
         citations (*)
-      `)
-      .limit(count);
-    
-    if (questionsError) throw questionsError;
+      `);
+
+    if (allQuestionsError) throw allQuestionsError;
+
+    // Filter out questions user has already answered correctly
+    const unansweredQuestions = (allQuestionsData || []).filter(q =>
+      !answeredQuestionIds.has(q.id)
+    );
+
+    // If no unanswered questions, use all questions for review
+    const availableQuestions = unansweredQuestions.length > 0
+      ? unansweredQuestions
+      : allQuestionsData || [];
+
+    // Get random questions from the available ones
+    const randomQuestions = availableQuestions
+      .sort(() => Math.random() - 0.5) // Randomize
+      .slice(0, count); // Take only requested count
     
     // Transform to QuestionWithChoices format
-    const questionsWithRelations: QuestionWithChoices[] = (questionsData || [])
-      .sort(() => Math.random() - 0.5) // Randomize
-      .slice(0, count) // Take only requested count
+    const questionsWithRelations: QuestionWithChoices[] = randomQuestions
       .map(q => ({
         id: q.id,
         topicId: q.topic_id,
