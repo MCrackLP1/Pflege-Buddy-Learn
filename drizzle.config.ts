@@ -5,6 +5,6 @@ export default {
   out: './drizzle/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgresql://postgres:[YOUR-PASSWORD]@db.tkqofzynpyvmivmxhoef.supabase.co:5432/postgres',
+    url: process.env.DATABASE_URL || 'postgresql://postgres:[YOUR-PASSWORD]@db.your-project.supabase.co:5432/postgres',
   },
 } satisfies Config;

@@ -38,11 +38,11 @@ npm install
 Create \`.env.local\`:
 
 \`\`\`env
-# Supabase Configuration - PflegeBuddy Learn  
-NEXT_PUBLIC_SUPABASE_URL=https://tkqofzynpyvmivmxhoef.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcW9menlucHl2bWl2bXhob2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MzYyNDAsImV4cCI6MjA3MjUxMjI0MH0.cFcq5cCiAevBz_ZmOZ1rwjYxvy-lplVGHKj2pztj30c
-SUPABASE_SERVICE_ROLE=your-service-role-key
-DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.tkqofzynpyvmivmxhoef.supabase.co:5432/postgres
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE=your_service_role_key
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.your-project.supabase.co:5432/postgres
 
 # App Configuration
 NEXT_PUBLIC_APP_NAME="PflegeBuddy Learn"

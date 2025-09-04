@@ -3,12 +3,26 @@ node_modules/
 .pnpm
 .npm
 
-# Environment files
-.env
+# Environment files (CRITICAL: Never commit these!)
+.env*
+!.env.template
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Security-sensitive files
+.config/
+.secrets/
+credentials/
+keys/
+*.pem
+*.key
+*.p12
+*.cert
+*_key
+*_secret
 
 # Next.js
 .next/

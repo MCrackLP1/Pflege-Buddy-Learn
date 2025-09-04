@@ -54,9 +54,9 @@
 
 ### Environment Variables to Set:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://tkqofzynpyvmivmxhoef.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcW9menlucHl2bWl2bXhob2VmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5MzYyNDAsImV4cCI6MjA3MjUxMjI0MH0.cFcq5cCiAevBz_ZmOZ1rwjYxvy-lplVGHKj2pztj30c
-DATABASE_URL=postgresql://postgres:[GET-PASSWORD-FROM-SUPABASE]@db.tkqofzynpyvmivmxhoef.supabase.co:5432/postgres
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.your-project.supabase.co:5432/postgres
 ```
 
 ### Next Steps:
