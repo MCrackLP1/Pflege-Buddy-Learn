@@ -7,6 +7,21 @@ export async function POST(
   req: NextRequest
 ): Promise<NextResponse<ApiResponse>> {
   try {
+    // Check if Supabase environment variables are configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Supabase environment variables not configured');
+      return NextResponse.json(
+        {
+          error: 'Server-Konfiguration unvollständig. Bitte wenden Sie sich an den Support.',
+          success: false
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createServerClient();
 
     // Get authenticated user
@@ -44,16 +59,18 @@ export async function POST(
       .from('profiles')
       .select('role')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to handle missing profiles
 
-    if (profileFetchError) {
-      console.error('Error fetching user profile:', profileFetchError);
+    // Only fail if there's a real database error, not if profile doesn't exist
+    if (profileFetchError && profileFetchError.code !== 'PGRST116') {
+      console.error('Database error fetching user profile:', profileFetchError);
       return NextResponse.json(
-        { error: 'Fehler beim Überprüfen der Benutzerberechtigungen', success: false },
+        { error: 'Datenbankfehler beim Überprüfen der Benutzerberechtigungen', success: false },
         { status: 500 }
       );
     }
 
+    // If profile exists and user is admin, prevent deletion
     if (profile?.role === 'admin') {
       return NextResponse.json(
         {
