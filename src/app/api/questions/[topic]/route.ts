@@ -25,16 +25,23 @@ export async function GET(
       questions = await getQuestionsByTopic(topic, limit, offset);
     }
     
-    const response = NextResponse.json({ 
+    const response = NextResponse.json({
       questions,
       count: questions.length,
-      success: true 
+      success: true
     });
 
-    // Add caching headers for performance
-    response.headers.set('Cache-Control', `public, max-age=${CACHE_MAX_AGE}`);
-    response.headers.set('CDN-Cache-Control', `max-age=${CACHE_MAX_AGE}`);
-    
+    // Disable caching for random questions to ensure true randomness
+    if (topic === 'random') {
+      response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      response.headers.set('Pragma', 'no-cache');
+      response.headers.set('Expires', '0');
+    } else {
+      // Add caching headers for performance on specific topics
+      response.headers.set('Cache-Control', `public, max-age=${CACHE_MAX_AGE}`);
+      response.headers.set('CDN-Cache-Control', `max-age=${CACHE_MAX_AGE}`);
+    }
+
     return response;
     
   } catch (error) {

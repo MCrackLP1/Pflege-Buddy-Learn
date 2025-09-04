@@ -94,7 +94,9 @@ export function QuizPage({ topic }: QuizPageProps) {
 
       try {
         setLoading(true);
-        const response = await fetch(`/api/questions/${topic}`);
+        // Add cache-busting parameter for random questions to ensure true randomness
+        const cacheBuster = topic === 'random' ? `&_t=${Date.now()}` : '';
+        const response = await fetch(`/api/questions/${topic}${cacheBuster}`);
         const data = await response.json();
 
         if (data.success && data.questions) {
@@ -262,7 +264,7 @@ export function QuizPage({ topic }: QuizPageProps) {
       <MainLayout>
         <QuizResults
           {...results}
-          onRestart={() => router.push(createLocalizedPath(locale, '/learn'))}
+          onRestart={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
           onReview={() => router.push(createLocalizedPath(locale, '/review'))}
         />
       </MainLayout>
