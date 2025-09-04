@@ -12,6 +12,11 @@ export async function middleware(req: NextRequest) {
   // Handle internationalization first
   const intlResponse = intlMiddleware(req);
   
+  // Skip Supabase auth if environment variables are not configured
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return intlResponse;
+  }
+  
   // Create a Supabase client configured to use cookies
   const res = NextResponse.next({
     request: {
@@ -20,8 +25,8 @@ export async function middleware(req: NextRequest) {
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
