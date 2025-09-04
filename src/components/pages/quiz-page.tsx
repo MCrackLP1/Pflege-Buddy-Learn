@@ -73,40 +73,82 @@ const mockQuestionsFallback: QuestionWithChoices[] = [
   }
 ];
 
+// Storage keys for persisting quiz state
+const QUIZ_STORAGE_KEYS = {
+  questions: (topic: string) => `quiz_questions_${topic}`,
+  answers: (topic: string) => `quiz_answers_${topic}`,
+  hints: (topic: string) => `quiz_hints_${topic}`,
+  index: (topic: string) => `quiz_index_${topic}`,
+  loaded: (topic: string) => `quiz_loaded_${topic}`,
+};
+
 export function QuizPage({ topic }: QuizPageProps) {
   // API Data loading
   const [questions, setQuestions] = useState<QuestionWithChoices[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [questionsLoaded, setQuestionsLoaded] = useState(false);
 
-  // Quiz State
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
+  // Quiz State - load from sessionStorage if available
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.index(topic));
+      return saved ? parseInt(saved, 10) : 0;
+    }
+    return 0;
+  });
+
+  const [answers, setAnswers] = useState<Record<string, string | boolean>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.answers(topic));
+      return saved ? JSON.parse(saved) : {};
+    }
+    return {};
+  });
+
+  const [usedHints, setUsedHints] = useState<Record<string, number>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem(QUIZ_STORAGE_KEYS.hints(topic));
+      return saved ? JSON.parse(saved) : {};
+    }
+    return {};
+  });
+
   const [showResults, setShowResults] = useState(false);
-  const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [startTime] = useState(Date.now());
   
-  // Fetch questions from API - only once per topic
+  // Load questions from sessionStorage or API
   useEffect(() => {
-    // Only load questions if not already loaded
-    if (questionsLoaded) {
-      console.log('Questions already loaded for topic:', topic, '- skipping API call');
-      return;
-    }
+    const loadQuestions = async () => {
+      // First check sessionStorage
+      if (typeof window !== 'undefined') {
+        const savedQuestions = sessionStorage.getItem(QUIZ_STORAGE_KEYS.questions(topic));
+        const savedLoaded = sessionStorage.getItem(QUIZ_STORAGE_KEYS.loaded(topic));
 
-    async function loadQuestions() {
-      console.log('Loading questions for topic:', topic);
+        if (savedQuestions && savedLoaded === 'true') {
+          console.log('Loading questions from sessionStorage for topic:', topic);
+          setQuestions(JSON.parse(savedQuestions));
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Load from API if not in sessionStorage
+      console.log('Loading questions from API for topic:', topic);
 
       try {
         setLoading(true);
         const response = await fetch(`/api/questions/${topic}`);
         const data = await response.json();
 
-        if (data.success) {
-          console.log(`Loaded ${data.questions?.length || 0} questions for topic: ${topic}`);
+        if (data.success && data.questions) {
+          console.log(`Loaded ${data.questions.length} questions for topic: ${topic}`);
           setQuestions(data.questions);
-          setQuestionsLoaded(true);
+
+          // Save to sessionStorage
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem(QUIZ_STORAGE_KEYS.questions(topic), JSON.stringify(data.questions));
+            sessionStorage.setItem(QUIZ_STORAGE_KEYS.loaded(topic), 'true');
+          }
         } else {
           throw new Error(data.error || 'Failed to load questions');
         }
@@ -115,15 +157,39 @@ export function QuizPage({ topic }: QuizPageProps) {
         setError(err instanceof Error ? err.message : 'Failed to load questions');
         // Fallback to mock data for development
         setQuestions(mockQuestionsFallback);
-        setQuestionsLoaded(true);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem(QUIZ_STORAGE_KEYS.questions(topic), JSON.stringify(mockQuestionsFallback));
+          sessionStorage.setItem(QUIZ_STORAGE_KEYS.loaded(topic), 'true');
+        }
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     loadQuestions();
-  }, [topic, questionsLoaded]); // Only run when topic changes or questions not loaded
-  
+  }, [topic]);
+
+  // Save answers to sessionStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined' && Object.keys(answers).length > 0) {
+      sessionStorage.setItem(QUIZ_STORAGE_KEYS.answers(topic), JSON.stringify(answers));
+    }
+  }, [answers, topic]);
+
+  // Save hints to sessionStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined' && Object.keys(usedHints).length > 0) {
+      sessionStorage.setItem(QUIZ_STORAGE_KEYS.hints(topic), JSON.stringify(usedHints));
+    }
+  }, [usedHints, topic]);
+
+  // Save current question index to sessionStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(QUIZ_STORAGE_KEYS.index(topic), currentQuestionIndex.toString());
+    }
+  }, [currentQuestionIndex, topic]);
+
   // Removed unused useTranslations import
   const locale = useLocale();
   const router = useRouter();
@@ -229,14 +295,25 @@ export function QuizPage({ topic }: QuizPageProps) {
     }
   };
 
+  // Clear quiz session data when quiz is completed or reset
+  const clearQuizSession = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.questions(topic));
+      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.answers(topic));
+      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.hints(topic));
+      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.index(topic));
+      sessionStorage.removeItem(QUIZ_STORAGE_KEYS.loaded(topic));
+    }
+  };
+
   const calculateResults = () => {
     let correct = 0;
     let totalXP = 0;
-    
+
     questions.forEach(question => {
       const userAnswer = answers[question.id];
       let isCorrect = false;
-      
+
       if (question.type === 'tf') {
         // For True/False questions, compare with the stored correct answer
         isCorrect = userAnswer === question.tfCorrectAnswer;
@@ -245,24 +322,28 @@ export function QuizPage({ topic }: QuizPageProps) {
         const correctChoice = question.choices.find(c => c.isCorrect);
         isCorrect = userAnswer === correctChoice?.id;
       }
-      
+
       if (isCorrect) {
         correct++;
         totalXP += question.difficulty * 10 - (usedHints[question.id] || 0) * 5;
       }
-      
+
       // Note: Attempts are now saved immediately when answer is given
       // No need to save again here
     });
-    
+
     return { correct, total: questions.length, xp: totalXP };
   };
 
   if (showResults) {
     const results = calculateResults();
+
+    // Clear session data when showing results (quiz completed)
+    clearQuizSession();
+
     return (
       <MainLayout>
-        <QuizResults 
+        <QuizResults
           {...results}
           onRestart={() => router.push(createLocalizedPath(locale, '/learn'))}
           onReview={() => router.push(createLocalizedPath(locale, '/review'))}

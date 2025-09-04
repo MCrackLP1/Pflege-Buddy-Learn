@@ -97,6 +97,18 @@ export function ProfilePage() {
       const data = await response.json();
 
       if (data.success) {
+        // Clear all quiz session data from localStorage/sessionStorage
+        if (typeof window !== 'undefined') {
+          const topics = ['grundlagen', 'hygiene', 'medikamente', 'dokumentation', 'random'];
+          topics.forEach(topic => {
+            sessionStorage.removeItem(`quiz_questions_${topic}`);
+            sessionStorage.removeItem(`quiz_answers_${topic}`);
+            sessionStorage.removeItem(`quiz_hints_${topic}`);
+            sessionStorage.removeItem(`quiz_index_${topic}`);
+            sessionStorage.removeItem(`quiz_loaded_${topic}`);
+          });
+        }
+
         // Reload user stats after reset
         const statsResponse = await fetch('/api/user/progress');
         const statsData = await statsResponse.json();
@@ -114,7 +126,7 @@ export function ProfilePage() {
 
         setShowResetDialog(false);
         // Optional: Show success message
-        alert('Quiz-Versuche erfolgreich zurückgesetzt!');
+        alert('Quiz-Versuche und lokale Daten erfolgreich zurückgesetzt!');
       } else {
         throw new Error(data.error || 'Fehler beim Zurücksetzen');
       }
