@@ -126,7 +126,7 @@ export default function CookiesPage({ params }: { params: { locale: string } }) 
 
           <p>
             Weitere Informationen finden Sie in unserer{' '}
-            <Link href="/datenschutz" className="text-primary hover:underline">
+            <Link href={`/${params.locale}/datenschutz`} className="text-primary hover:underline">
               Datenschutzerklärung
             </Link>
             .

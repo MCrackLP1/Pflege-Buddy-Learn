@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '@/components/providers/auth-provider';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw, Shield, FileText, Cookie } from 'lucide-react';
 import Link from 'next/link';
 import { LEGAL_CONFIG } from '@/lib/constants';
+import { createLocalizedPath } from '@/lib/navigation';
 
 interface UserStats {
   totalXP: number;
@@ -29,6 +30,7 @@ export function ProfilePage() {
   const [resetLoading, setResetLoading] = useState(false);
 
   const t = useTranslations('profile');
+  const locale = useLocale();
   const { user, signOut } = useAuth();
   
   // Load real user statistics from API
@@ -210,7 +212,7 @@ export function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <Link href="/datenschutz" className="block">
+              <Link href={createLocalizedPath(locale, 'datenschutz')} className="block">
                 <Button variant="outline" className="w-full justify-start h-auto p-3">
                   <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
                   <div className="text-left">
@@ -220,7 +222,7 @@ export function ProfilePage() {
                 </Button>
               </Link>
 
-              <Link href="/agb" className="block">
+              <Link href={createLocalizedPath(locale, 'agb')} className="block">
                 <Button variant="outline" className="w-full justify-start h-auto p-3">
                   <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
                   <div className="text-left">
@@ -230,7 +232,7 @@ export function ProfilePage() {
                 </Button>
               </Link>
 
-              <Link href="/cookie-einstellungen" className="block">
+              <Link href={createLocalizedPath(locale, 'cookie-einstellungen')} className="block">
                 <Button variant="outline" className="w-full justify-start h-auto p-3">
                   <Cookie className="h-4 w-4 mr-2 flex-shrink-0" />
                   <div className="text-left">
@@ -240,7 +242,7 @@ export function ProfilePage() {
                 </Button>
               </Link>
 
-              <Link href="/impressum" className="block">
+              <Link href={createLocalizedPath(locale, 'impressum')} className="block">
                 <Button variant="outline" className="w-full justify-start h-auto p-3">
                   <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
                   <div className="text-left">

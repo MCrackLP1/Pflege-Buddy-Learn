@@ -1,9 +1,10 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { LEGAL_CONFIG } from '@/lib/constants';
+import { createLocalizedPath } from '@/lib/navigation';
 
 interface FooterProps {
   showFullFooter?: boolean;
@@ -11,6 +12,7 @@ interface FooterProps {
 
 export function Footer({ showFullFooter = true }: FooterProps) {
   const t = useTranslations();
+  const locale = useLocale();
 
   const currentYear = new Date().getFullYear();
 
@@ -22,13 +24,13 @@ export function Footer({ showFullFooter = true }: FooterProps) {
             {/* Essential Legal Links - only show what's not in profile */}
             <div className="flex justify-center space-x-4 mb-4">
               <Link
-                href="/widerruf"
+                href={createLocalizedPath(locale, 'widerruf')}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 Widerruf
               </Link>
               <Link
-                href="/disclaimer-medizin"
+                href={createLocalizedPath(locale, 'disclaimer-medizin')}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 Medizin-Disclaimer

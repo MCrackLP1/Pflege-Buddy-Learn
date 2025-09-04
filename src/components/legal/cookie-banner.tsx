@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Settings, Check } from 'lucide-react';
 import Link from 'next/link';
 import { LEGAL_CONFIG } from '@/lib/constants';
+import { createLocalizedPath } from '@/lib/navigation';
 
 interface CookieBannerProps {
   onAccept: (preferences: Record<string, boolean>) => void;
@@ -16,6 +17,7 @@ interface CookieBannerProps {
 export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const t = useTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     // Check if user has already made a choice
@@ -100,11 +102,11 @@ export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
             <p>
               Durch Klick auf "Alle akzeptieren" stimmen Sie der Verwendung aller Cookies zu.
               Weitere Informationen finden Sie in unserer{' '}
-              <Link href="/cookies" className="underline hover:no-underline">
+              <Link href={createLocalizedPath(locale, 'cookies')} className="underline hover:no-underline">
                 Cookie-Richtlinie
               </Link>
               {' '}und{' '}
-              <Link href="/datenschutz" className="underline hover:no-underline">
+              <Link href={createLocalizedPath(locale, 'datenschutz')} className="underline hover:no-underline">
                 Datenschutzerklärung
               </Link>
               .
