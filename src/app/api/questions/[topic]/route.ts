@@ -10,7 +10,15 @@ export async function GET(
   { params }: { params: { topic: string } }
 ): Promise<NextResponse<ApiResponse>> {
   try {
-    const { topic } = params;
+    // Extract topic from params and ignore cache-busting parameters
+    let topic = params.topic;
+
+    // Remove cache-busting parameter if present (e.g., "random?_t=123" -> "random")
+    if (topic.includes('?')) {
+      topic = topic.split('?')[0];
+    }
+
+    console.log('Processing topic:', topic);
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const offset = parseInt(url.searchParams.get('offset') || '0');

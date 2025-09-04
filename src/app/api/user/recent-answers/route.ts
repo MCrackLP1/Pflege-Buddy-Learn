@@ -44,35 +44,59 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (attemptsError) throw attemptsError;
+    if (attemptsError) {
+      console.error('Database error fetching attempts:', attemptsError);
+      // Return empty array instead of throwing error
+      return NextResponse.json({
+        recent_answers: [],
+        success: true
+      });
+    }
+
+    console.log(`Found ${attempts?.length || 0} attempts for user`);
 
     const recentAnswers: RecentAnswer[] = (attempts || []).map((attempt: any) => {
-      const question = attempt.questions;
-      let userAnswer = '';
-      let correctAnswer = '';
+      try {
+        const question = attempt.questions;
+        let userAnswer = '';
+        let correctAnswer = '';
 
-      // Format user answer
-      if (question.type === 'tf') {
-        userAnswer = attempt.user_answer === 'true' ? 'Wahr' : 'Falsch';
-        correctAnswer = question.tf_correct_answer ? 'Wahr' : 'Falsch';
-      } else {
-        // For MC questions, find the choice label
-        const userChoice = question.choices?.find((c: any) => c.id === attempt.user_answer);
-        const correctChoice = question.choices?.find((c: any) => c.is_correct);
-        userAnswer = userChoice?.label || attempt.user_answer || 'Unbekannt';
-        correctAnswer = correctChoice?.label || 'Unbekannt';
+        // Format user answer
+        if (question?.type === 'tf') {
+          userAnswer = attempt.user_answer === 'true' ? 'Wahr' : 'Falsch';
+          correctAnswer = question.tf_correct_answer ? 'Wahr' : 'Falsch';
+        } else if (question?.type === 'mc') {
+          // For MC questions, find the choice label
+          const userChoice = question.choices?.find((c: any) => c.id === attempt.user_answer);
+          const correctChoice = question.choices?.find((c: any) => c.is_correct);
+          userAnswer = userChoice?.label || attempt.user_answer || 'Unbekannt';
+          correctAnswer = correctChoice?.label || 'Unbekannt';
+        }
+
+        return {
+          id: attempt.id,
+          isCorrect: attempt.is_correct,
+          topic: question?.topics?.title || 'Unbekannt',
+          createdAt: attempt.created_at,
+          question: question?.stem || 'Frage nicht verfügbar',
+          userAnswer,
+          correctAnswer,
+          explanation: question?.explanation_md || 'Keine Erklärung verfügbar'
+        };
+      } catch (error) {
+        console.error('Error processing attempt:', attempt.id, error);
+        // Return a fallback entry
+        return {
+          id: attempt.id,
+          isCorrect: attempt.is_correct,
+          topic: 'Unbekannt',
+          createdAt: attempt.created_at,
+          question: 'Frage konnte nicht geladen werden',
+          userAnswer: 'Unbekannt',
+          correctAnswer: 'Unbekannt',
+          explanation: 'Keine Erklärung verfügbar'
+        };
       }
-
-      return {
-        id: attempt.id,
-        isCorrect: attempt.is_correct,
-        topic: question?.topics?.title || 'Unbekannt',
-        createdAt: attempt.created_at,
-        question: question?.stem || 'Frage nicht verfügbar',
-        userAnswer,
-        correctAnswer,
-        explanation: question?.explanation_md || 'Keine Erklärung verfügbar'
-      };
     });
 
     return NextResponse.json({

@@ -95,7 +95,7 @@ export function QuizPage({ topic }: QuizPageProps) {
       try {
         setLoading(true);
         // Add cache-busting parameter for random questions to ensure true randomness
-        const cacheBuster = topic === 'random' ? `&_t=${Date.now()}` : '';
+        const cacheBuster = topic === 'random' ? `?_t=${Date.now()}` : '';
         const response = await fetch(`/api/questions/${topic}${cacheBuster}`);
         const data = await response.json();
 
