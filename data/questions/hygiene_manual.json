@@ -1,0 +1,69 @@
+{
+  "topic": "hygiene",
+  "questions": [
+    {
+      "type": "mc",
+      "stem": "Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?",
+      "explanation_md": "Die korrekte Reihenfolge ist: 1) Hände anfeuchten, 2) Desinfektionsmittel auftragen, 3) 20-30 Sekunden einwirken lassen, 4) Vollständig trocknen lassen. Diese Reihenfolge gewährleistet optimale Keimreduktion.",
+      "difficulty": 2,
+      "hints": [
+        "Einwirkzeit ist kritisch",
+        "Trocknen ist der letzte Schritt"
+      ],
+      "choices": [
+        { "label": "Auftragen → Anfeuchten → Einwirken → Trocknen", "is_correct": false },
+        { "label": "Anfeuchten → Auftragen → Einwirken → Trocknen", "is_correct": true },
+        { "label": "Auftragen → Einwirken → Anfeuchten → Trocknen", "is_correct": false },
+        { "label": "Anfeuchten → Einwirken → Auftragen → Trocknen", "is_correct": false }
+      ],
+      "citations": [
+        {
+          "url": "https://www.rki.de/DE/Content/Infekt/Krankenhaushygiene/krankenhaushygiene_node.html",
+          "title": "RKI Krankenhaushygiene Leitlinien",
+          "published_date": "2024-01-20"
+        }
+      ]
+    },
+    {
+      "type": "tf",
+      "stem": "Schmuck und Uhren sollten vor der Händedesinfektion abgelegt werden.",
+      "explanation_md": "Schmuck, Uhren und Ringe behindern eine effektive Händedesinfektion, da sich darunter Keime ansammeln können. Sie müssen vor der Desinfektion abgelegt werden.",
+      "difficulty": 1,
+      "hints": [
+        "Keime sammeln sich unter Schmuck an",
+        "Vollständige Benetzung der Haut ist wichtig"
+      ],
+      "tf_correct_answer": true,
+      "citations": [
+        {
+          "url": "https://www.who.int/gpsc/5may/Hand_Hygiene_Why_How_and_When_Brochure.pdf",
+          "title": "WHO Hand Hygiene Guidelines",
+          "published_date": "2024-01-12"
+        }
+      ]
+    },
+    {
+      "type": "mc",
+      "stem": "Wann ist eine hygienische Händedesinfektion vor Patientenkontakt erforderlich?",
+      "explanation_md": "Eine hygienische Händedesinfektion ist IMMER vor direktem Patientenkontakt erforderlich, um eine Übertragung von Krankheitserregern zu verhindern. Dies ist eine Grundregel der Krankenhaushygiene.",
+      "difficulty": 1,
+      "hints": [
+        "Patientenschutz steht im Vordergrund",
+        "Übertragung von Erregern vermeiden"
+      ],
+      "choices": [
+        { "label": "Nur bei infektiösen Patienten", "is_correct": false },
+        { "label": "Bei allen Patienten", "is_correct": true },
+        { "label": "Nur bei invasiven Eingriffen", "is_correct": false },
+        { "label": "Nur bei immunsupprimierten Patienten", "is_correct": false }
+      ],
+      "citations": [
+        {
+          "url": "https://www.cdc.gov/handhygiene/providers/guideline.html",
+          "title": "CDC Hand Hygiene Guidelines for Healthcare Settings",
+          "published_date": "2024-01-08"
+        }
+      ]
+    }
+  ]
+}

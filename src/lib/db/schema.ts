@@ -27,6 +27,8 @@ export const questions = pgTable('questions', {
   sourceDate: date('source_date'),
   difficulty: integer('difficulty').notNull().default(1), // 1-5
   hints: jsonb('hints').$type<string[]>().default([]),
+  // For True/False questions: true or false is the correct answer
+  tfCorrectAnswer: boolean('tf_correct_answer'), // null for MC questions, boolean for TF questions
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -132,6 +134,7 @@ export type Citation = typeof citations.$inferSelect;
 export type QuestionWithChoices = Question & {
   choices: Choice[];
   citations: Citation[];
+  tfCorrectAnswer?: boolean | null;
 };
 
 export type TopicWithProgress = Topic & {

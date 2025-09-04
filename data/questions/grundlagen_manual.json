@@ -1,0 +1,111 @@
+{
+  "topic": "grundlagen",
+  "questions": [
+    {
+      "type": "mc",
+      "stem": "Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?",
+      "explanation_md": "Die normale Körpertemperatur liegt bei rektaler Messung zwischen 36,6°C und 37,2°C. Rektal gemessene Werte liegen etwa 0,5°C höher als oral gemessene Werte.",
+      "difficulty": 2,
+      "hints": [
+        "Die rektale Messung gilt als genaueste Methode",
+        "Normale Werte liegen zwischen 36-37°C"
+      ],
+      "choices": [
+        { "label": "35,5°C - 36,0°C", "is_correct": false },
+        { "label": "36,6°C - 37,2°C", "is_correct": true },
+        { "label": "37,5°C - 38,0°C", "is_correct": false },
+        { "label": "38,0°C - 38,5°C", "is_correct": false }
+      ],
+      "citations": [
+        {
+          "url": "https://www.rki.de/DE/Content/InfAZ/F/Fieber/Fieber_node.html",
+          "title": "RKI - Fieber Definition und Messung",
+          "published_date": "2024-01-15"
+        }
+      ]
+    },
+    {
+      "type": "tf", 
+      "stem": "Die Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden.",
+      "explanation_md": "Nach WHO-Empfehlungen sollte die Händedesinfektion mindestens 20-30 Sekunden dauern, um eine wirksame Keimreduktion zu erreichen. 30 Sekunden sind optimal für vollständige Desinfektion.",
+      "difficulty": 1,
+      "hints": [
+        "WHO empfiehlt mindestens 20-30 Sekunden",
+        "Längere Einwirkzeit = bessere Desinfektion"
+      ],
+      "tf_correct_answer": true,
+      "citations": [
+        {
+          "url": "https://www.who.int/gpsc/5may/Hand_Hygiene_Why_How_and_When_Brochure.pdf",
+          "title": "WHO Hand Hygiene Guidelines",
+          "published_date": "2024-01-12"
+        }
+      ]
+    },
+    {
+      "type": "mc",
+      "stem": "Welche Körperposition ist für bettlägerige Patienten zur Pneumonieprophylaxe am besten geeignet?",
+      "explanation_md": "Die Oberkörperhochlagerung (30-45°) fördert die Drainage der Atemwege und reduziert das Aspirationsrisiko. Dies ist eine wichtige Maßnahme zur Pneumonieprophylaxe bei bettlägerigen Patienten.",
+      "difficulty": 3,
+      "hints": [
+        "Drainage der Atemwege ist wichtig",
+        "30-45° Winkel ist optimal",
+        "Reduziert Aspirationsrisiko"
+      ],
+      "choices": [
+        { "label": "Flache Rückenlage", "is_correct": false },
+        { "label": "Seitenlage", "is_correct": false },
+        { "label": "Oberkörperhochlagerung 30-45°", "is_correct": true },
+        { "label": "Bauchlage", "is_correct": false }
+      ],
+      "citations": [
+        {
+          "url": "https://www.awmf.org/leitlinien/detail/ll/157-001.html", 
+          "title": "AWMF Leitlinie Pneumonieprophylaxe",
+          "published_date": "2024-01-10"
+        }
+      ]
+    },
+    {
+      "type": "tf",
+      "stem": "Dekubitalgeschwüre entstehen hauptsächlich durch anhaltenden Druck auf die Haut.",
+      "explanation_md": "Dekubitalgeschwüre entstehen durch anhaltenden Druck, der die Durchblutung unterbindet. Weitere Faktoren sind Scherkräfte und Reibung, aber der Hauptfaktor ist der kontinuierliche Druck auf gefährdete Körperstellen.",
+      "difficulty": 2,
+      "hints": [
+        "Druck unterbindet die Durchblutung",
+        "Besonders gefährdet sind Knochenvorsprünge"
+      ],
+      "tf_correct_answer": true,
+      "citations": [
+        {
+          "url": "https://www.rki.de/DE/Content/InfAZ/N/Nosokomiale_Infektionen/nosokomiale-infektionen_node.html",
+          "title": "RKI - Dekubitusprophylaxe",
+          "published_date": "2024-01-15"
+        }
+      ]
+    },
+    {
+      "type": "mc", 
+      "stem": "Wie oft sollten immobile Patienten zur Dekubitusprophylaxe umgelagert werden?",
+      "explanation_md": "Zur Dekubitusprophylaxe sollten immobile Patienten alle 2 Stunden umgelagert werden. Dies verhindert anhaltenden Druck auf dieselben Hautstellen und fördert die Durchblutung.",
+      "difficulty": 2,
+      "hints": [
+        "Regelmäßige Entlastung ist wichtig",
+        "Nicht zu selten, aber auch praktikabel"
+      ],
+      "choices": [
+        { "label": "Alle 30 Minuten", "is_correct": false },
+        { "label": "Alle 2 Stunden", "is_correct": true },
+        { "label": "Alle 4 Stunden", "is_correct": false },
+        { "label": "Einmal pro Schicht", "is_correct": false }
+      ],
+      "citations": [
+        {
+          "url": "https://www.awmf.org/leitlinien/detail/ll/157-001.html",
+          "title": "AWMF Leitlinie Dekubitusprophylaxe", 
+          "published_date": "2024-01-10"
+        }
+      ]
+    }
+  ]
+}

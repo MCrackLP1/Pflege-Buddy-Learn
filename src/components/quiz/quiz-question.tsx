@@ -32,6 +32,18 @@ export function QuizQuestion({
   const [showFeedback, setShowFeedback] = useState(false);
   const t = useTranslations();
 
+  // Calculate if the current answer is correct
+  const isCurrentAnswerCorrect = () => {
+    if (answer === undefined) return false;
+    
+    if (question.type === 'tf') {
+      return answer === question.tfCorrectAnswer;
+    } else {
+      const correctChoice = question.choices.find(c => c.isCorrect);
+      return answer === correctChoice?.id;
+    }
+  };
+
   const handleSubmit = () => {
     setShowFeedback(true);
   };
@@ -164,12 +176,34 @@ export function QuizQuestion({
 
       {/* Feedback Card */}
       {showFeedback && (
-        <Card className="border-green-500/20 bg-green-500/5">
+        <Card className={`${
+          isCurrentAnswerCorrect() 
+            ? 'border-green-500/20 bg-green-500/5' 
+            : 'border-red-500/20 bg-red-500/5'
+        }`}>
           <CardContent className="p-4 space-y-4">
             <div className="text-center">
-              <div className="text-lg font-semibold text-green-500">
-                {t('quiz.correct')} {/* Simplified - will add correct/incorrect logic */}
+              <div className={`text-lg font-semibold ${
+                isCurrentAnswerCorrect() ? 'text-green-500' : 'text-red-500'
+              }`}>
+                {isCurrentAnswerCorrect() ? t('quiz.correct') : t('quiz.incorrect')}
               </div>
+              
+              {/* Show correct answer if user was wrong */}
+              {!isCurrentAnswerCorrect() && (
+                <div className="mt-3 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-sm font-medium text-green-600 mb-1">Richtige Antwort:</p>
+                  {question.type === 'tf' ? (
+                    <p className="text-sm">
+                      {question.tfCorrectAnswer ? t('quiz.true') : t('quiz.false')}
+                    </p>
+                  ) : (
+                    <p className="text-sm">
+                      {question.choices.find(c => c.isCorrect)?.label}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Explanation */}
