@@ -154,8 +154,25 @@ export function QuizPage({ topic }: QuizPageProps) {
     );
   }
 
-  const handleAnswer = (questionId: string, answer: string | boolean) => {
+  const handleAnswer = async (questionId: string, answer: string | boolean) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
+
+    // Calculate if answer is correct and save immediately
+    const question = questions.find(q => q.id === questionId);
+    if (!question) return;
+
+    let isCorrect = false;
+    if (question.type === 'tf') {
+      isCorrect = answer === question.tfCorrectAnswer;
+    } else {
+      const correctChoice = question.choices.find(c => c.isCorrect);
+      isCorrect = answer === correctChoice?.id;
+    }
+
+    // Save attempt immediately when answer is given
+    const timeMs = Date.now() - startTime;
+    const hintsUsed = usedHints[questionId] || 0;
+    await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
   };
 
   const handleNext = () => {
@@ -216,10 +233,8 @@ export function QuizPage({ topic }: QuizPageProps) {
         totalXP += question.difficulty * 10 - (usedHints[question.id] || 0) * 5;
       }
       
-      // Save attempt to database (fire and forget)
-      const timeMs = Date.now() - startTime;
-      const hintsUsed = usedHints[question.id] || 0;
-      saveAttemptToDb(question.id, isCorrect, timeMs, hintsUsed);
+      // Note: Attempts are now saved immediately when answer is given
+      // No need to save again here
     });
     
     return { correct, total: questions.length, xp: totalXP };

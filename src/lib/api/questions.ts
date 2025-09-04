@@ -68,7 +68,7 @@ export async function getQuestionsByTopic(
 
     // Apply pagination to the filtered results
     const paginatedQuestions = unansweredQuestions.slice(offset, offset + limit);
-    
+
     // If no unanswered questions, return a few for review/practice
     const finalQuestions = unansweredQuestions.length > 0
       ? paginatedQuestions
