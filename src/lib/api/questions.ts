@@ -48,13 +48,13 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
       hints: q.hints || [],
       tfCorrectAnswer: q.tf_correct_answer,
       createdAt: new Date(q.created_at),
-      choices: (q.choices || []).map(c => ({
+      choices: (q.choices || []).map((c: any) => ({
         id: c.id,
         questionId: c.question_id,
         label: c.label,
         isCorrect: c.is_correct, // Map snake_case to camelCase
       })),
-      citations: (q.citations || []).map(c => ({
+      citations: (q.citations || []).map((c: any) => ({
         id: c.id,
         questionId: c.question_id,
         url: c.url,
@@ -108,13 +108,13 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
         hints: q.hints || [],
         tfCorrectAnswer: q.tf_correct_answer,
         createdAt: new Date(q.created_at),
-        choices: (q.choices || []).map(c => ({
+        choices: (q.choices || []).map((c: any) => ({
           id: c.id,
           questionId: c.question_id,
           label: c.label,
           isCorrect: c.is_correct, // Map snake_case to camelCase
         })),
-        citations: (q.citations || []).map(c => ({
+        citations: (q.citations || []).map((c: any) => ({
           id: c.id,
           questionId: c.question_id,
           url: c.url,
