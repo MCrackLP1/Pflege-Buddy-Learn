@@ -1,52 +1,56 @@
-import { db } from '@/lib/db';
-import { topics, questions, choices, citations } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { createServerClient } from '@/lib/supabase/server';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 
 /**
- * Fetch questions for a specific topic from database
+ * Fetch questions for a specific topic from database using Supabase client
  */
 export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWithChoices[]> {
   try {
+    const supabase = createServerClient();
+    
     // Get topic by slug
-    const topic = await db
-      .select()
-      .from(topics)
-      .where(eq(topics.slug, topicSlug))
+    const { data: topics, error: topicError } = await supabase
+      .from('topics')
+      .select('*')
+      .eq('slug', topicSlug)
       .limit(1);
     
-    if (topic.length === 0) {
+    if (topicError) throw topicError;
+    if (!topics || topics.length === 0) {
       throw new Error(`Topic '${topicSlug}' not found`);
     }
     
-    // Get questions with choices and citations
-    const questionsData = await db
-      .select()
-      .from(questions)
-      .where(eq(questions.topicId, topic[0].id));
+    const topic = topics[0];
     
-    const questionsWithRelations: QuestionWithChoices[] = [];
+    // Get questions for this topic with all related data
+    const { data: questionsData, error: questionsError } = await supabase
+      .from('questions')
+      .select(`
+        *,
+        choices (*),
+        citations (*)
+      `)
+      .eq('topic_id', topic.id);
     
-    for (const question of questionsData) {
-      // Get choices for this question
-      const questionChoices = await db
-        .select()
-        .from(choices)
-        .where(eq(choices.questionId, question.id));
-      
-      // Get citations for this question  
-      const questionCitations = await db
-        .select()
-        .from(citations)
-        .where(eq(citations.questionId, question.id));
-      
-      questionsWithRelations.push({
-        ...question,
-        choices: questionChoices,
-        citations: questionCitations,
-        tfCorrectAnswer: question.tfCorrectAnswer,
-      });
-    }
+    if (questionsError) throw questionsError;
+    
+    // Transform to QuestionWithChoices format
+    const questionsWithRelations: QuestionWithChoices[] = (questionsData || []).map(q => ({
+      id: q.id,
+      topicId: q.topic_id,
+      type: q.type,
+      stem: q.stem,
+      explanationMd: q.explanation_md,
+      sourceUrl: q.source_url,
+      sourceTitle: q.source_title,
+      sourceDate: q.source_date,
+      difficulty: q.difficulty,
+      hints: q.hints || [],
+      tfCorrectAnswer: q.tf_correct_answer,
+      createdAt: new Date(q.created_at),
+      choices: q.choices || [],
+      citations: q.citations || [],
+    }));
     
     return questionsWithRelations;
     
@@ -61,37 +65,40 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
  */
 export async function getRandomQuestions(count: number = 10): Promise<QuestionWithChoices[]> {
   try {
-    // Get all questions
-    const allQuestions = await db
-      .select()
-      .from(questions)
-      .limit(count * 3); // Get more to randomize
+    const supabase = createServerClient();
     
-    // Shuffle and take requested count
-    const shuffled = allQuestions.sort(() => Math.random() - 0.5).slice(0, count);
+    // Get random questions from all topics with related data
+    const { data: questionsData, error: questionsError } = await supabase
+      .from('questions')
+      .select(`
+        *,
+        choices (*),
+        citations (*)
+      `)
+      .limit(count);
     
-    const questionsWithRelations: QuestionWithChoices[] = [];
+    if (questionsError) throw questionsError;
     
-    for (const question of shuffled) {
-      // Get choices for this question
-      const questionChoices = await db
-        .select()
-        .from(choices)
-        .where(eq(choices.questionId, question.id));
-      
-      // Get citations for this question  
-      const questionCitations = await db
-        .select()
-        .from(citations)
-        .where(eq(citations.questionId, question.id));
-      
-      questionsWithRelations.push({
-        ...question,
-        choices: questionChoices,
-        citations: questionCitations,
-        tfCorrectAnswer: question.tfCorrectAnswer,
-      });
-    }
+    // Transform to QuestionWithChoices format
+    const questionsWithRelations: QuestionWithChoices[] = (questionsData || [])
+      .sort(() => Math.random() - 0.5) // Randomize
+      .slice(0, count) // Take only requested count
+      .map(q => ({
+        id: q.id,
+        topicId: q.topic_id,
+        type: q.type,
+        stem: q.stem,
+        explanationMd: q.explanation_md,
+        sourceUrl: q.source_url,
+        sourceTitle: q.source_title,
+        sourceDate: q.source_date,
+        difficulty: q.difficulty,
+        hints: q.hints || [],
+        tfCorrectAnswer: q.tf_correct_answer,
+        createdAt: new Date(q.created_at),
+        choices: q.choices || [],
+        citations: q.citations || [],
+      }));
     
     return questionsWithRelations;
     
@@ -102,7 +109,7 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
 }
 
 /**
- * Save user attempt to database
+ * Save user attempt to database using Supabase client
  */
 export async function saveAttempt(
   userId: string, 
@@ -112,15 +119,19 @@ export async function saveAttempt(
   usedHints: number
 ) {
   try {
-    const { attempts } = await import('@/lib/db/schema');
+    const supabase = createServerClient();
     
-    await db.insert(attempts).values({
-      userId,
-      questionId,
-      isCorrect,
-      timeMs,
-      usedHints,
-    });
+    const { error } = await supabase
+      .from('attempts')
+      .insert({
+        user_id: userId,
+        question_id: questionId,
+        is_correct: isCorrect,
+        time_ms: timeMs,
+        used_hints: usedHints,
+      });
+    
+    if (error) throw error;
     
     return { success: true };
   } catch (error) {
