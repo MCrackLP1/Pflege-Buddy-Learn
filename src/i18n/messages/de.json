@@ -117,7 +117,7 @@
     "deleteAccountTypeDelete": "LÖSCHEN",
     "deleteAccountPlaceholder": "Geben Sie 'LÖSCHEN' ein, um zu bestätigen",
     "deleteAccountDeleting": "Konto wird gelöscht...",
-    "deleteAccountSuccess": "Ihr Konto wurde erfolgreich gelöscht.",
+    "deleteAccountSuccess": "Ihr Konto wurde erfolgreich gelöscht. Sie werden automatisch abgemeldet.",
     "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
   },
   "store": {

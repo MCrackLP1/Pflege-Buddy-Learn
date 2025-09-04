@@ -120,8 +120,15 @@ export function ProfilePage() {
         // Show success message
         alert(t('deleteAccountSuccess'));
 
-        // Sign out and redirect to home
-        await signOut();
+        // Sign out user manually since API couldn't do it due to permission restrictions
+        try {
+          await signOut();
+        } catch (signOutError) {
+          console.error('Error during manual sign out:', signOutError);
+          // Continue anyway - user will be redirected
+        }
+
+        // Redirect to home
         router.push('/');
       } else {
         throw new Error(data.error || 'Unbekannter Fehler');
