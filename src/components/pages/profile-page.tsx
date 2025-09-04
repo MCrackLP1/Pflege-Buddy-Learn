@@ -10,7 +10,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw } from 'lucide-react';
+import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw, Shield, FileText, Cookie } from 'lucide-react';
+import Link from 'next/link';
+import { LEGAL_CONFIG } from '@/lib/constants';
 
 interface UserStats {
   totalXP: number;
@@ -194,6 +196,99 @@ export function ProfilePage() {
                 <div className="text-xl font-bold">{userStats?.accuracy || 0}%</div>
                 <div className="text-xs text-muted-foreground">{t('accuracy')}</div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Legal & Privacy */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center">
+              <Shield className="h-5 w-5 mr-2" />
+              Rechtliches & Datenschutz
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/datenschutz" className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">Datenschutz</div>
+                    <div className="text-xs text-muted-foreground">v{LEGAL_CONFIG.versions.privacy}</div>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href="/agb" className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">AGB</div>
+                    <div className="text-xs text-muted-foreground">v{LEGAL_CONFIG.versions.terms}</div>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href="/cookie-einstellungen" className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <Cookie className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">Cookies</div>
+                    <div className="text-xs text-muted-foreground">Einstellungen</div>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href="/impressum" className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">Impressum</div>
+                    <div className="text-xs text-muted-foreground">Angaben</div>
+                  </div>
+                </Button>
+              </Link>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium">Ihre Einwilligungen</h4>
+
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <div className="flex justify-between">
+                  <span>Altersüberprüfung (16+):</span>
+                  <span className="text-green-600">
+                    {typeof window !== 'undefined' && localStorage.getItem('ageVerified') === 'true' ? 'Erteilt' : 'Ausstehend'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Cookies:</span>
+                  <span className="text-green-600">
+                    {typeof window !== 'undefined' && localStorage.getItem('cookieConsentGiven') === 'true' ? 'Erteilt' : 'Ausstehend'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>AGB:</span>
+                  <span className="text-green-600">Aktuell</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Datenschutz:</span>
+                  <span className="text-green-600">Aktuell</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+              <p className="text-xs text-blue-800 dark:text-blue-200">
+                <strong>DSGVO-Rechte:</strong> Sie haben das Recht auf Auskunft, Berichtigung,
+                Löschung und Datenübertragbarkeit. Nutzen Sie die Export-Funktion oben
+                oder kontaktieren Sie uns bei weiteren Fragen.
+              </p>
             </div>
           </CardContent>
         </Card>

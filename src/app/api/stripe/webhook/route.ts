@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import { purchases, userWallet } from '@/lib/db/schema';
 import { eq, sql } from 'drizzle-orm';
+import { updatePurchaseWithdrawalWaiver } from '@/lib/actions/legal';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
@@ -29,13 +30,22 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        
+
         if (session.payment_status === 'paid' && session.metadata?.pack_key && session.metadata?.user_id) {
           // Update purchase status
           await db
             .update(purchases)
             .set({ status: 'succeeded' })
             .where(eq(purchases.stripeSessionId, session.id));
+
+          // Handle withdrawal waiver if present in metadata
+          if (session.metadata.withdrawal_waiver_version) {
+            await updatePurchaseWithdrawalWaiver(
+              session.id,
+              session.metadata.withdrawal_waiver_version
+            );
+            console.log(`✅ Recorded withdrawal waiver for session ${session.id}`);
+          }
 
           // Get purchase details
           const purchase = await db
@@ -46,8 +56,8 @@ export async function POST(req: NextRequest) {
 
           if (purchase.length > 0) {
             const { userId, hintsDelta } = purchase[0];
-            
-            // Add hints to user wallet
+
+            // Add hints to user wallet (immediate delivery for digital content)
             await db
               .insert(userWallet)
               .values({
@@ -62,8 +72,8 @@ export async function POST(req: NextRequest) {
                   hintsBalance: sql`${userWallet.hintsBalance} + ${hintsDelta}`
                 }
               });
-            
-            console.log(`✅ Added ${hintsDelta} hints to user ${userId}`);
+
+            console.log(`✅ Added ${hintsDelta} hints to user ${userId} (digital delivery)`);
           }
         }
         break;

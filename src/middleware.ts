@@ -1,6 +1,8 @@
 import createIntlMiddleware from 'next-intl/middleware';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { LEGAL_CONFIG } from '@/lib/constants';
+import crypto from 'crypto';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['de', 'en'],
@@ -9,14 +11,19 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(req: NextRequest) {
+  // Generate CSP nonce for inline scripts/styles
+  const nonce = crypto.randomBytes(16).toString('base64');
+
   // Handle internationalization first
   const intlResponse = intlMiddleware(req);
-  
+
   // Skip Supabase auth if environment variables are not configured
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return intlResponse;
+    const res = intlResponse || NextResponse.next();
+    addSecurityHeaders(res, nonce);
+    return res;
   }
-  
+
   // Create a Supabase client configured to use cookies
   const res = NextResponse.next({
     request: {
@@ -44,21 +51,56 @@ export async function middleware(req: NextRequest) {
 
   // Get user session
   const { data: { session } } = await supabase.auth.getSession();
-  
+
   // Protected routes that require authentication
   const protectedPaths = ['/learn', '/quiz', '/review', '/profile', '/store'];
-  const isProtectedPath = protectedPaths.some(path => 
+  const isProtectedPath = protectedPaths.some(path =>
     req.nextUrl.pathname.startsWith(path)
   );
-  
+
   // Redirect to home if accessing protected route without session
   if (isProtectedPath && !session) {
     const locale = req.nextUrl.pathname.split('/')[1];
     const homeUrl = new URL(`/${locale}`, req.url);
-    return NextResponse.redirect(homeUrl);
+    const redirectRes = NextResponse.redirect(homeUrl);
+    addSecurityHeaders(redirectRes, nonce);
+    return redirectRes;
   }
 
-  return intlResponse || res;
+  // Add security headers to all responses
+  const finalResponse = intlResponse || res;
+  addSecurityHeaders(finalResponse, nonce);
+
+  return finalResponse;
+}
+
+// Add comprehensive security headers for GDPR/DSGVO compliance
+function addSecurityHeaders(response: NextResponse, nonce: string) {
+  // Content Security Policy with nonce for inline scripts
+  const csp = LEGAL_CONFIG.securityHeaders.csp.replace(
+    "'self'",
+    `'self' 'nonce-${nonce}'`
+  );
+
+  response.headers.set('Content-Security-Policy', csp);
+  response.headers.set('X-Content-Type-Options', LEGAL_CONFIG.securityHeaders.xContentTypeOptions);
+  response.headers.set('X-Frame-Options', LEGAL_CONFIG.securityHeaders.xFrameOptions);
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', LEGAL_CONFIG.securityHeaders.referrerPolicy);
+  response.headers.set('Permissions-Policy', LEGAL_CONFIG.securityHeaders.permissionsPolicy);
+
+  // HSTS (HTTP Strict Transport Security) - only in production
+  if (process.env.NODE_ENV === 'production') {
+    response.headers.set('Strict-Transport-Security', LEGAL_CONFIG.securityHeaders.hsts);
+  }
+
+  // Add nonce to response for use in components
+  response.headers.set('X-Nonce', nonce);
+
+  // Security headers for GDPR compliance
+  response.headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+  response.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
 }
 
 export const config = {

@@ -5,6 +5,7 @@ import { relations } from 'drizzle-orm';
 export const questionTypeEnum = pgEnum('question_type', ['mc', 'tf']);
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
 export const purchaseStatusEnum = pgEnum('purchase_status', ['pending', 'succeeded', 'failed']);
+export const consentTypeEnum = pgEnum('consent_type', ['terms', 'privacy', 'cookie', 'withdrawal']);
 
 // Topics table
 export const topics = pgTable('topics', {
@@ -110,6 +111,9 @@ export const purchases = pgTable('purchases', {
   hintsDelta: integer('hints_delta').notNull(),
   status: purchaseStatusEnum('status').notNull().default('pending'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  // Legal compliance fields for withdrawal waiver (DSGVO/BGB §356(5))
+  withdrawalWaiverVersion: text('withdrawal_waiver_version'),
+  withdrawalWaiverAt: timestamp('withdrawal_waiver_at'),
 });
 
 // Citations table for question sources
@@ -120,6 +124,19 @@ export const citations = pgTable('citations', {
   title: text('title').notNull(),
   publishedDate: date('published_date'),
   accessedAt: timestamp('accessed_at').defaultNow().notNull(),
+});
+
+// Legal consent events table for GDPR compliance
+export const legalConsentEvents = pgTable('legal_consent_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull(),
+  type: consentTypeEnum('type').notNull(), // terms, privacy, cookie, withdrawal
+  version: text('version').notNull(), // version of the legal document
+  locale: text('locale').notNull(), // user's locale at time of consent
+  categories: jsonb('categories'), // for cookie consent: which categories were accepted
+  ipHash: text('ip_hash'), // hashed IP for audit trail (GDPR compliance)
+  userAgent: text('user_agent'), // for audit trail
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Relations
@@ -166,6 +183,7 @@ export type Purchase = typeof purchases.$inferSelect;
 export type Citation = typeof citations.$inferSelect;
 export type StreakMilestone = typeof streakMilestones.$inferSelect;
 export type UserMilestoneAchievement = typeof userMilestoneAchievements.$inferSelect;
+export type LegalConsentEvent = typeof legalConsentEvents.$inferSelect;
 
 export type QuestionWithChoices = Question & {
   choices: Choice[];

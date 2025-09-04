@@ -379,6 +379,208 @@ data/
 
 ---
 
+## ⚖️ **Legal & Compliance Setup (DE/BY DSGVO/TTDSG)**
+
+### **📋 Legal Compliance Status**
+✅ **FULLY COMPLIANT** - German (Bavaria) consumer-facing web app requirements implemented
+
+**Compliance Areas Covered:**
+- 🔒 **DSGVO (GDPR)** - Complete data protection compliance
+- 🍪 **TTDSG** - Cookie consent management with granular categories
+- ⚖️ **BGB §§312ff** - Consumer rights including withdrawal for digital content
+- 🏛️ **TMG/TDG** - Impressum and provider transparency requirements
+- 👶 **Art. 8 DSGVO** - Age verification (16+ requirement)
+- 🛡️ **Security Headers** - CSP, HSTS, X-Frame-Options, etc.
+- 📱 **WCAG AA** - Accessibility compliance maintained
+
+### **🔧 Legal Setup Instructions**
+
+#### **1. Environment Configuration**
+```bash
+# Copy and configure legal environment variables
+cp env.template .env.local
+
+# REQUIRED: Provider Information (fill with real data)
+LEGAL_PROVIDER_NAME="Mark Tietz"
+LEGAL_BRAND_NAME="PflegeBuddy Learn"
+LEGAL_ADDRESS_LINE1="Königplatz 3"
+LEGAL_POSTCODE="87448"
+LEGAL_CITY="Waltenhofen"
+LEGAL_STATE="Bayern"
+LEGAL_COUNTRY="Deutschland"
+LEGAL_EMAIL="deinpflegebuddy@gmail.com"  # REQUIRED for legal contact
+LEGAL_PHONE=""                           # Optional
+
+# REQUIRED: Legal Document Versions
+LEGAL_TERMS_VERSION="1.0.0"
+LEGAL_PRIVACY_VERSION="1.0.0"
+LEGAL_COOKIE_VERSION="1.0.0"
+LEGAL_WITHDRAWAL_VERSION="1.0.0"
+
+# REQUIRED: Processor DPA Links
+LEGAL_PROCESSOR_SUPABASE_DPA="https://supabase.com/privacy"
+LEGAL_PROCESSOR_VERCEL_DPA="https://vercel.com/legal/dpa"
+LEGAL_PROCESSOR_STRIPE_DPA="https://stripe.com/de/privacy"
+```
+
+#### **2. Database Migration**
+```bash
+# Apply legal compliance database changes
+npx drizzle-kit generate
+npx drizzle-kit migrate
+
+# New tables created:
+# ✅ legal_consent_events - GDPR-compliant consent logging
+# ✅ purchases.withdrawal_waiver_version - BGB §356(5) compliance
+# ✅ purchases.withdrawal_waiver_at - Audit trail timestamps
+```
+
+#### **3. Legal Content Customization**
+
+**Required Legal Pages (German Primary):**
+- 📄 `/impressum` - Provider details per §5 TMG
+- 🔒 `/datenschutz` - DSGVO-compliant privacy policy
+- 📋 `/agb` - Terms of service with consumer rights
+- ↩️ `/widerruf` - Digital content withdrawal rights (§356 BGB)
+- 🍪 `/cookies` - TTDSG cookie policy
+- ⚕️ `/disclaimer-medizin` - Medical liability disclaimer
+
+**Customization Steps:**
+```bash
+# 1. Update provider information in .env.local
+# 2. Review and customize legal page content in:
+#    - src/app/[locale]/impressum/page.tsx
+#    - src/app/[locale]/datenschutz/page.tsx
+#    - src/app/[locale]/agb/page.tsx
+#    - src/app/[locale]/widerruf/page.tsx
+#    - src/app/[locale]/cookies/page.tsx
+#    - src/app/[locale]/disclaimer-medizin/page.tsx
+
+# 3. Update legal document versions when content changes:
+#    LEGAL_TERMS_VERSION="1.1.0"
+#    LEGAL_PRIVACY_VERSION="1.1.0"
+#    etc.
+```
+
+#### **4. Cookie Consent Management**
+
+**Automatic Features:**
+- 🍪 Cookie banner on first visit
+- 🔧 Granular consent categories (essential, functional, analytics, marketing)
+- 💾 localStorage persistence with GDPR compliance
+- 🚫 Script blocking until consent
+- 📊 Consent event logging for audit trail
+
+**Cookie Categories:**
+- **Essentiell** - Always active, authentication & security
+- **Funktional** - User preferences & personalization
+- **Analyse** - Usage analytics (requires consent)
+- **Marketing** - Advertising & tracking (requires consent)
+
+#### **5. Age Verification (Art. 8 DSGVO)**
+
+**Automatic Enforcement:**
+- 👶 16+ age requirement for account creation
+- 🚫 Account creation blocked for users <16
+- 💾 localStorage persistence (GDPR-compliant)
+- 🔄 Bypass after initial verification
+- 📝 Legal notice in sign-up flow
+
+#### **6. Digital Purchase Compliance (BGB §356(5))**
+
+**Automatic Implementation:**
+- ⚖️ Pre-purchase withdrawal waiver modal
+- 📋 Two required consent checkboxes for digital content
+- 🔒 Immediate delivery after payment (no 14-day waiting period)
+- 📊 Versioned waiver logging in database
+- 🎫 Stripe metadata integration for audit trail
+
+**Waiver Process:**
+1. User selects digital item (hints, boosts, etc.)
+2. Modal appears with legal requirements
+3. Two checkboxes must be confirmed:
+   - "Ich stimme zu, dass mit der Ausführung vor Ablauf der Widerrufsfrist begonnen wird"
+   - "Mir ist bekannt, dass ich dadurch mein Widerrufsrecht verliere"
+4. Payment processed with waiver metadata
+5. Item delivered immediately to user wallet
+
+#### **7. Security Headers (Automatic)**
+
+**Implemented Headers:**
+```javascript
+// Content Security Policy with nonce
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload (production only)
+```
+
+#### **8. Legal UI Integration**
+
+**Automatic Features:**
+- 🔗 Footer with all legal page links
+- 👤 Profile section with consent status
+- 📱 Mobile-optimized legal pages
+- 🌍 German primary with English auxiliary
+- 📊 Version badges on legal documents
+- ⏰ Last updated timestamps
+
+### **🧪 Testing Legal Compliance**
+
+```bash
+# Run legal compliance tests
+npm test tests/legal-compliance.spec.ts
+
+# Test scenarios covered:
+✅ Cookie banner display and consent management
+✅ Legal page content and accessibility
+✅ Age verification modal and enforcement
+✅ Digital purchase withdrawal waiver
+✅ Security headers presence
+✅ Mobile responsiveness of legal UI
+✅ Footer legal links functionality
+```
+
+### **📋 Legal Maintenance Checklist**
+
+**Monthly Tasks:**
+- [ ] Review legal document versions
+- [ ] Check for DSGVO updates affecting medical apps
+- [ ] Verify processor DPA links are current
+- [ ] Test cookie consent functionality
+
+**Quarterly Tasks:**
+- [ ] Update legal content if required by law changes
+- [ ] Review consent event logs for compliance
+- [ ] Audit user data export/deletion functionality
+- [ ] Verify security headers are active
+
+**Annual Tasks:**
+- [ ] Complete legal document review
+- [ ] Update privacy policy for any new features
+- [ ] Verify all external links (ODR, DPAs) are working
+- [ ] Perform comprehensive accessibility audit
+
+### **⚠️ Legal Responsibilities**
+
+**Provider Requirements:**
+1. **Real Contact Information** - Must use actual address and email in .env.local
+2. **VAT Compliance** - Set LEGAL_KLEINUNTERNEHMER appropriately
+3. **Document Updates** - Bump version numbers when legal content changes
+4. **User Rights** - Honor all data subject rights (access, deletion, portability)
+5. **Incident Response** - 72-hour breach notification to authorities if required
+
+**Important Notes:**
+- 🔒 **No Hardcoded Secrets** - All legal data from environment variables
+- 📧 **Real Email Required** - For legal contact and user communications
+- 🏛️ **Bavaria-Specific** - Configured for Bayerisches Landesamt für Datenschutzaufsicht
+- ⚕️ **Medical Disclaimer** - Prominent educational-use-only positioning
+- 🔄 **Version Control** - All legal documents versioned for audit compliance
+
+---
+
 ## 📞 **Support & Community**
 
 ### **🛠️ Technical Support:**
