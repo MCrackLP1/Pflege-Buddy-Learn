@@ -78,7 +78,8 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [questions, setQuestions] = useState<QuestionWithChoices[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [questionsLoaded, setQuestionsLoaded] = useState(false);
+
   // Quiz State
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
@@ -86,16 +87,26 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [startTime] = useState(Date.now());
   
-  // Fetch questions from API
+  // Fetch questions from API - only once per topic
   useEffect(() => {
+    // Only load questions if not already loaded
+    if (questionsLoaded) {
+      console.log('Questions already loaded for topic:', topic, '- skipping API call');
+      return;
+    }
+
     async function loadQuestions() {
+      console.log('Loading questions for topic:', topic);
+
       try {
         setLoading(true);
         const response = await fetch(`/api/questions/${topic}`);
         const data = await response.json();
-        
+
         if (data.success) {
+          console.log(`Loaded ${data.questions?.length || 0} questions for topic: ${topic}`);
           setQuestions(data.questions);
+          setQuestionsLoaded(true);
         } else {
           throw new Error(data.error || 'Failed to load questions');
         }
@@ -104,13 +115,14 @@ export function QuizPage({ topic }: QuizPageProps) {
         setError(err instanceof Error ? err.message : 'Failed to load questions');
         // Fallback to mock data for development
         setQuestions(mockQuestionsFallback);
+        setQuestionsLoaded(true);
       } finally {
         setLoading(false);
       }
     }
-    
+
     loadQuestions();
-  }, [topic]);
+  }, [topic, questionsLoaded]); // Only run when topic changes or questions not loaded
   
   // Removed unused useTranslations import
   const locale = useLocale();
@@ -155,34 +167,29 @@ export function QuizPage({ topic }: QuizPageProps) {
   }
 
   const handleAnswer = async (questionId: string, answer: string | boolean) => {
-    console.log('DEBUG handleAnswer called:', { questionId, answer });
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
 
     // Calculate if answer is correct and save immediately
     const question = questions.find(q => q.id === questionId);
-    console.log('DEBUG found question:', question ? 'YES' : 'NO', question?.id);
     if (!question) return;
 
     let isCorrect = false;
     if (question.type === 'tf') {
       isCorrect = answer === question.tfCorrectAnswer;
-      console.log('DEBUG TF check:', { answer, correctAnswer: question.tfCorrectAnswer, isCorrect });
     } else {
       const correctChoice = question.choices.find(c => c.isCorrect);
       isCorrect = answer === correctChoice?.id;
-      console.log('DEBUG MC check:', { answer, correctChoiceId: correctChoice?.id, isCorrect });
     }
 
     // Save attempt immediately when answer is given
     const timeMs = Date.now() - startTime;
     const hintsUsed = usedHints[questionId] || 0;
-    console.log('DEBUG saving attempt:', { questionId, isCorrect, timeMs, hintsUsed });
 
     try {
       await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
-      console.log('DEBUG attempt saved successfully');
     } catch (error) {
-      console.error('DEBUG attempt save failed:', error);
+      console.error('Failed to save attempt:', error);
+      // Don't break the quiz flow if saving fails
     }
   };
 

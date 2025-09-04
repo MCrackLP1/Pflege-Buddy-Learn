@@ -7,13 +7,9 @@ import type { ApiResponse } from '@/types/api.types';
 
 export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
-    console.log('DEBUG /api/attempts called');
-
     // Get user from auth
     const supabase = createServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    console.log('DEBUG auth result:', { hasUser: !!user, hasError: !!authError, userId: user?.id });
 
     if (authError || !user) {
       return NextResponse.json({
@@ -46,9 +42,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
 
     // Parse and validate request body
     const body = await req.json();
-    console.log('DEBUG request body:', body);
     const validatedData = AttemptRequestSchema.parse(body);
-    console.log('DEBUG validated data:', validatedData);
     
     // Verify question exists and user has access
     const { data: question, error: questionError } = await supabase
@@ -65,15 +59,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
     }
 
     // Save attempt to database
-    console.log('DEBUG inserting attempt:', {
-      user_id: user.id,
-      question_id: validatedData.questionId,
-      is_correct: validatedData.isCorrect,
-      time_ms: validatedData.timeMs,
-      used_hints: validatedData.usedHints,
-    });
-
-    const { error: saveError, data: saveData } = await supabase
+    const { error: saveError } = await supabase
       .from('attempts')
       .insert({
         user_id: user.id,
@@ -81,10 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         is_correct: validatedData.isCorrect,
         time_ms: validatedData.timeMs,
         used_hints: validatedData.usedHints,
-      })
-      .select();
-
-    console.log('DEBUG save result:', { saveData, saveError });
+      });
 
     if (saveError) {
       console.error('Failed to save attempt:', saveError);
