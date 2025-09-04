@@ -253,45 +253,6 @@ export function ProfilePage() {
               </Link>
             </div>
 
-            <Separator />
-
-            <div className="space-y-3">
-              <h4 className="text-sm font-medium">Ihre Einwilligungen</h4>
-
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Altersüberprüfung (16+):</span>
-                  <span className="text-green-600">
-                    {typeof window !== 'undefined' && localStorage.getItem('ageVerified') === 'true' ? 'Erteilt' : 'Ausstehend'}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Cookies:</span>
-                  <span className="text-green-600">
-                    {typeof window !== 'undefined' && localStorage.getItem('cookieConsentGiven') === 'true' ? 'Erteilt' : 'Ausstehend'}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>AGB:</span>
-                  <span className="text-green-600">Aktuell</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Datenschutz:</span>
-                  <span className="text-green-600">Aktuell</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
-              <p className="text-xs text-blue-800 dark:text-blue-200">
-                <strong>DSGVO-Rechte:</strong> Sie haben das Recht auf Auskunft, Berichtigung,
-                Löschung und Datenübertragbarkeit. Nutzen Sie die Export-Funktion oben
-                oder kontaktieren Sie uns bei weiteren Fragen.
-              </p>
-            </div>
           </CardContent>
         </Card>
 
