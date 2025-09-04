@@ -399,32 +399,32 @@ export function ProfilePage() {
       {/* Delete Account Confirmation Dialog */}
       {showDeleteDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center mb-4">
               <AlertTriangle className="h-6 w-6 text-red-500 mr-2 flex-shrink-0" />
-              <h3 className="text-lg font-semibold text-red-600">{t('deleteAccountConfirmTitle')}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('deleteAccountConfirmTitle')}</h3>
             </div>
 
             <div className="space-y-4">
-              <p className="text-muted-foreground">
+              <p className="text-gray-700 dark:text-gray-300">
                 {t('deleteAccountConfirmMessage')}
               </p>
 
-              <div className="bg-red-50 border border-red-200 rounded-md p-4">
-                <pre className="text-sm text-red-800 whitespace-pre-line">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+                <pre className="text-sm text-red-800 dark:text-red-200 whitespace-pre-line">
                   {t('deleteAccountDataList')}
                 </pre>
               </div>
 
-              <Alert className="border-blue-200 bg-blue-50">
-                <AlertTriangle className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
+              <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+                <AlertTriangle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <AlertDescription className="text-blue-800 dark:text-blue-200">
                   {t('deleteAccountStripeNote')}
                 </AlertDescription>
               </Alert>
 
               <div className="space-y-2">
-                <Label htmlFor="deleteConfirmation" className="text-sm font-medium">
+                <Label htmlFor="deleteConfirmation" className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {t('deleteAccountPlaceholder')}
                 </Label>
                 <Input
@@ -432,14 +432,14 @@ export function ProfilePage() {
                   value={deleteConfirmation}
                   onChange={(e) => setDeleteConfirmation(e.target.value)}
                   placeholder={t('deleteAccountTypeDelete')}
-                  className="font-mono"
+                  className="font-mono text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
                 />
               </div>
 
               {deleteError && (
-                <Alert className="border-red-200 bg-red-50">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-800">
+                <Alert className="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20">
+                  <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <AlertDescription className="text-red-800 dark:text-red-200">
                     {deleteError}
                   </AlertDescription>
                 </Alert>
