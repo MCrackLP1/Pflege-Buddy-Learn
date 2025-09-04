@@ -48,8 +48,20 @@ export async function getQuestionsByTopic(topicSlug: string): Promise<QuestionWi
       hints: q.hints || [],
       tfCorrectAnswer: q.tf_correct_answer,
       createdAt: new Date(q.created_at),
-      choices: q.choices || [],
-      citations: q.citations || [],
+      choices: (q.choices || []).map(c => ({
+        id: c.id,
+        questionId: c.question_id,
+        label: c.label,
+        isCorrect: c.is_correct, // Map snake_case to camelCase
+      })),
+      citations: (q.citations || []).map(c => ({
+        id: c.id,
+        questionId: c.question_id,
+        url: c.url,
+        title: c.title,
+        publishedDate: c.published_date,
+        accessedAt: new Date(), // Default to now since this isn't stored
+      })),
     }));
     
     return questionsWithRelations;
@@ -96,8 +108,20 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
         hints: q.hints || [],
         tfCorrectAnswer: q.tf_correct_answer,
         createdAt: new Date(q.created_at),
-        choices: q.choices || [],
-        citations: q.citations || [],
+        choices: (q.choices || []).map(c => ({
+          id: c.id,
+          questionId: c.question_id,
+          label: c.label,
+          isCorrect: c.is_correct, // Map snake_case to camelCase
+        })),
+        citations: (q.citations || []).map(c => ({
+          id: c.id,
+          questionId: c.question_id,
+          url: c.url,
+          title: c.title,
+          publishedDate: c.published_date,
+          accessedAt: new Date(), // Default to now since this isn't stored
+        })),
       }));
     
     return questionsWithRelations;
