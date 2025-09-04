@@ -23,6 +23,10 @@ interface RecentAnswer {
   isCorrect: boolean;
   topic: string;
   createdAt: string;
+  question: string;
+  userAnswer: string;
+  correctAnswer: string;
+  explanation: string;
 }
 
 export function DashboardCard() {
@@ -84,6 +88,57 @@ export function DashboardCard() {
 
     loadRecentAnswers();
   }, []);
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    if (recentAnswers.length <= 1) return;
+
+    const scrollContainer = document.getElementById('recent-answers-carousel');
+    if (!scrollContainer) return;
+
+    const scrollSpeed = 1; // pixels per frame
+    let animationId: number;
+
+    const autoScroll = () => {
+      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+        // Reset to beginning when reaching the end
+        scrollContainer.scrollLeft = 0;
+      } else {
+        scrollContainer.scrollLeft += scrollSpeed;
+      }
+      animationId = requestAnimationFrame(autoScroll);
+    };
+
+    // Pause on hover
+    const pauseScroll = () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+
+    const resumeScroll = () => {
+      if (!animationId) {
+        autoScroll();
+      }
+    };
+
+    scrollContainer.addEventListener('mouseenter', pauseScroll);
+    scrollContainer.addEventListener('mouseleave', resumeScroll);
+
+    // Start scrolling after a delay
+    const startDelay = setTimeout(() => {
+      autoScroll();
+    }, 2000);
+
+    return () => {
+      clearTimeout(startDelay);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      scrollContainer.removeEventListener('mouseenter', pauseScroll);
+      scrollContainer.removeEventListener('mouseleave', resumeScroll);
+    };
+  }, [recentAnswers]);
 
   // Calculate today's progress (simple goal: 5 questions per day)
   const todayProgress = Math.min(((userProgress?.today_attempts || 0) / 5) * 100, 100);
@@ -169,32 +224,101 @@ export function DashboardCard() {
               <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
+              <div
+                id="recent-answers-carousel"
+                className="flex overflow-x-auto gap-4 pb-2 scrollbar-hide scroll-smooth"
+                style={{
+                  scrollbarWidth: 'none', // Firefox
+                  msOverflowStyle: 'none', // IE/Edge
+                }}
+              >
                 {recentAnswers.map((answer, index) => (
                   <div
                     key={answer.id}
-                    className="flex-shrink-0 w-32 bg-card border border-border rounded-lg p-3 text-center hover:bg-accent/50 transition-colors cursor-pointer"
+                    className="flex-shrink-0 w-80 bg-card border border-border rounded-lg p-4 hover:bg-accent/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
                     onClick={() => router.push(createLocalizedPath(locale, '/review'))}
                   >
-                    <div className={`text-lg mb-2 ${
-                      answer.isCorrect ? 'text-green-500' : 'text-red-500'
-                    }`}>
-                      {answer.isCorrect ? <CheckCircle className="h-6 w-6 mx-auto" /> : <XCircle className="h-6 w-6 mx-auto" />}
+                    {/* Status & Topic Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`flex items-center gap-2 ${
+                        answer.isCorrect ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {answer.isCorrect ? (
+                          <CheckCircle className="h-5 w-5" />
+                        ) : (
+                          <XCircle className="h-5 w-5" />
+                        )}
+                        <span className="text-sm font-medium">
+                          {answer.isCorrect ? 'Richtig' : 'Falsch'}
+                        </span>
+                      </div>
+                      <div className="text-xs bg-secondary px-2 py-1 rounded-full">
+                        {answer.topic}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground mb-1">
-                      {answer.topic}
+
+                    {/* Question */}
+                    <div className="mb-3">
+                      <p className="text-sm font-medium leading-relaxed overflow-hidden"
+                         style={{
+                           display: '-webkit-box',
+                           WebkitLineClamp: 2,
+                           WebkitBoxOrient: 'vertical'
+                         }}>
+                        {answer.question}
+                      </p>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+
+                    {/* Answers */}
+                    <div className="space-y-2 mb-3">
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs font-medium text-muted-foreground mt-0.5">Deine:</span>
+                        <span className="text-sm flex-1">{answer.userAnswer}</span>
+                      </div>
+                      {!answer.isCorrect && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-xs font-medium text-green-600 mt-0.5">Richtig:</span>
+                          <span className="text-sm flex-1 text-green-700">{answer.correctAnswer}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Explanation (truncated) */}
+                    <div className="border-t pt-2">
+                      <p className="text-xs text-muted-foreground overflow-hidden"
+                         style={{
+                           display: '-webkit-box',
+                           WebkitLineClamp: 2,
+                           WebkitBoxOrient: 'vertical'
+                         }}>
+                        {answer.explanation}
+                      </p>
+                    </div>
+
+                    {/* Timestamp */}
+                    <div className="mt-3 pt-2 border-t text-xs text-muted-foreground">
                       {new Date(answer.createdAt).toLocaleDateString('de-DE', {
                         day: '2-digit',
-                        month: '2-digit'
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-muted-foreground mt-3 text-center">
-                {t('home.tapForDetails') || 'Tippe auf eine Antwort für Details'}
+
+              {/* Custom CSS for hiding scrollbar completely */}
+              <style dangerouslySetInnerHTML={{
+                __html: `
+                  #recent-answers-carousel::-webkit-scrollbar {
+                    display: none;
+                  }
+                `
+              }} />
+
+              <p className="text-xs text-muted-foreground mt-4 text-center">
+                🎯 Hover für Pause • Klick für Details
               </p>
             </CardContent>
           </Card>
