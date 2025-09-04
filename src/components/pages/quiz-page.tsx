@@ -155,24 +155,35 @@ export function QuizPage({ topic }: QuizPageProps) {
   }
 
   const handleAnswer = async (questionId: string, answer: string | boolean) => {
+    console.log('DEBUG handleAnswer called:', { questionId, answer });
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
 
     // Calculate if answer is correct and save immediately
     const question = questions.find(q => q.id === questionId);
+    console.log('DEBUG found question:', question ? 'YES' : 'NO', question?.id);
     if (!question) return;
 
     let isCorrect = false;
     if (question.type === 'tf') {
       isCorrect = answer === question.tfCorrectAnswer;
+      console.log('DEBUG TF check:', { answer, correctAnswer: question.tfCorrectAnswer, isCorrect });
     } else {
       const correctChoice = question.choices.find(c => c.isCorrect);
       isCorrect = answer === correctChoice?.id;
+      console.log('DEBUG MC check:', { answer, correctChoiceId: correctChoice?.id, isCorrect });
     }
 
     // Save attempt immediately when answer is given
     const timeMs = Date.now() - startTime;
     const hintsUsed = usedHints[questionId] || 0;
-    await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
+    console.log('DEBUG saving attempt:', { questionId, isCorrect, timeMs, hintsUsed });
+
+    try {
+      await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
+      console.log('DEBUG attempt saved successfully');
+    } catch (error) {
+      console.error('DEBUG attempt save failed:', error);
+    }
   };
 
   const handleNext = () => {

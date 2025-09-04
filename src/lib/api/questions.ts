@@ -34,7 +34,7 @@ export async function getQuestionsByTopic(
     }
     
     const topic = topics[0];
-    
+
     // Get questions that user has already answered correctly
     const { data: correctAttempts, error: attemptsError } = await supabase
       .from('attempts')
@@ -44,9 +44,13 @@ export async function getQuestionsByTopic(
 
     if (attemptsError) throw attemptsError;
 
+    console.log('DEBUG getQuestionsByTopic - correctAttempts from DB:', correctAttempts);
+
     const answeredQuestionIds = new Set(
       (correctAttempts || []).map(a => a.question_id)
     );
+
+    console.log('DEBUG getQuestionsByTopic - answeredQuestionIds set:', Array.from(answeredQuestionIds));
 
     // First get ALL questions for this topic to properly filter
     const { data: allQuestionsData, error: allQuestionsError } = await supabase
@@ -66,8 +70,15 @@ export async function getQuestionsByTopic(
       !answeredQuestionIds.has(q.id)
     );
 
+    console.log('DEBUG getQuestionsByTopic - all questions:', allQuestionsData?.length);
+    console.log('DEBUG getQuestionsByTopic - unanswered questions:', unansweredQuestions.length);
+    console.log('DEBUG getQuestionsByTopic - filtered out:', (allQuestionsData?.length || 0) - unansweredQuestions.length);
+
     // Apply pagination to the filtered results
     const paginatedQuestions = unansweredQuestions.slice(offset, offset + limit);
+
+    console.log('DEBUG getQuestionsByTopic - paginated questions:', paginatedQuestions.length);
+    console.log('DEBUG getQuestionsByTopic - requested offset:', offset, 'limit:', limit);
 
     // If no unanswered questions, return a few for review/practice
     const finalQuestions = unansweredQuestions.length > 0
@@ -136,9 +147,13 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
 
     if (attemptsError) throw attemptsError;
 
+    console.log('DEBUG getRandomQuestions - correctAttempts from DB:', correctAttempts);
+
     const answeredQuestionIds = new Set(
       (correctAttempts || []).map(a => a.question_id)
     );
+
+    console.log('DEBUG getRandomQuestions - answeredQuestionIds set:', Array.from(answeredQuestionIds));
 
     // Get ALL questions from all topics
     const { data: allQuestionsData, error: allQuestionsError } = await supabase
@@ -151,10 +166,15 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
 
     if (allQuestionsError) throw allQuestionsError;
 
+    console.log('DEBUG getRandomQuestions - all questions:', allQuestionsData?.length);
+
     // Filter out questions user has already answered correctly
     const unansweredQuestions = (allQuestionsData || []).filter(q =>
       !answeredQuestionIds.has(q.id)
     );
+
+    console.log('DEBUG getRandomQuestions - unanswered questions:', unansweredQuestions.length);
+    console.log('DEBUG getRandomQuestions - filtered out:', (allQuestionsData?.length || 0) - unansweredQuestions.length);
 
     // If no unanswered questions, use all questions for review
     const availableQuestions = unansweredQuestions.length > 0
@@ -165,6 +185,8 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
     const randomQuestions = availableQuestions
       .sort(() => Math.random() - 0.5) // Randomize
       .slice(0, count); // Take only requested count
+
+    console.log('DEBUG getRandomQuestions - random questions selected:', randomQuestions.length);
     
     // Transform to QuestionWithChoices format
     const questionsWithRelations: QuestionWithChoices[] = randomQuestions
