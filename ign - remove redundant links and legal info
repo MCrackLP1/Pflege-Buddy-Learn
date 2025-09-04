@@ -1,0 +1,3 @@
+[33me60c230[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix build errors and add missing UI components
+[33m15ead96[m feat: Complete German legal compliance hardening (DSGVO/TTDSG/BGB)
+[33m7525c22[m fix: Resolve TypeScript compilation errors for Vercel deployment

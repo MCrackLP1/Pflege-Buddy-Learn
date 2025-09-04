@@ -16,131 +16,63 @@ export function Footer({ showFullFooter = true }: FooterProps) {
 
   return (
     <footer className="bg-muted/50 border-t border-border mt-auto">
-      <div className="max-w-md mx-auto px-4 py-6">
+      <div className="max-w-md mx-auto px-4 py-4">
         {showFullFooter && (
           <>
-            {/* Legal Links */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <Link
-                href="/impressum"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Impressum
-              </Link>
-              <Link
-                href="/datenschutz"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Datenschutz
-              </Link>
-              <Link
-                href="/agb"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                AGB
-              </Link>
+            {/* Essential Legal Links - only show what's not in profile */}
+            <div className="flex justify-center space-x-4 mb-4">
               <Link
                 href="/widerruf"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 Widerruf
               </Link>
               <Link
-                href="/cookies"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Cookies
-              </Link>
-              <Link
-                href="/cookie-einstellungen"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Cookie-Einstellungen
-              </Link>
-              <Link
                 href="/disclaimer-medizin"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
                 Medizin-Disclaimer
               </Link>
             </div>
 
-            <Separator className="mb-6" />
+            <Separator className="mb-4" />
 
-            {/* Provider Info */}
-            <div className="text-center mb-6">
-              <div className="text-sm text-muted-foreground">
-                <p className="font-medium">{LEGAL_CONFIG.provider.name}</p>
-                <p>{LEGAL_CONFIG.provider.brand}</p>
-                <p className="text-xs mt-1">
-                  {LEGAL_CONFIG.provider.address.line1}, {LEGAL_CONFIG.provider.address.postcode} {LEGAL_CONFIG.provider.address.city}
-                </p>
-                <p className="text-xs">
-                  E-Mail: {LEGAL_CONFIG.provider.email}
-                </p>
-                {LEGAL_CONFIG.provider.phone && (
-                  <p className="text-xs">
-                    Tel: {LEGAL_CONFIG.provider.phone}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <Separator className="mb-6" />
-
-            {/* Legal Notices */}
-            <div className="space-y-3 mb-6">
+            {/* Essential Legal Notices */}
+            <div className="space-y-2 mb-4">
               <div className="text-xs text-muted-foreground text-center">
                 <p>
-                  <strong>Medizinischer Haftungsausschluss:</strong> Diese App ist kein Ersatz für
-                  professionelle medizinische Beratung. Bei gesundheitlichen Problemen wenden Sie
-                  sich an qualifizierte Fachkräfte oder rufen Sie den Notruf 112.
+                  <strong>Haftungsausschluss:</strong> Kein Ersatz für professionelle medizinische Beratung.
+                  Bei gesundheitlichen Problemen qualifizierte Fachkräfte konsultieren oder Notruf 112.
                 </p>
               </div>
 
               <div className="text-xs text-muted-foreground text-center">
                 <p>
-                  <strong>EU-Streitbeilegung:</strong> Die Europäische Kommission stellt eine
-                  Plattform zur Online-Streitbeilegung bereit:{' '}
+                  EU-Streitbeilegung:{' '}
                   <a
-                    href="https://ec.europa.eu/consumers/odr/"
+                    href="https://consumer-redress.ec.europa.eu/index_de"
                     className="underline hover:no-underline"
                     target="_blank"
                     rel="noopener"
                   >
-                    ec.europa.eu/consumers/odr/
+                    consumer-redress.ec.europa.eu
                   </a>
-                </p>
-              </div>
-
-              <div className="text-xs text-muted-foreground text-center">
-                <p>
-                  Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-                  Verbraucherschlichtungsstelle teilzunehmen (§ 36 VSBG).
                 </p>
               </div>
             </div>
 
-            <Separator className="mb-6" />
+            <Separator className="mb-4" />
           </>
         )}
 
-        {/* Copyright and Version */}
+        {/* Copyright */}
         <div className="text-center">
           <p className="text-xs text-muted-foreground">
-            © {currentYear} {LEGAL_CONFIG.provider.brand}. Alle Rechte vorbehalten.
+            © {currentYear} {LEGAL_CONFIG.provider.brand}
           </p>
-          <div className="flex justify-center items-center space-x-4 mt-2">
-            <span className="text-xs text-muted-foreground">
-              AGB v{LEGAL_CONFIG.versions.terms}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Datenschutz v{LEGAL_CONFIG.versions.privacy}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              Cookies v{LEGAL_CONFIG.versions.cookie}
-            </span>
-          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Alle rechtlichen Informationen im Profil verfügbar
+          </p>
         </div>
       </div>
     </footer>
