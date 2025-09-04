@@ -24,10 +24,14 @@
   "home": {
     "title": "Start Daily Session",
     "subtitle": "5 minutes for your nursing knowledge",
+    "quickStart": "Continue Learning",
+    "selectTopics": "Choose Topics",
     "currentStreak": "Current Streak",
     "days": "days",
     "totalXP": "Total XP",
     "todaysGoal": "Today's Goal",
+    "recentAnswers": "Recent Answers",
+    "tapForDetails": "Tap for details",
     "disclaimer": "PflegeBuddy Learn is not a substitute for medical advice or professional training."
   },
   "learn": {

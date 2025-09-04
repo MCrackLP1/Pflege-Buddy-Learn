@@ -114,7 +114,7 @@ export function DashboardCard() {
               className="w-full"
               size="sm"
             >
-              📚 Themen auswählen
+              📚 {t('home.selectTopics') || 'Themen auswählen'}
             </Button>
           </CardContent>
         </Card>
@@ -166,7 +166,7 @@ export function DashboardCard() {
         {recentAnswers.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">📚 Letzte Antworten</CardTitle>
+              <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-hide">
@@ -194,7 +194,7 @@ export function DashboardCard() {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-3 text-center">
-                Tippe auf eine Antwort für Details
+                {t('home.tapForDetails') || 'Tippe auf eine Antwort für Details'}
               </p>
             </CardContent>
           </Card>

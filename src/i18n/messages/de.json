@@ -24,10 +24,14 @@
   "home": {
     "title": "Tägliche Session starten",
     "subtitle": "5 Minuten für Ihr Pflegewissen",
+    "quickStart": "Weiterlernen",
+    "selectTopics": "Themen auswählen",
     "currentStreak": "Aktuelle Serie",
     "days": "Tage",
     "totalXP": "Gesamt-XP",
     "todaysGoal": "Heutiges Ziel",
+    "recentAnswers": "Letzte Antworten",
+    "tapForDetails": "Tippe auf eine Antwort für Details",
     "disclaimer": "PflegeBuddy Learn ist kein Ersatz für medizinische Beratung oder professionelle Ausbildung."
   },
   "learn": {
