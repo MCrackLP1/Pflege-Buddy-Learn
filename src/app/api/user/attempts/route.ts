@@ -9,7 +9,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user attempts with question details for review
@@ -77,7 +77,8 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
 
   } catch (error) {
     console.error('Error fetching user attempts:', error);
-    return NextResponse.json({ 
+        return NextResponse.json({
+      success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch attempts' 
     }, { status: 500 });
   }

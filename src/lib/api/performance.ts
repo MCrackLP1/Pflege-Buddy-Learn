@@ -44,7 +44,7 @@ export async function getOptimizedQuestionsByTopic(
   }
 
   // Transform and cache
-  const transformedQuestions = (questionsData || []).map(q => ({
+  const transformedQuestions = (questionsData || []).map((q: any) => ({
     id: q.id,
     topicId: q.topic_id,
     type: q.type,

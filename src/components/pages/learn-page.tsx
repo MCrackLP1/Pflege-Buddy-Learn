@@ -25,7 +25,7 @@ interface TopicWithProgress {
 export function LearnPage() {
   const [topics, setTopics] = useState<TopicWithProgress[]>([]);
   const [loading, setLoading] = useState(true);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const t = useTranslations('learn');
   const locale = useLocale();

@@ -9,11 +9,11 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: U
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get or create user progress
-    const { data: progress, error: progressError } = await supabase
+    let { data: progress, error: progressError } = await supabase
       .from('user_progress')
       .select('*')
       .eq('user_id', user.id)
@@ -70,13 +70,14 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ user_progress: U
         accuracy: accuracy,
         today_attempts: todayAttempts,
       },
-      topic_progress: topicStats || [],
+      topic_progress: [], // topicStats removed for now
       success: true
     });
 
   } catch (error) {
     console.error('Error fetching user progress:', error);
-    return NextResponse.json({ 
+        return NextResponse.json({
+      success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch progress' 
     }, { status: 500 });
   }

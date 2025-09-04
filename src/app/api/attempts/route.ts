@@ -87,9 +87,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
           user_id: user.id,
           xp: xpGained,
           last_seen: new Date().toISOString().split('T')[0]
-        }, {
-          onConflict: 'user_id',
-          update: ['xp'] // Add to existing XP
         });
         
       if (xpError) {

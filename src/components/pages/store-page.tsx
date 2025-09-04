@@ -65,7 +65,8 @@ export function StorePage() {
       const packInfo = hintPacks.find(p => p.id === packId);
       
       // Check if it's a demo mode error
-      if (error?.message?.includes('Demo mode') || error?.message?.includes('demo') || error?.message?.includes('Failed to create checkout session')) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('Demo mode') || errorMessage.includes('demo') || errorMessage.includes('Failed to create checkout session')) {
         alert(`🎮 Demo-Modus aktiv!\n\n${packInfo?.hints || 'X'} Hints für ${packInfo?.price || 'X'} würden gekauft werden.\n\nDies ist nur eine Demo - keine echte Zahlung wird verarbeitet.\n\nFür echte Käufe müssen Stripe-Credentials konfiguriert werden.`);
       } else {
         alert('Unerwarteter Fehler beim Kaufvorgang. Bitte versuchen Sie es erneut.');

@@ -1,5 +1,7 @@
 // API Response Types for consistent typing across the application
 
+import type { Database } from './database.types';
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
