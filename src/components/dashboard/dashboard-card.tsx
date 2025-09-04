@@ -78,11 +78,57 @@ export function DashboardCard() {
 
         if (data.success) {
           setRecentAnswers(data.recent_answers);
+        } else {
+          console.error('API returned error:', data.error);
+          // Fallback to mock data for debugging
+          setRecentAnswers([
+            {
+              id: 'mock-1',
+              isCorrect: true,
+              topic: 'Grundlagen',
+              createdAt: new Date().toISOString(),
+              question: 'Was ist die normale Körpertemperatur eines gesunden Erwachsenen?',
+              userAnswer: '36.1°C - 37.2°C',
+              correctAnswer: '36.1°C - 37.2°C',
+              explanation: 'Die normale Körpertemperatur liegt zwischen 36,1°C und 37,2°C.'
+            },
+            {
+              id: 'mock-2',
+              isCorrect: false,
+              topic: 'Hygiene',
+              createdAt: new Date(Date.now() - 3600000).toISOString(),
+              question: 'Wie lange sollte man die Hände waschen?',
+              userAnswer: '10 Sekunden',
+              correctAnswer: '20-30 Sekunden',
+              explanation: 'Hände sollten mindestens 20-30 Sekunden gewaschen werden.'
+            }
+          ]);
         }
       } catch (err) {
         console.error('Error loading recent answers:', err);
-        // Fallback to mock data
-        setRecentAnswers([]);
+        // Fallback to mock data for debugging
+        setRecentAnswers([
+          {
+            id: 'mock-1',
+            isCorrect: true,
+            topic: 'Grundlagen',
+            createdAt: new Date().toISOString(),
+            question: 'Was ist die normale Körpertemperatur eines gesunden Erwachsenen?',
+            userAnswer: '36.1°C - 37.2°C',
+            correctAnswer: '36.1°C - 37.2°C',
+            explanation: 'Die normale Körpertemperatur liegt zwischen 36,1°C und 37,2°C.'
+          },
+          {
+            id: 'mock-2',
+            isCorrect: false,
+            topic: 'Hygiene',
+            createdAt: new Date(Date.now() - 3600000).toISOString(),
+            question: 'Wie lange sollte man die Hände waschen?',
+            userAnswer: '10 Sekunden',
+            correctAnswer: '20-30 Sekunden',
+            explanation: 'Hände sollten mindestens 20-30 Sekunden gewaschen werden.'
+          }
+        ]);
       }
     }
 
@@ -218,7 +264,7 @@ export function DashboardCard() {
         </Card>
 
         {/* Review Light - Recent Answers Carousel */}
-        {recentAnswers.length > 0 && (
+        {recentAnswers.length > 0 ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
@@ -320,6 +366,20 @@ export function DashboardCard() {
               <p className="text-xs text-muted-foreground mt-4 text-center">
                 🎯 Hover für Pause • Klick für Details
               </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <div className="text-muted-foreground mb-2">Lade Antworten...</div>
+                <div className="text-xs text-muted-foreground">
+                  Beantworte einige Fragen, um hier deine letzten Antworten zu sehen
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
