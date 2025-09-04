@@ -79,7 +79,8 @@ async function seedManualQuestions() {
       }
 
       // Insert questions
-      for (const [index, questionData] of topicQuestions.questions.entries()) {
+      for (let index = 0; index < topicQuestions.questions.length; index++) {
+        const questionData = topicQuestions.questions[index];
         try {
           // Check for duplicates by stem
           const existingQuestion = await db
