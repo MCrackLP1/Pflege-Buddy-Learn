@@ -4,6 +4,32 @@ import { readFileSync, writeFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { generateReviewTemplate } from '../src/lib/content/medical-review';
 
+interface VerifiedQuestion {
+  type: 'mc' | 'tf';
+  stem: string;
+  explanation_md: string;
+  difficulty: number;
+  hints: string[];
+  choices?: {
+    label: string;
+    is_correct: boolean;
+  }[];
+  tf_correct_answer?: boolean;
+  citations: {
+    url: string;
+    title: string;
+    organization: string;
+    published_date: string;
+    credibility_score: number;
+  }[];
+  medical_review: {
+    generated_at: string;
+    ai_confidence: number;
+    requires_expert_review: boolean;
+    source_verification: 'verified' | 'pending' | 'rejected';
+  };
+}
+
 /**
  * Generate medical expert review template from generated content
  */
@@ -32,11 +58,11 @@ async function generateReviewTemplates(): Promise<void> {
     
     try {
       const content = JSON.parse(readFileSync(join(contentDir, file), 'utf-8'));
-      const questions = content.questions || [];
+      const questions: VerifiedQuestion[] = content.questions || [];
       
       // Filter questions that require expert review
-      const reviewRequired = questions.filter(q => 
-        q.medical_review?.requires_expert_review || 
+      const reviewRequired = questions.filter((q: VerifiedQuestion) =>
+        q.medical_review?.requires_expert_review ||
         q.medical_review?.ai_confidence < 90
       );
 

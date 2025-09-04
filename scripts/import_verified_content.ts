@@ -113,7 +113,8 @@ async function importVerifiedContent(
       }
 
       // Import questions with batch processing for performance
-      for (const [index, question] of batch.questions.entries()) {
+      for (let index = 0; index < batch.questions.length; index++) {
+        const question = batch.questions[index];
         try {
           // Check for duplicates
           const { data: existing } = await supabase

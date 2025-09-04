@@ -200,15 +200,15 @@ ${questions.map((q, i) => `
 **KI-Konfidenz:** ${q.medical_review?.ai_confidence || 'N/A'}%
 
 **Antworten:**
-${q.type === 'mc' && q.choices ? 
-  q.choices.map((c, idx) => `${idx + 1}. ${c.label} ${c.is_correct ? '✅ (Korrekt)' : ''}`).join('\n') :
+${q.type === 'mc' && q.choices ?
+  q.choices.map((c: any, idx: number) => `${idx + 1}. ${c.label} ${c.is_correct ? '✅ (Korrekt)' : ''}`).join('\n') :
   q.tf_correct_answer !== undefined ? `Korrekte Antwort: ${q.tf_correct_answer ? 'Wahr' : 'Falsch'}` : ''
 }
 
 **Erklärung:** ${q.explanation_md}
 
 **Quellen:**
-${q.citations ? q.citations.map(c => `- ${c.organization}: ${c.title} (${c.published_date})`).join('\n') : 'Keine Quellen'}
+${q.citations ? q.citations.map((c: any) => `- ${c.organization}: ${c.title} (${c.published_date})`).join('\n') : 'Keine Quellen'}
 
 **BEWERTUNG:**
 - [ ] ✅ Genehmigt (Kann ohne Änderungen verwendet werden)
@@ -278,7 +278,7 @@ export function exportReviewResults(reviews: QuestionReview[]): {
       totalReviewed: reviews.length,
       approvalRate: Math.round(approvalRate),
       averageScore: Math.round(averageScore),
-      criticalIssues: [...new Set(criticalIssues)],
+      criticalIssues: Array.from(new Set(criticalIssues)),
     }
   };
 }
