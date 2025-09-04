@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp } from 'lucide-react';
+import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw } from 'lucide-react';
 
 interface UserStats {
   totalXP: number;
@@ -23,7 +23,9 @@ interface UserStats {
 export function ProfilePage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [, setLoading] = useState(true);
-  
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
   const t = useTranslations('profile');
   const { user, signOut } = useAuth();
   
@@ -78,6 +80,50 @@ export function ProfilePage() {
   const handleDeleteAccount = () => {
     // Will implement account deletion
     console.log('Delete account');
+  };
+
+  const handleResetQuiz = async () => {
+    if (!user) return;
+
+    try {
+      setResetLoading(true);
+      const response = await fetch('/api/user/reset-quiz', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Reload user stats after reset
+        const statsResponse = await fetch('/api/user/progress');
+        const statsData = await statsResponse.json();
+
+        if (statsData.success) {
+          const progress = statsData.user_progress;
+          setUserStats({
+            totalXP: progress.xp || 0,
+            currentStreak: progress.streak_days || 0,
+            totalQuestions: progress.total_questions || 0,
+            accuracy: progress.accuracy || 0,
+            displayName: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
+          });
+        }
+
+        setShowResetDialog(false);
+        // Optional: Show success message
+        alert('Quiz-Versuche erfolgreich zurückgesetzt!');
+      } else {
+        throw new Error(data.error || 'Fehler beim Zurücksetzen');
+      }
+    } catch (error) {
+      console.error('Error resetting quiz:', error);
+      alert('Fehler beim Zurücksetzen der Quiz-Versuche. Bitte versuchen Sie es erneut.');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   return (
@@ -164,6 +210,15 @@ export function ProfilePage() {
               {t('exportData')}
             </Button>
 
+            <Button
+              onClick={() => setShowResetDialog(true)}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Quiz zurücksetzen
+            </Button>
+
             <Separator />
 
             <Button
@@ -195,6 +250,38 @@ export function ProfilePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Reset Quiz Confirmation Dialog */}
+      {showResetDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Quiz zurücksetzen</h3>
+            <p className="text-muted-foreground mb-6">
+              Sind Sie sicher, dass Sie alle Quiz-Versuche zurücksetzen möchten?
+              Diese Aktion kann nicht rückgängig gemacht werden und alle Ihre
+              bisherigen Antworten sowie der Fortschritt gehen verloren.
+            </p>
+            <div className="flex space-x-3">
+              <Button
+                onClick={() => setShowResetDialog(false)}
+                variant="outline"
+                className="flex-1"
+                disabled={resetLoading}
+              >
+                Abbrechen
+              </Button>
+              <Button
+                onClick={handleResetQuiz}
+                variant="destructive"
+                className="flex-1"
+                disabled={resetLoading}
+              >
+                {resetLoading ? 'Zurücksetzen...' : 'Zurücksetzen'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
