@@ -3,6 +3,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { AttemptRequestSchema } from '@/lib/validation';
 import { rateLimiter, RATE_LIMITS } from '@/middleware/rate-limiter';
 import { invalidateUserCache } from '@/lib/api/performance';
+import { calculateXP } from '@/lib/utils/quiz';
 import type { ApiResponse } from '@/types/api.types';
 
 export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>> {
@@ -79,19 +80,38 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
 
     // Calculate and update XP if correct
     if (validatedData.isCorrect) {
-      const xpGained = Math.max(1, question.difficulty * 10 - validatedData.usedHints * 5);
-      
+      // Use the standardized calculateXP function
+      const xpGained = calculateXP(question.difficulty, validatedData.usedHints, validatedData.timeMs);
+      console.log(`XP gained: ${xpGained} (difficulty: ${question.difficulty}, hints: ${validatedData.usedHints}, time: ${validatedData.timeMs}ms)`);
+
+      // Get current XP first, then add the new XP
+      const { data: currentProgress, error: fetchError } = await supabase
+        .from('user_progress')
+        .select('xp')
+        .eq('user_id', user.id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = not found
+        console.error('Failed to fetch current XP:', fetchError);
+      }
+
+      const currentXP = currentProgress?.xp || 0;
+      const newTotalXP = currentXP + xpGained;
+
+      // Update with the new total XP
       const { error: xpError } = await supabase
         .from('user_progress')
         .upsert({
           user_id: user.id,
-          xp: xpGained,
+          xp: newTotalXP,
           last_seen: new Date().toISOString().split('T')[0]
         });
-        
+
       if (xpError) {
         console.error('Failed to update XP:', xpError);
         // Don't fail the request if XP update fails
+      } else {
+        console.log(`XP updated: ${currentXP} + ${xpGained} = ${newTotalXP}`);
       }
     }
 

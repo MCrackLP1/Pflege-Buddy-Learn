@@ -8,6 +8,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { QuizQuestion } from '@/components/quiz/quiz-question';
 import { QuizResults } from '@/components/quiz/quiz-results';
 import { QuizProgress } from '@/components/quiz/quiz-progress';
+import { calculateXP } from '@/lib/utils/quiz';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 
 interface QuizPageProps {
@@ -241,7 +242,10 @@ export function QuizPage({ topic }: QuizPageProps) {
 
       if (isCorrect) {
         correct++;
-        totalXP += question.difficulty * 10 - (usedHints[question.id] || 0) * 5;
+        // Use the standardized calculateXP function for consistency
+        const timeSpent = startTime ? Date.now() - startTime : 0; // Fallback if startTime not available
+        const xpForThisQuestion = calculateXP(question.difficulty, usedHints[question.id] || 0, timeSpent);
+        totalXP += xpForThisQuestion;
       }
 
       // Note: Attempts are now saved immediately when answer is given
