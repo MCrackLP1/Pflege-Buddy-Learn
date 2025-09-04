@@ -14,6 +14,11 @@
     "db:reset": "tsx scripts/reset-db.ts",
     "content:discover": "tsx scripts/discover_sources.ts",
     "content:generate": "tsx scripts/generate_questions.ts",
+    "content:generate-verified": "tsx scripts/generate_verified_content.ts",
+    "content:import": "tsx scripts/import_verified_content.ts",
+    "content:review": "tsx scripts/generate_review_template.ts",
+    "content:demo": "tsx scripts/content_demo.ts",
+    "content:pipeline": "tsx scripts/content_demo.ts",
     "test": "playwright test",
     "test:ui": "playwright test --ui"
   },
