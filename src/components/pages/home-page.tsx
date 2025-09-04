@@ -20,7 +20,9 @@ import {
   Users,
   Star,
   Zap,
-  ChevronDown
+  ChevronDown,
+  User,
+  X
 } from 'lucide-react';
 
 // Loading Animation Component
@@ -75,10 +77,90 @@ function StatCard({ number, label }: { number: string, label: string }) {
   );
 }
 
+// Name Input Modal Component
+function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; onSkip: () => void }) {
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSave = async () => {
+    if (!name.trim()) return;
+
+    setLoading(true);
+    try {
+      await onSave(name.trim());
+    } catch (error) {
+      console.error('Error saving name:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
+        <div className="p-6">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 text-white" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
+            Willkommen bei PflegeBuddy Learn! 🎉
+          </h2>
+
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
+            Wie sollen wir dich nennen? Dieser Name wird in deinem Profil angezeigt.
+          </p>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Anzeigename
+              </label>
+              <input
+                id="displayName"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="z.B. Anna Schmidt"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && name.trim()) {
+                    handleSave();
+                  }
+                }}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={onSkip}
+                className="flex-1 px-4 py-3 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Überspringen
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!name.trim() || loading}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+              >
+                {loading ? 'Speichern...' : 'Speichern'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function HomePage() {
   const t = useTranslations();
   const { session, loading } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,6 +169,59 @@ export function HomePage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Check if user needs to set their name
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      if (session?.user?.id) {
+        try {
+          // Check if user has a display name in the profiles table
+          const response = await fetch('/api/user/profile');
+          if (response.ok) {
+            const profile = await response.json();
+            setUserProfile(profile);
+
+            // Show modal if no display name is set
+            if (!profile.displayName) {
+              setShowNameModal(true);
+            }
+          }
+        } catch (error) {
+          console.error('Error checking user profile:', error);
+        }
+      }
+    };
+
+    checkUserProfile();
+  }, [session]);
+
+  const handleSaveName = async (name: string) => {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ displayName: name }),
+      });
+
+      if (response.ok) {
+        const updatedProfile = await response.json();
+        setUserProfile(updatedProfile);
+        setShowNameModal(false);
+      } else {
+        throw new Error('Failed to save name');
+      }
+    } catch (error) {
+      console.error('Error saving name:', error);
+      alert('Fehler beim Speichern des Namens. Bitte versuche es erneut.');
+    }
+  };
+
+  const handleSkipName = () => {
+    setShowNameModal(false);
+    // Optional: Save a default name or mark as skipped
+  };
 
   if (loading) {
     return <LoadingAnimation />;
@@ -320,5 +455,12 @@ export function HomePage() {
     );
   }
 
-  return <DashboardCard />;
+  return (
+    <>
+      <DashboardCard />
+      {showNameModal && (
+        <NameInputModal onSave={handleSaveName} onSkip={handleSkipName} />
+      )}
+    </>
+  );
 }
