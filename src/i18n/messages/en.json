@@ -55,6 +55,24 @@
     "dailyLogin": "Daily login",
     "consecutiveDays": "consecutive days"
   },
+  "xp": {
+    "xpMilestones": "XP Milestones",
+    "totalXp": "Total XP",
+    "nextMilestone": "Next Milestone",
+    "xpToGo": "XP to go",
+    "freeHints": "free hints",
+    "rewardPreview": "Reward",
+    "allMilestonesAchieved": "All milestones achieved! 🎉",
+    "startLearning": "Start learning and earn XP!",
+    "keepGoing": "Keep going!",
+    "greatProgress": "Great progress!",
+    "excellentWork": "Excellent work!",
+    "milestoneAchieved": "Milestone achieved!",
+    "newXPBoost": "New XP Boost unlocked!",
+    "streakBroken": "Streak broken",
+    "streakContinued": "Streak continued",
+    "dailyLogin": "Daily login"
+  },
   "learn": {
     "title": "Learning Topics",
     "selectTopic": "Choose a topic",

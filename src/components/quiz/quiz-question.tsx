@@ -17,6 +17,9 @@ interface QuizQuestionProps {
   onHintUsed: () => void;
   usedHints: number;
   isLastQuestion: boolean;
+  hintsBalance: number;
+  freeHintsLeft: number;
+  hintsLoading: boolean;
 }
 
 export function QuizQuestion({
@@ -26,7 +29,10 @@ export function QuizQuestion({
   onNext,
   onHintUsed,
   usedHints,
-  isLastQuestion
+  isLastQuestion,
+  hintsBalance,
+  freeHintsLeft,
+  hintsLoading
 }: QuizQuestionProps) {
   const [showHint, setShowHint] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -60,10 +66,7 @@ export function QuizQuestion({
   };
 
   const isAnswered = answer !== undefined;
-  const canShowHint = question.hints && question.hints.length > usedHints;
-  
-  // Mock hint balance - will be replaced with real data
-  const freeHintsLeft = Math.max(0, 2 - usedHints);
+  const canShowHint = question.hints && question.hints.length > usedHints && (freeHintsLeft > 0 || hintsBalance > 0);
 
   return (
     <div className="space-y-4">
@@ -123,13 +126,23 @@ export function QuizQuestion({
           {/* Hint Section */}
           {canShowHint && !showHint && !showFeedback && (
             <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-              <span className="text-sm">
-                {t('quiz.freeHintsLeft', { count: freeHintsLeft })}
-              </span>
+              <div className="text-sm">
+                {hintsLoading ? (
+                  <span>Lade Hints...</span>
+                ) : (
+                  <div className="flex flex-col">
+                    <span>Kostenlose Hints: {freeHintsLeft}</span>
+                    {hintsBalance > 0 && (
+                      <span>Gekaufte Hints: {hintsBalance}</span>
+                    )}
+                  </div>
+                )}
+              </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleHint}
+                disabled={hintsLoading}
                 className="shrink-0"
               >
                 <Lightbulb className="h-4 w-4 mr-1" />

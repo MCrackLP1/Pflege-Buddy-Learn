@@ -86,6 +86,11 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [startTime] = useState(Date.now());
+
+  // Hint balance state
+  const [hintsBalance, setHintsBalance] = useState(0);
+  const [freeHintsLeft, setFreeHintsLeft] = useState(2);
+  const [hintsLoading, setHintsLoading] = useState(true);
   
   // Load questions from API - always fresh and random
   useEffect(() => {
@@ -117,6 +122,30 @@ export function QuizPage({ topic }: QuizPageProps) {
 
     loadQuestions();
   }, [topic]);
+
+  // Load hints balance
+  useEffect(() => {
+    const loadHints = async () => {
+      try {
+        setHintsLoading(true);
+        const response = await fetch('/api/user/hints');
+        const data = await response.json();
+
+        if (response.ok) {
+          setHintsBalance(data.hintsBalance || 0);
+          setFreeHintsLeft(data.freeHintsLeft || 2);
+        } else {
+          console.error('Failed to load hints:', data.error);
+        }
+      } catch (error) {
+        console.error('Error loading hints:', error);
+      } finally {
+        setHintsLoading(false);
+      }
+    };
+
+    loadHints();
+  }, []);
 
   // Removed unused useTranslations import
   const locale = useLocale();
@@ -195,11 +224,37 @@ export function QuizPage({ topic }: QuizPageProps) {
     }
   };
 
-  const handleHintUsed = (questionId: string) => {
-    setUsedHints(prev => ({
-      ...prev,
-      [questionId]: (prev[questionId] || 0) + 1
-    }));
+  const handleHintUsed = async (questionId: string) => {
+    try {
+      // First, use the hint via API
+      const response = await fetch('/api/user/hints', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'use_hint' }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Update local state
+        setUsedHints(prev => ({
+          ...prev,
+          [questionId]: (prev[questionId] || 0) + 1
+        }));
+
+        // Update hint balance
+        setHintsBalance(data.hintsBalance);
+        setFreeHintsLeft(data.freeHintsLeft);
+      } else {
+        console.error('Failed to use hint:', data.error);
+        alert('Hint konnte nicht verwendet werden: ' + (data.error || 'Unbekannter Fehler'));
+      }
+    } catch (error) {
+      console.error('Error using hint:', error);
+      alert('Fehler beim Verwenden des Hints');
+    }
   };
 
   // Save attempt to database
@@ -297,6 +352,9 @@ export function QuizPage({ topic }: QuizPageProps) {
           onHintUsed={() => handleHintUsed(currentQuestion.id)}
           usedHints={usedHints[currentQuestion.id] || 0}
           isLastQuestion={isLastQuestion}
+          hintsBalance={hintsBalance}
+          freeHintsLeft={freeHintsLeft}
+          hintsLoading={hintsLoading}
         />
       </div>
     </MainLayout>

@@ -76,14 +76,26 @@ export const streakMilestones = pgTable('streak_milestones', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// XP Milestones for hint rewards
+export const xpMilestones = pgTable('xp_milestones', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  xpRequired: integer('xp_required').notNull().unique(),
+  freeHintsReward: integer('free_hints_reward').notNull().default(1),
+  rewardDescription: text('reward_description').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // User milestone achievements
 export const userMilestoneAchievements = pgTable('user_milestone_achievements', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id').notNull(),
-  milestoneId: uuid('milestone_id').references(() => streakMilestones.id).notNull(),
+  milestoneId: uuid('milestone_id').notNull(), // Can reference either streak or XP milestones
+  milestoneType: text('milestone_type').notNull(), // 'streak' or 'xp'
   achievedAt: timestamp('achieved_at').defaultNow().notNull(),
-  xpBoostMultiplier: integer('xp_boost_multiplier').notNull(),
-  boostExpiry: timestamp('boost_expiry').notNull(),
+  xpBoostMultiplier: integer('xp_boost_multiplier'),
+  boostExpiry: timestamp('boost_expiry'),
+  freeHintsReward: integer('free_hints_reward'),
 });
 
 // User profiles
@@ -167,8 +179,21 @@ export const streakMilestonesRelations = relations(streakMilestones, ({ many }) 
   achievements: many(userMilestoneAchievements),
 }));
 
+export const xpMilestonesRelations = relations(xpMilestones, ({ many }) => ({
+  achievements: many(userMilestoneAchievements),
+}));
+
 export const userMilestoneAchievementsRelations = relations(userMilestoneAchievements, ({ one }) => ({
-  milestone: one(streakMilestones, { fields: [userMilestoneAchievements.milestoneId], references: [streakMilestones.id] }),
+  streakMilestone: one(streakMilestones, {
+    fields: [userMilestoneAchievements.milestoneId],
+    references: [streakMilestones.id],
+    relationName: 'streakAchievements'
+  }),
+  xpMilestone: one(xpMilestones, {
+    fields: [userMilestoneAchievements.milestoneId],
+    references: [xpMilestones.id],
+    relationName: 'xpAchievements'
+  }),
 }));
 
 // Types
@@ -182,6 +207,7 @@ export type UserWallet = typeof userWallet.$inferSelect;
 export type Purchase = typeof purchases.$inferSelect;
 export type Citation = typeof citations.$inferSelect;
 export type StreakMilestone = typeof streakMilestones.$inferSelect;
+export type XpMilestone = typeof xpMilestones.$inferSelect;
 export type UserMilestoneAchievement = typeof userMilestoneAchievements.$inferSelect;
 export type LegalConsentEvent = typeof legalConsentEvents.$inferSelect;
 

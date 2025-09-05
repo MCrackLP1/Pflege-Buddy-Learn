@@ -5,6 +5,7 @@ import { rateLimiter, RATE_LIMITS } from '@/middleware/rate-limiter';
 import { invalidateUserCache } from '@/lib/api/performance';
 import { calculateXP } from '@/lib/utils/quiz';
 import { updateUserStreak, getActiveXPBoost, calculateXPWithBoost } from '@/lib/streak-utils';
+import { updateXpMilestones } from '@/lib/xp-utils';
 import type { ApiResponse } from '@/types/api.types';
 
 export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>> {
@@ -118,6 +119,20 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         // Don't fail the request if XP update fails
       } else {
         console.log(`XP updated: ${currentXP} + ${finalXPGained} = ${newTotalXP}`);
+
+        // Check for XP milestones and award free hints
+        try {
+          const xpMilestoneResult = await updateXpMilestones(user.id, newTotalXP);
+          if (xpMilestoneResult.milestonesAchieved.length > 0) {
+            console.log(`🎉 XP milestones achieved: ${xpMilestoneResult.milestonesAchieved.length}`);
+            xpMilestoneResult.milestonesAchieved.forEach(milestone => {
+              console.log(`  - ${milestone.xpRequired} XP: +5 hints`);
+            });
+          }
+        } catch (milestoneError) {
+          console.error('Failed to update XP milestones:', milestoneError);
+          // Don't fail the request if milestone update fails
+        }
       }
     }
 

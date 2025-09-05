@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
 import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
+import { XpMilestoneCard } from '@/components/xp/xp-milestone-card';
 import { Flame, Star, Target, CheckCircle, XCircle } from 'lucide-react';
 import type { StreakMilestone } from '@/lib/db/schema';
 
@@ -18,6 +19,8 @@ interface UserProgress {
   longest_streak: number;
   total_questions: number;
   accuracy: number;
+  next_streak_milestone?: StreakMilestone;
+  next_xp_milestone?: any;
   today_attempts: number;
   xp_boost_active: boolean;
   xp_boost_multiplier: number;
@@ -236,25 +239,14 @@ export function DashboardCard() {
             xpBoostActive={userProgress?.xp_boost_active || false}
             xpBoostMultiplier={userProgress?.xp_boost_multiplier || 1}
             xpBoostExpiry={userProgress?.xp_boost_expiry ? new Date(userProgress.xp_boost_expiry) : undefined}
-            nextMilestone={userProgress?.next_milestone}
+            nextMilestone={userProgress?.next_streak_milestone}
           />
 
-          {/* Total XP */}
-          <Card>
-            <CardContent className="p-4 text-center space-y-2">
-              <Star className="h-8 w-8 mx-auto text-yellow-500" />
-              <div>
-                <div className="text-2xl font-bold">{(userProgress?.xp || 0).toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">XP</div>
-              </div>
-              <div className="text-xs font-medium">{t('home.totalXP')}</div>
-              {userProgress?.xp_boost_active && (
-                <div className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-                  {userProgress.xp_boost_multiplier}x Boost aktiv
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* XP Milestones */}
+          <XpMilestoneCard
+            currentXp={userProgress?.xp || 0}
+            nextMilestone={userProgress?.next_xp_milestone}
+          />
         </div>
 
         {/* Today's Goal */}
