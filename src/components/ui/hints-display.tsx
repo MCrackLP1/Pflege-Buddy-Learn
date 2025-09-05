@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 
 interface HintsData {
   hintsBalance: number;
-  freeHintsLeft: number;
 }
 
 export function HintsDisplay() {
@@ -25,8 +24,7 @@ export function HintsDisplay() {
 
       if (data.success) {
         setHintsData({
-          hintsBalance: data.hintsBalance,
-          freeHintsLeft: data.freeHintsLeft
+          hintsBalance: data.hintsBalance
         });
       } else {
         throw new Error(data.error || 'Failed to load hints');
@@ -88,7 +86,7 @@ export function HintsDisplay() {
     );
   }
 
-  const totalHints = (hintsData?.hintsBalance || 0) + (hintsData?.freeHintsLeft || 0);
+  const totalHints = hintsData?.hintsBalance || 0;
 
   return (
     <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
@@ -101,17 +99,9 @@ export function HintsDisplay() {
             <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
               Verfügbare Hints
             </p>
-            <div className="flex gap-2 text-xs text-yellow-600 dark:text-yellow-400">
-              {hintsData?.freeHintsLeft && hintsData.freeHintsLeft > 0 && (
-                <span>Kostenlos: {hintsData.freeHintsLeft}</span>
-              )}
-              {hintsData?.hintsBalance && hintsData.hintsBalance > 0 && (
-                <span>Gekauft: {hintsData.hintsBalance}</span>
-              )}
-              {totalHints === 0 && (
-                <span>Keine Hints verfügbar</span>
-              )}
-            </div>
+            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+              {totalHints === 0 ? 'Keine Hints verfügbar' : 'Für schwierige Fragen verwenden'}
+            </p>
           </div>
         </div>
         <div className="text-right">
@@ -119,7 +109,7 @@ export function HintsDisplay() {
             {totalHints}
           </p>
           <p className="text-xs text-yellow-600 dark:text-yellow-400">
-            Gesamt
+            Hints
           </p>
         </div>
       </CardContent>

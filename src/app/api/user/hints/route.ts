@@ -10,61 +10,35 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user's wallet data
+    // Get user's wallet data - simplified to just hints_balance
     const { data: wallet } = await supabase
       .from('user_wallet')
-      .select('hints_balance, daily_free_hints_used, daily_reset_date')
+      .select('hints_balance')
       .eq('user_id', user.id)
       .single();
 
     if (!wallet) {
-      // Create wallet if it doesn't exist
+      // Create wallet if it doesn't exist - start with 5 free hints
       const { data: newWallet } = await supabase
         .from('user_wallet')
         .insert({
           user_id: user.id,
-          hints_balance: 0,
+          hints_balance: 5, // Everyone starts with 5 free hints
           daily_free_hints_used: 0,
-          daily_reset_date: new Date().toISOString(),
+          daily_reset_date: new Date().toISOString().split('T')[0]
         })
-        .select('hints_balance, daily_free_hints_used, daily_reset_date')
+        .select('hints_balance')
         .single();
 
       return NextResponse.json({
         success: true,
-        hintsBalance: newWallet?.hints_balance || 0,
-        dailyFreeHintsUsed: newWallet?.daily_free_hints_used || 0,
-        freeHintsLeft: 2, // Daily free hints limit
+        hintsBalance: newWallet?.hints_balance || 5,
       });
     }
 
-    // Check if we need to reset daily free hints
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const lastReset = wallet.daily_reset_date ? new Date(wallet.daily_reset_date) : new Date();
-    lastReset.setHours(0, 0, 0, 0);
-
-    let dailyFreeHintsUsed = wallet.daily_free_hints_used;
-    if (today > lastReset) {
-      // Reset daily free hints
-      dailyFreeHintsUsed = 0;
-      await supabase
-        .from('user_wallet')
-        .update({
-          daily_free_hints_used: 0,
-          daily_reset_date: today.toISOString(),
-        })
-        .eq('user_id', user.id);
-    }
-
-    const freeHintsLeft = Math.max(0, 2 - dailyFreeHintsUsed);
-
     return NextResponse.json({
-      success: true,
+      success: true,  
       hintsBalance: wallet.hints_balance,
-      dailyFreeHintsUsed,
-      freeHintsLeft,
     });
 
   } catch (error) {
@@ -91,7 +65,7 @@ export async function POST(request: NextRequest) {
       // Get current wallet data
       const { data: wallet } = await supabase
         .from('user_wallet')
-        .select('hints_balance, daily_free_hints_used, daily_reset_date')
+        .select('hints_balance')
         .eq('user_id', user.id)
         .single();
 
@@ -99,56 +73,28 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Wallet not found' }, { status: 404 });
       }
 
-      // Check if we need to reset daily free hints
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const lastReset = wallet.daily_reset_date ? new Date(wallet.daily_reset_date) : new Date();
-      lastReset.setHours(0, 0, 0, 0);
-
-      let dailyFreeHintsUsed = wallet.daily_free_hints_used;
-      let hintsBalance = wallet.hints_balance;
-
-      if (today > lastReset) {
-        dailyFreeHintsUsed = 0;
-      }
-
-      // Try to use a free hint first, then paid hints
-      let usedFreeHint = false;
-      let usedPaidHint = false;
-
-      if (dailyFreeHintsUsed < 2) {
-        // Use free hint
-        dailyFreeHintsUsed += 1;
-        usedFreeHint = true;
-      } else if (hintsBalance > 0) {
-        // Use paid hint
-        hintsBalance -= 1;
-        usedPaidHint = true;
-      } else {
+      // Simple check: do we have hints?
+      if (wallet.hints_balance <= 0) {
         return NextResponse.json({
           error: 'No hints available',
-          hintsBalance: wallet.hints_balance,
-          freeHintsLeft: Math.max(0, 2 - wallet.daily_free_hints_used),
+          hintsBalance: 0,
         }, { status: 400 });
       }
+
+      // Use one hint
+      const newBalance = wallet.hints_balance - 1;
 
       // Update wallet
       await supabase
         .from('user_wallet')
         .update({
-          hints_balance: hintsBalance,
-          daily_free_hints_used: dailyFreeHintsUsed,
-          daily_reset_date: today > lastReset ? today.toISOString() : wallet.daily_reset_date,
+          hints_balance: newBalance,
         })
         .eq('user_id', user.id);
 
       return NextResponse.json({
         success: true,
-        usedFreeHint,
-        usedPaidHint,
-        hintsBalance,
-        freeHintsLeft: Math.max(0, 2 - dailyFreeHintsUsed),
+        hintsBalance: newBalance,
       });
     }
 

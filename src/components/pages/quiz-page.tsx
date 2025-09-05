@@ -90,9 +90,8 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [showResults, setShowResults] = useState(false);
   const [startTime] = useState(Date.now());
 
-  // Hint balance state
+  // Hint balance state - simplified
   const [hintsBalance, setHintsBalance] = useState(0);
-  const [freeHintsLeft, setFreeHintsLeft] = useState(2);
   const [hintsLoading, setHintsLoading] = useState(true);
   
   // Load questions from API - always fresh and random
@@ -134,9 +133,8 @@ export function QuizPage({ topic }: QuizPageProps) {
         const response = await fetch('/api/user/hints');
         const data = await response.json();
 
-        if (response.ok) {
+        if (data.success) {
           setHintsBalance(data.hintsBalance || 0);
-          setFreeHintsLeft(data.freeHintsLeft || 2);
         } else {
           console.error('Failed to load hints:', data.error);
         }
@@ -356,7 +354,6 @@ export function QuizPage({ topic }: QuizPageProps) {
           usedHints={usedHints[currentQuestion.id] || 0}
           isLastQuestion={isLastQuestion}
           hintsBalance={hintsBalance}
-          freeHintsLeft={freeHintsLeft}
           hintsLoading={hintsLoading}
         />
       </div>
