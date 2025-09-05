@@ -48,9 +48,20 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     ).length || 0;
 
     // Get next milestones
-    const nextStreakMilestone = await getNextMilestone(user.id);
+    const nextStreakMilestoneRaw = await getNextMilestone(user.id);
     const nextXpMilestone = await getNextXpMilestone(user.id);
     const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
+
+    // Convert snake_case to camelCase for frontend
+    const nextStreakMilestone = nextStreakMilestoneRaw ? {
+      id: nextStreakMilestoneRaw.id,
+      daysRequired: nextStreakMilestoneRaw.days_required,
+      xpBoostMultiplier: nextStreakMilestoneRaw.xp_boost_multiplier,
+      boostDurationHours: nextStreakMilestoneRaw.boost_duration_hours,
+      rewardDescription: nextStreakMilestoneRaw.reward_description,
+      isActive: nextStreakMilestoneRaw.is_active,
+      createdAt: nextStreakMilestoneRaw.created_at,
+    } : null;
 
     // Get active XP boost info
     const xpBoostInfo = await getActiveXPBoost(user.id);

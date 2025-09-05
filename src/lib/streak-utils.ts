@@ -174,8 +174,6 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
   // If no progress record exists or error (user doesn't exist yet), treat as 0 streak days
   const streakDays = progress?.streak_days ?? 0;
 
-  console.log('getNextMilestone - userId:', userId, 'streakDays:', streakDays);
-
   // Get next milestone greater than current streak
   const { data: milestones, error: milestonesError } = await supabase
     .from('streak_milestones')
@@ -184,8 +182,6 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
     .gt('days_required', streakDays)
     .order('days_required')
     .limit(1);
-
-  console.log('getNextMilestone - found milestones:', milestones?.length || 0, milestones?.[0]?.days_required);
 
   if (milestonesError) {
     console.error('Error fetching milestones:', milestonesError);

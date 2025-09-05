@@ -28,13 +28,6 @@ export function StreakMilestoneCard({
   const t = useTranslations();
   const [timeLeft, setTimeLeft] = useState<string>('');
 
-  // Debug logging
-  console.log('StreakMilestoneCard props:', {
-    currentStreak,
-    nextMilestone,
-    nextMilestoneDays: nextMilestone?.daysRequired || nextMilestone?.days_required,
-  });
-
   // Update countdown timer for XP boost
   useEffect(() => {
     if (!xpBoostActive || !xpBoostExpiry) return;
@@ -64,13 +57,8 @@ export function StreakMilestoneCard({
     return () => clearInterval(interval);
   }, [xpBoostActive, xpBoostExpiry]);
 
-  // Handle both camelCase and snake_case property names
-  const daysRequired = nextMilestone?.daysRequired || nextMilestone?.days_required || 0;
-  const xpMultiplier = nextMilestone?.xpBoostMultiplier || nextMilestone?.xp_boost_multiplier || 1;
-  const rewardDesc = nextMilestone?.rewardDescription || nextMilestone?.reward_description || '';
-
-  const progressToNextMilestone = nextMilestone && daysRequired > 0
-    ? Math.min((currentStreak / daysRequired) * 100, 100)
+  const progressToNextMilestone = nextMilestone
+    ? Math.min((currentStreak / nextMilestone.daysRequired) * 100, 100)
     : 0;
 
   return (
@@ -125,7 +113,7 @@ export function StreakMilestoneCard({
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                <span className="font-medium">{daysRequired} {t('streak.days')}</span>
+                <span className="font-medium">{nextMilestone.daysRequired} {t('streak.days')}</span>
               </div>
             </div>
 
@@ -136,11 +124,11 @@ export function StreakMilestoneCard({
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {Math.max(0, daysRequired - currentStreak)} {t('streak.daysToGo')}
+                {Math.max(0, nextMilestone.daysRequired - currentStreak)} {t('streak.daysToGo')}
               </span>
               <div className="flex items-center gap-1">
                 <Gift className="h-3 w-3" />
-                <span>{xpMultiplier}x XP</span>
+                <span>{nextMilestone.xpBoostMultiplier}x XP</span>
               </div>
             </div>
 
@@ -150,7 +138,7 @@ export function StreakMilestoneCard({
                 {t('streak.rewardPreview')}:
               </div>
               <div className="text-muted-foreground">
-                {rewardDesc}
+                {nextMilestone.rewardDescription}
               </div>
             </div>
           </div>
