@@ -143,13 +143,25 @@ export async function getNextXpMilestone(userId: string): Promise<XpMilestone | 
 export async function getLastAchievedXpMilestone(userId: string): Promise<XpMilestone | null> {
   const supabase = createServerClient();
 
+  // First get the milestone ID from achievements
   const { data: lastAchievement } = await supabase
     .from('user_milestone_achievements')
-    .select('xp_milestones(*)')
+    .select('milestone_id')
     .eq('user_id', userId)
     .eq('milestone_type', 'xp')
     .order('achieved_at', { ascending: false })
     .limit(1);
 
-  return lastAchievement?.[0]?.xp_milestones || null;
+  if (!lastAchievement || lastAchievement.length === 0) {
+    return null;
+  }
+
+  // Then get the milestone data
+  const { data: milestone } = await supabase
+    .from('xp_milestones')
+    .select('*')
+    .eq('id', lastAchievement[0].milestone_id)
+    .single();
+
+  return milestone || null;
 }
