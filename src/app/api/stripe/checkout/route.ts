@@ -51,11 +51,6 @@ export async function POST(req: NextRequest) {
       }, { status: 500 });
     }
 
-    // In production, assume live mode is configured properly
-    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
-      // Production mode - proceed with live payments
-    }
-
     // Get price ID from environment or use default
     let priceIds;
     try {
@@ -70,6 +65,14 @@ export async function POST(req: NextRequest) {
     const priceId = priceIds[pack_key] || pack.price_id;
 
     // Create Stripe checkout session with waiver metadata
+    console.log('Creating Stripe session with:', {
+      priceId,
+      userId: user.id,
+      packKey: pack_key,
+      hasSecretKey: !!process.env.STRIPE_SECRET_KEY,
+      secretKeyPrefix: process.env.STRIPE_SECRET_KEY?.substring(0, 7)
+    });
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -88,6 +91,8 @@ export async function POST(req: NextRequest) {
         withdrawal_waiver_consent: 'true',
       },
     });
+
+    console.log('Stripe session created successfully:', session.id);
 
     // Log withdrawal waiver consent event
     await logConsentEvent({
@@ -113,10 +118,17 @@ export async function POST(req: NextRequest) {
       sessionId: session.id
     });
 
-  } catch (error) {
-    console.error('Stripe checkout error:', error);
+  } catch (error: any) {
+    console.error('Stripe checkout error:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      param: error.param
+    });
+
     return NextResponse.json({
-      error: 'Failed to create checkout session'
+      error: `Stripe Error: ${error.message || 'Failed to create checkout session'}`,
+      stripe_error: true
     }, { status: 500 });
   }
 }
