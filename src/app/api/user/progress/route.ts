@@ -48,9 +48,16 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     ).length || 0;
 
     // Get next milestones
+    console.log('🔍 Getting milestones for user:', user.id);
     const nextStreakMilestone = await getNextMilestone(user.id);
     const nextXpMilestone = await getNextXpMilestone(user.id);
     const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
+
+    console.log('📊 Milestone results:', {
+      nextStreakMilestone: !!nextStreakMilestone,
+      nextXpMilestone: !!nextXpMilestone,
+      lastXpMilestone: !!lastXpMilestone
+    });
 
     // Get active XP boost info
     const xpBoostInfo = await getActiveXPBoost(user.id);

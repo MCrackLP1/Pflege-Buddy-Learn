@@ -118,21 +118,40 @@ export async function updateXpMilestones(userId: string, currentXp: number): Pro
 export async function getNextXpMilestone(userId: string): Promise<XpMilestone | null> {
   const supabase = createServerClient();
 
-  const { data: progress } = await supabase
+  console.log('🔍 Getting next XP milestone for user:', userId);
+
+  const { data: progress, error: progressError } = await supabase
     .from('user_progress')
     .select('xp')
     .eq('user_id', userId)
     .single();
 
-  if (!progress) return null;
+  if (progressError) {
+    console.log('❌ Error getting user progress:', progressError);
+    return null;
+  }
 
-  const { data: milestones } = await supabase
+  if (!progress) {
+    console.log('❌ No user progress found');
+    return null;
+  }
+
+  console.log('📊 User XP:', progress.xp);
+
+  const { data: milestones, error: milestonesError } = await supabase
     .from('xp_milestones')
     .select('*')
     .eq('is_active', true)
     .gt('xp_required', progress.xp)
     .order('xp_required')
     .limit(1);
+
+  if (milestonesError) {
+    console.log('❌ Error getting XP milestones:', milestonesError);
+    return null;
+  }
+
+  console.log('🎯 Found milestones:', milestones?.length || 0, milestones?.[0]);
 
   return milestones?.[0] || null;
 }

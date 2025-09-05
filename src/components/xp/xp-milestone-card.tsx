@@ -21,6 +21,13 @@ export function XpMilestoneCard({
 }: XpMilestoneCardProps) {
   const t = useTranslations();
 
+  console.log('🎯 XP Milestone Card received:', {
+    currentXp,
+    nextMilestone: !!nextMilestone,
+    lastMilestone: !!lastMilestone,
+    nextMilestoneData: nextMilestone
+  });
+
   const progressToNextMilestone = nextMilestone
     ? (currentXp / nextMilestone.xpRequired) * 100
     : 100;
