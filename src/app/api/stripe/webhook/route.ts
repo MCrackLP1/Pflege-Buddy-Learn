@@ -80,8 +80,14 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Initialize Supabase admin client
-      const supabase = createServerClient();
+      // Initialize Supabase ADMIN client (bypasses RLS for webhooks)
+      if (!process.env.SUPABASE_SERVICE_ROLE) {
+        console.error('❌ Missing SUPABASE_SERVICE_ROLE environment variable');
+        throw new Error('Webhook requires Supabase service role key');
+      }
+      
+      // Create admin client that bypasses RLS
+      const supabase = createServerClient(true); // Admin mode
       
       console.log('🔐 Testing Supabase connection...');
       
