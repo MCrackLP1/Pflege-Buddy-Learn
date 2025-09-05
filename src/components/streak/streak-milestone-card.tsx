@@ -104,7 +104,7 @@ export function StreakMilestoneCard({
         </div>
 
         {/* Next Milestone Progress */}
-        {nextMilestone && (
+        {nextMilestone ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ export function StreakMilestoneCard({
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {nextMilestone.daysRequired - currentStreak} {t('streak.daysToGo')}
+                {Math.max(0, nextMilestone.daysRequired - currentStreak)} {t('streak.daysToGo')}
               </span>
               <div className="flex items-center gap-1">
                 <Gift className="h-3 w-3" />
@@ -139,6 +139,24 @@ export function StreakMilestoneCard({
               </div>
               <div className="text-muted-foreground">
                 {nextMilestone.rewardDescription}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-yellow-500" />
+                <span>{t('streak.nextMilestone')}</span>
+              </div>
+            </div>
+            <div className="text-center p-4 bg-secondary/50 rounded-lg">
+              <Trophy className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
+              <div className="text-sm font-medium text-foreground">
+                Alle Meilensteine erreicht! 🎉
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Du hast alle verfügbaren Streak-Meilensteine gemeistert!
               </div>
             </div>
           </div>
