@@ -10,35 +10,57 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user's wallet data - simplified to just hints_balance
+    // Get user's wallet data with daily reset tracking
     const { data: wallet } = await supabase
       .from('user_wallet')
-      .select('hints_balance')
+      .select('hints_balance, daily_reset_date')
       .eq('user_id', user.id)
       .single();
 
     if (!wallet) {
-      // Create wallet if it doesn't exist - start with 5 free hints
+      // Create wallet if it doesn't exist - start with 7 hints (5 initial + 2 daily)
+      const today = new Date().toISOString().split('T')[0];
       const { data: newWallet } = await supabase
         .from('user_wallet')
         .insert({
           user_id: user.id,
-          hints_balance: 5, // Everyone starts with 5 free hints
+          hints_balance: 7, // 5 initial + 2 daily
           daily_free_hints_used: 0,
-          daily_reset_date: new Date().toISOString().split('T')[0]
+          daily_reset_date: today
         })
         .select('hints_balance')
         .single();
 
       return NextResponse.json({
         success: true,
-        hintsBalance: newWallet?.hints_balance || 5,
+        hintsBalance: newWallet?.hints_balance || 7,
       });
+    }
+
+    // Check if we need to add daily hints (2 per day)
+    const today = new Date().toISOString().split('T')[0];
+    const lastReset = wallet.daily_reset_date || today;
+
+    let currentBalance = wallet.hints_balance;
+
+    if (today > lastReset) {
+      // Add 2 daily hints
+      currentBalance += 2;
+      
+      await supabase
+        .from('user_wallet')
+        .update({
+          hints_balance: currentBalance,
+          daily_reset_date: today
+        })
+        .eq('user_id', user.id);
+        
+      console.log(`💎 Added 2 daily hints to user. New balance: ${currentBalance}`);
     }
 
     return NextResponse.json({
       success: true,  
-      hintsBalance: wallet.hints_balance,
+      hintsBalance: currentBalance,
     });
 
   } catch (error) {

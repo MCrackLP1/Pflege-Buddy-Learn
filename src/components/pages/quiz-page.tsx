@@ -247,7 +247,6 @@ export function QuizPage({ topic }: QuizPageProps) {
 
         // Update hint balance
         setHintsBalance(data.hintsBalance);
-        setFreeHintsLeft(data.freeHintsLeft);
       } else {
         console.error('Failed to use hint:', data.error);
         alert(tErrors('hintNotUsed') + ': ' + (data.error || tErrors('unknownError')));
