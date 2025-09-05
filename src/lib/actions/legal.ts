@@ -20,11 +20,15 @@ interface ConsentEventData {
 export async function logConsentEvent(data: ConsentEventData) {
   try {
     const supabase = createServerClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      throw new Error('User not authenticated');
+    // Get the current session explicitly
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.user) {
+      throw new Error(`No valid session: ${sessionError?.message || 'Session not found'}`);
     }
+
+    const user = session.user;
 
     // Get IP address (hashed for privacy)
     const headersList = headers();
