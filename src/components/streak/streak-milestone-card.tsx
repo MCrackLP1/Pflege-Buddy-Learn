@@ -28,6 +28,13 @@ export function StreakMilestoneCard({
   const t = useTranslations();
   const [timeLeft, setTimeLeft] = useState<string>('');
 
+  // Debug logging
+  console.log('StreakMilestoneCard props:', {
+    currentStreak,
+    nextMilestone,
+    nextMilestoneDays: nextMilestone?.daysRequired,
+  });
+
   // Update countdown timer for XP boost
   useEffect(() => {
     if (!xpBoostActive || !xpBoostExpiry) return;
@@ -57,9 +64,9 @@ export function StreakMilestoneCard({
     return () => clearInterval(interval);
   }, [xpBoostActive, xpBoostExpiry]);
 
-  const progressToNextMilestone = nextMilestone
-    ? (currentStreak / nextMilestone.daysRequired) * 100
-    : 100;
+  const progressToNextMilestone = nextMilestone && nextMilestone.daysRequired > 0
+    ? Math.min((currentStreak / nextMilestone.daysRequired) * 100, 100)
+    : 0;
 
   return (
     <Card className="relative overflow-hidden">

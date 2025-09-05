@@ -164,21 +164,33 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
 export async function getNextMilestone(userId: string): Promise<StreakMilestone | null> {
   const supabase = createServerClient();
 
-  const { data: progress } = await supabase
+  // Get user progress, default to 0 streak if no record exists
+  const { data: progress, error: progressError } = await supabase
     .from('user_progress')
     .select('streak_days')
     .eq('user_id', userId)
     .single();
 
-  if (!progress) return null;
+  // If no progress record exists or error (user doesn't exist yet), treat as 0 streak days
+  const streakDays = progress?.streak_days ?? 0;
 
-  const { data: milestones } = await supabase
+  console.log('getNextMilestone - userId:', userId, 'streakDays:', streakDays);
+
+  // Get next milestone greater than current streak
+  const { data: milestones, error: milestonesError } = await supabase
     .from('streak_milestones')
     .select('*')
     .eq('is_active', true)
-    .gt('days_required', progress.streak_days)
+    .gt('days_required', streakDays)
     .order('days_required')
     .limit(1);
+
+  console.log('getNextMilestone - found milestones:', milestones?.length || 0, milestones?.[0]?.days_required);
+
+  if (milestonesError) {
+    console.error('Error fetching milestones:', milestonesError);
+    return null;
+  }
 
   return milestones?.[0] || null;
 }
