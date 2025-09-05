@@ -87,17 +87,12 @@ export function DashboardCard() {
   useEffect(() => {
     async function loadRecentAnswers() {
       try {
-        console.log('🔍 Loading recent answers...');
         const response = await fetch('/api/user/recent-answers');
         const data = await response.json();
 
-        console.log('📊 Recent answers API response:', data);
-
         if (data.success) {
-          console.log('✅ Setting recent answers:', data.recent_answers?.length || 0, 'items');
           setRecentAnswers(data.recent_answers || []);
         } else {
-          console.error('❌ API returned error:', data.error);
           setRecentAnswers([]);
         }
       } catch (err) {
@@ -272,9 +267,7 @@ export function DashboardCard() {
         </Card>
 
         {/* Review Light - Recent Answers Carousel */}
-        {(() => {
-          console.log('🎯 Rendering recent answers section:', recentAnswers.length, 'items');
-          return recentAnswers.length > 0 ? (
+        {recentAnswers.length > 0 ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
@@ -394,8 +387,7 @@ export function DashboardCard() {
               </Card>
             );
           })()
-        );
-        })()}
+        )}
 
         {/* Disclaimer */}
         <Card className="border-yellow-500/20 bg-yellow-500/5">
