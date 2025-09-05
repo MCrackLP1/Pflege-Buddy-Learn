@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
 import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
 import { XpMilestoneCard } from '@/components/xp/xp-milestone-card';
-import { Target, CheckCircle, XCircle } from 'lucide-react';
+import { Target } from 'lucide-react';
 import type { StreakMilestone, XpMilestone } from '@/lib/db/schema';
 
 interface UserProgress {
@@ -29,20 +29,8 @@ interface UserProgress {
   next_milestone?: StreakMilestone;
 }
 
-interface RecentAnswer {
-  id: string;
-  isCorrect: boolean;
-  topic: string;
-  createdAt: string;
-  question: string;
-  userAnswer: string;
-  correctAnswer: string;
-  explanation: string;
-}
-
 export function DashboardCard() {
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
-  const [recentAnswers, setRecentAnswers] = useState<RecentAnswer[]>([]);
   const [, setLoading] = useState(true);
 
   const t = useTranslations();
@@ -83,163 +71,6 @@ export function DashboardCard() {
     loadUserProgress();
   }, []);
 
-  // Load recent answers for carousel
-  useEffect(() => {
-    async function loadRecentAnswers() {
-      try {
-        const response = await fetch('/api/user/recent-answers');
-        const data = await response.json();
-
-        if (data.success && data.recent_answers) {
-          setRecentAnswers(data.recent_answers);
-        } else {
-          // Fallback to demo data if API fails or returns empty
-          setRecentAnswers([
-            {
-              id: 'demo-1',
-              isCorrect: true,
-              topic: 'Grundlagen',
-              createdAt: new Date().toISOString(),
-              question: 'Was ist die normale Körpertemperatur?',
-              userAnswer: '36,1°C - 37,2°C',
-              correctAnswer: '36,1°C - 37,2°C',
-              explanation: 'Die normale Körpertemperatur liegt zwischen 36,1°C und 37,2°C.'
-            },
-            {
-              id: 'demo-2',
-              isCorrect: false,
-              topic: 'Hygiene',
-              createdAt: new Date(Date.now() - 300000).toISOString(),
-              question: 'Wie lange sollte Händedesinfektion dauern?',
-              userAnswer: '10 Sekunden',
-              correctAnswer: '30 Sekunden',
-              explanation: 'Händedesinfektion sollte mindestens 30 Sekunden dauern für eine effektive Keimreduktion.'
-            },
-            {
-              id: 'demo-3',
-              isCorrect: true,
-              topic: 'Medikamente',
-              createdAt: new Date(Date.now() - 600000).toISOString(),
-              question: 'Welche der folgenden Aussagen zur Medikamentengabe ist richtig?',
-              userAnswer: 'Immer die 5-R-Regel beachten',
-              correctAnswer: 'Immer die 5-R-Regel beachten',
-              explanation: 'Die 5-R-Regel (Richtiger Patient, Richtiges Medikament, Richtige Dosis, Richtige Zeit, Richtige Art der Verabreichung) ist essentiell für sichere Medikamentengabe.'
-            }
-          ]);
-        }
-      } catch (err) {
-        console.error('Error loading recent answers:', err);
-        // Fallback to demo data on error
-        setRecentAnswers([
-          {
-            id: 'demo-1',
-            isCorrect: true,
-            topic: 'Grundlagen',
-            createdAt: new Date().toISOString(),
-            question: 'Was ist die normale Körpertemperatur?',
-            userAnswer: '36,1°C - 37,2°C',
-            correctAnswer: '36,1°C - 37,2°C',
-            explanation: 'Die normale Körpertemperatur liegt zwischen 36,1°C und 37,2°C.'
-          }
-        ]);
-      }
-    }
-
-    loadRecentAnswers();
-  }, []);
-
-  // Auto-scroll carousel with pauses - new implementation
-  useEffect(() => {
-    if (recentAnswers.length <= 1) return;
-
-    const scrollContainer = document.getElementById('recent-answers-carousel');
-    if (!scrollContainer) return;
-
-    const cardWidth = 320 + 16; // Card width + gap
-    const scrollSpeed = 1; // pixels per frame for smooth movement
-    let currentCardIndex = 0;
-    let animationId: number;
-    let isPaused = false;
-    let pauseTimeout: NodeJS.Timeout;
-
-    const scrollToCard = (cardIndex: number) => {
-      const targetScroll = cardIndex * cardWidth;
-      const currentScroll = scrollContainer.scrollLeft;
-      const distance = targetScroll - currentScroll;
-
-      if (Math.abs(distance) < 1) {
-        // Reached target - pause for reading
-        startPause(cardIndex);
-        return;
-      }
-
-      // Smooth scroll towards target
-      const step = Math.sign(distance) * Math.min(scrollSpeed, Math.abs(distance));
-      scrollContainer.scrollLeft += step;
-      animationId = requestAnimationFrame(() => scrollToCard(cardIndex));
-    };
-
-    const startPause = (cardIndex: number) => {
-      isPaused = true;
-      // Pause for 4 seconds to allow reading
-      pauseTimeout = setTimeout(() => {
-        isPaused = false;
-        // Move to next card
-        currentCardIndex = (cardIndex + 1) % recentAnswers.length;
-        scrollToCard(currentCardIndex);
-      }, 4000); // 4 seconds pause
-    };
-
-    const startCarousel = () => {
-      currentCardIndex = 0;
-      scrollContainer.scrollLeft = 0; // Start at beginning
-      scrollToCard(0);
-    };
-
-    // Pause on hover
-    const pauseScroll = () => {
-      if (pauseTimeout) {
-        clearTimeout(pauseTimeout);
-      }
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-      isPaused = true;
-    };
-
-    const resumeScroll = () => {
-      if (!isPaused) return;
-
-      isPaused = false;
-      // Resume from current position
-      const currentScroll = scrollContainer.scrollLeft;
-      const nearestCardIndex = Math.round(currentScroll / cardWidth);
-
-      // Start pause for current card
-      startPause(nearestCardIndex % recentAnswers.length);
-    };
-
-    scrollContainer.addEventListener('mouseenter', pauseScroll);
-    scrollContainer.addEventListener('mouseleave', resumeScroll);
-
-    // Start carousel after 2 seconds
-    const startDelay = setTimeout(() => {
-      startCarousel();
-    }, 2000);
-
-    return () => {
-      clearTimeout(startDelay);
-      if (pauseTimeout) {
-        clearTimeout(pauseTimeout);
-      }
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-      scrollContainer.removeEventListener('mouseenter', pauseScroll);
-      scrollContainer.removeEventListener('mouseleave', resumeScroll);
-    };
-  }, [recentAnswers]);
-
   // Calculate today's progress (simple goal: 5 questions per day)
   const todayProgress = Math.min(((userProgress?.today_attempts || 0) / 5) * 100, 100);
 
@@ -253,46 +84,58 @@ export function DashboardCard() {
             <p className="text-muted-foreground">{t('home.subtitle')}</p>
           </CardHeader>
           <CardContent className="space-y-3">
-            {/* 1-Tap-Start: Direkter Quiz-Start */}
-            <Button
+            <Button 
+              className="w-full h-12 text-lg"
               onClick={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              size="lg"
             >
-              🚀 {t('home.quickStart') || 'Weiterlernen'}
+              ⚡ {t('home.quickStart')}
             </Button>
-
-            {/* Alternative: Topic-Auswahl */}
-            <Button
+            <Button 
+              variant="outline" 
+              className="w-full h-10"
               onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
-              variant="outline"
-              className="w-full"
-              size="sm"
             >
-              📚 {t('home.selectTopics') || 'Themen auswählen'}
+              📚 {t('home.selectTopics')}
             </Button>
           </CardContent>
         </Card>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Enhanced Streak with Milestones */}
-          <StreakMilestoneCard
-            currentStreak={userProgress?.streak_days || 0}
-            longestStreak={userProgress?.longest_streak || 0}
-            xpBoostActive={userProgress?.xp_boost_active || false}
-            xpBoostMultiplier={userProgress?.xp_boost_multiplier || 1}
-            xpBoostExpiry={userProgress?.xp_boost_expiry ? new Date(userProgress.xp_boost_expiry) : undefined}
-            nextMilestone={userProgress?.next_streak_milestone}
-          />
-
-          {/* XP Milestones */}
-          <XpMilestoneCard
-            currentXp={userProgress?.xp || 0}
-            nextMilestone={userProgress?.next_xp_milestone}
-            lastMilestone={userProgress?.last_xp_milestone}
-          />
+        {/* Progress Overview */}
+        <div className="grid grid-cols-2 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t('home.currentStreak')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{userProgress?.streak_days || 0}</div>
+              <p className="text-xs text-muted-foreground">{t('home.days')}</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">{t('home.totalXP')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{userProgress?.xp || 0}</div>
+              <p className="text-xs text-muted-foreground">XP</p>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Streak Milestone */}
+        <StreakMilestoneCard 
+          currentStreak={userProgress?.streak_days || 0}
+          longestStreak={userProgress?.longest_streak || 0}
+          nextMilestone={userProgress?.next_streak_milestone}
+        />
+
+        {/* XP Milestone */}
+        <XpMilestoneCard 
+          currentXp={userProgress?.xp || 0}
+          nextMilestone={userProgress?.next_xp_milestone}
+          lastMilestone={userProgress?.last_xp_milestone}
+        />
 
         {/* Today's Goal */}
         <Card>
@@ -309,124 +152,6 @@ export function DashboardCard() {
             </p>
           </CardContent>
         </Card>
-
-        {/* Review Light - Recent Answers Carousel */}
-        {recentAnswers.length > 0 ? (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                id="recent-answers-carousel"
-                className="flex overflow-x-auto gap-4 pb-2 scrollbar-hide scroll-smooth"
-                style={{
-                  scrollbarWidth: 'none', // Firefox
-                  msOverflowStyle: 'none', // IE/Edge
-                }}
-              >
-                {recentAnswers.map((answer) => (
-                  <div
-                    key={answer.id}
-                    className="flex-shrink-0 w-80 bg-card border border-border rounded-lg p-4 hover:bg-accent/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
-                    onClick={() => router.push(createLocalizedPath(locale, '/review'))}
-                  >
-                    {/* Status & Topic Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`flex items-center gap-2 ${
-                        answer.isCorrect ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {answer.isCorrect ? (
-                          <CheckCircle className="h-5 w-5" />
-                        ) : (
-                          <XCircle className="h-5 w-5" />
-                        )}
-                        <span className="text-sm font-medium">
-                          {answer.isCorrect ? 'Richtig' : 'Falsch'}
-                        </span>
-                      </div>
-                      <div className="text-xs bg-secondary px-2 py-1 rounded-full">
-                        {answer.topic}
-                      </div>
-                    </div>
-
-                    {/* Question */}
-                    <div className="mb-3">
-                      <p className="text-sm font-medium leading-relaxed overflow-hidden"
-                         style={{
-                           display: '-webkit-box',
-                           WebkitLineClamp: 2,
-                           WebkitBoxOrient: 'vertical'
-                         }}>
-                        {answer.question}
-                      </p>
-                    </div>
-
-                    {/* Answers */}
-                    <div className="space-y-2 mb-3">
-                      <div className="flex items-start gap-2">
-                        <span className="text-xs font-medium text-muted-foreground mt-0.5">Deine:</span>
-                        <span className="text-sm flex-1">{answer.userAnswer}</span>
-                      </div>
-                      {!answer.isCorrect && (
-                        <div className="flex items-start gap-2">
-                          <span className="text-xs font-medium text-green-600 mt-0.5">Richtig:</span>
-                          <span className="text-sm flex-1 text-green-700">{answer.correctAnswer}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Explanation (truncated) */}
-                    <div className="border-t pt-2">
-                      <p className="text-xs text-muted-foreground overflow-hidden"
-                         style={{
-                           display: '-webkit-box',
-                           WebkitLineClamp: 2,
-                           WebkitBoxOrient: 'vertical'
-                         }}>
-                        {answer.explanation}
-                      </p>
-                    </div>
-
-                    {/* Timestamp */}
-                    <div className="mt-3 pt-2 border-t text-xs text-muted-foreground">
-                      {new Date(answer.createdAt).toLocaleDateString('de-DE', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Custom CSS for hiding scrollbar completely */}
-              <style dangerouslySetInnerHTML={{
-                __html: `
-                  #recent-answers-carousel::-webkit-scrollbar {
-                    display: none;
-                  }
-                `
-              }} />
-
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <div className="text-muted-foreground mb-2">Lade Antworten...</div>
-                <div className="text-xs text-muted-foreground">
-                  Beantworte einige Fragen, um hier deine letzten Antworten zu sehen
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Disclaimer */}
         <Card className="border-yellow-500/20 bg-yellow-500/5">
