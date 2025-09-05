@@ -58,7 +58,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
   // Hint balance state
   const [hintsBalance, setHintsBalance] = useState(0);
-  const [freeHintsLeft, setFreeHintsLeft] = useState(2);
+  // Removed freeHintsLeft - using unified hints system
 
   // Initialize session
   useEffect(() => {
@@ -85,7 +85,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
         if (response.ok) {
           setHintsBalance(data.hintsBalance || 0);
-          setFreeHintsLeft(data.freeHintsLeft || 2);
+          // Using unified hints system - no separate free hints
         }
       } catch (error) {
         console.error('Error loading hints:', error);
@@ -150,7 +150,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
       if (response.ok && data.success) {
         setQuizState(prev => ({ ...prev, usedHints: prev.usedHints + 1 }));
         setHintsBalance(data.hintsBalance);
-        setFreeHintsLeft(data.freeHintsLeft);
+        // Using unified hints system
       } else {
         alert('Failed to use hint: ' + (data.error || 'Unknown error'));
       }
@@ -262,7 +262,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
   const { currentQuestion } = quizState;
   const isAnswered = quizState.answer !== undefined;
   const canShowHint = currentQuestion.hints && currentQuestion.hints.length > quizState.usedHints &&
-                     (freeHintsLeft > 0 || hintsBalance > 0);
+                     (hintsBalance > 0);
 
   return (
     <div className="space-y-6">
@@ -352,7 +352,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
           {canShowHint && !quizState.showFeedback && (
             <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="text-sm">
-                Kostenlose Hints: {freeHintsLeft} | Hints: {hintsBalance}
+                Verfügbare Hints: {hintsBalance}
               </div>
               <Button
                 variant="outline"
