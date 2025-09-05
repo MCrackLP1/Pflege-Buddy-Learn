@@ -30,6 +30,8 @@ interface QuizState {
   showFeedback: boolean;
   isLoading: boolean;
   startTime: number;
+  lastAnswerCorrect: boolean | null;
+  lastScore: number;
 }
 
 export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
@@ -50,6 +52,8 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
     showFeedback: false,
     isLoading: true,
     startTime: Date.now(),
+    lastAnswerCorrect: null,
+    lastScore: 0,
   });
 
   // Hint balance state
@@ -110,6 +114,8 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
           showFeedback: false,
           isLoading: false,
           startTime: Date.now(),
+          lastAnswerCorrect: null,
+          lastScore: 0,
         });
       } else {
         throw new Error(data.error || 'No questions available');
@@ -190,7 +196,17 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
         setStats(newStats);
         onUpdateStats(newStats);
 
-        setQuizState(prev => ({ ...prev, showFeedback: true }));
+        setQuizState(prev => ({ 
+          ...prev, 
+          showFeedback: true, 
+          lastAnswerCorrect: isCorrect,
+          lastScore: score 
+        }));
+
+        // Auto-advance to next question after 2 seconds
+        setTimeout(() => {
+          loadNextQuestion();
+        }, 2000);
       } else {
         throw new Error(data.error);
       }
@@ -200,9 +216,6 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
     }
   };
 
-  const handleNext = () => {
-    loadNextQuestion();
-  };
 
   const handleEndSession = async () => {
     if (!sessionId) return;
@@ -364,8 +377,29 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
             </div>
           )}
 
-          {/* Submit/Next Button */}
-          {!quizState.showFeedback ? (
+          {/* Feedback Display */}
+          {quizState.showFeedback && quizState.lastAnswerCorrect !== null && (
+            <div className={`p-4 rounded-lg text-center ${
+              quizState.lastAnswerCorrect 
+                ? 'bg-green-500/10 border border-green-500/20' 
+                : 'bg-red-500/10 border border-red-500/20'
+            }`}>
+              <div className={`text-lg font-bold ${
+                quizState.lastAnswerCorrect ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {quizState.lastAnswerCorrect ? 'Richtig!' : 'Falsch!'}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {quizState.lastScore > 0 ? '+' : ''}{quizState.lastScore} Punkte
+              </div>
+              <div className="text-xs text-muted-foreground mt-2">
+                Automatische Weiterleitung zur nächsten Frage...
+              </div>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          {!quizState.showFeedback && (
             <Button
               onClick={() => submitAnswer()}
               disabled={!isAnswered}
@@ -373,14 +407,6 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
               size="lg"
             >
               {t('quiz.submit')}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              className="w-full"
-              size="lg"
-            >
-              Nächste Frage
             </Button>
           )}
         </CardContent>
