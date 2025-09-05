@@ -146,14 +146,28 @@ export async function getNextXpMilestone(userId: string): Promise<XpMilestone | 
     .order('xp_required')
     .limit(1);
 
-  if (milestonesError) {
-    console.log('❌ Error getting XP milestones:', milestonesError);
-    return null;
+  // Fallback to hardcoded milestones if database query fails or returns empty
+  let nextMilestone = milestones?.[0] || null;
+
+  if (!nextMilestone || milestonesError) {
+    console.log('⚠️ Using fallback XP milestones due to error or empty result:', milestonesError);
+
+    // Hardcoded XP milestones as fallback
+    const fallbackMilestones = [
+      { id: '1', xpRequired: 100, freeHintsReward: 5, rewardDescription: '100 XP erreicht! Du erhältst 5 gratis Hints für deine Lernfortschritte.', isActive: true, createdAt: new Date() },
+      { id: '2', xpRequired: 500, freeHintsReward: 5, rewardDescription: '500 XP erreicht! Du erhältst 5 gratis Hints als Belohnung.', isActive: true, createdAt: new Date() },
+      { id: '3', xpRequired: 1000, freeHintsReward: 5, rewardDescription: '1000 XP erreicht! Du erhältst 5 gratis Hints - du bist auf dem richtigen Weg!', isActive: true, createdAt: new Date() },
+      { id: '4', xpRequired: 2500, freeHintsReward: 5, rewardDescription: '2500 XP erreicht! Du erhältst 5 gratis Hints für deine beeindruckenden Fortschritte.', isActive: true, createdAt: new Date() },
+      { id: '5', xpRequired: 5000, freeHintsReward: 5, rewardDescription: '5000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Lern-Champion!', isActive: true, createdAt: new Date() },
+    ];
+
+    nextMilestone = fallbackMilestones.find(m => m.xpRequired > progress.xp) || null;
+    console.log('🎯 Using fallback milestone:', nextMilestone);
+  } else {
+    console.log('🎯 Found database milestone:', nextMilestone);
   }
 
-  console.log('🎯 Found milestones:', milestones?.length || 0, milestones?.[0]);
-
-  return milestones?.[0] || null;
+  return nextMilestone;
 }
 
 /**
@@ -176,11 +190,40 @@ export async function getLastAchievedXpMilestone(userId: string): Promise<XpMile
   }
 
   // Then get the milestone data
-  const { data: milestone } = await supabase
+  const { data: milestone, error: milestoneError } = await supabase
     .from('xp_milestones')
     .select('*')
     .eq('id', lastAchievement[0].milestone_id)
     .single();
+
+  if (milestoneError || !milestone) {
+    console.log('⚠️ Milestone not found in database, using fallback for last achieved');
+
+    // Find the last achieved milestone based on user progress
+    const { data: userProgress } = await supabase
+      .from('user_progress')
+      .select('xp')
+      .eq('user_id', userId)
+      .single();
+
+    if (userProgress) {
+      const fallbackMilestones = [
+        { id: '1', xpRequired: 100, freeHintsReward: 5, rewardDescription: '100 XP erreicht! Du erhältst 5 gratis Hints für deine Lernfortschritte.', isActive: true, createdAt: new Date() },
+        { id: '2', xpRequired: 500, freeHintsReward: 5, rewardDescription: '500 XP erreicht! Du erhältst 5 gratis Hints als Belohnung.', isActive: true, createdAt: new Date() },
+        { id: '3', xpRequired: 1000, freeHintsReward: 5, rewardDescription: '1000 XP erreicht! Du erhältst 5 gratis Hints - du bist auf dem richtigen Weg!', isActive: true, createdAt: new Date() },
+        { id: '4', xpRequired: 2500, freeHintsReward: 5, rewardDescription: '2500 XP erreicht! Du erhältst 5 gratis Hints für deine beeindruckenden Fortschritte.', isActive: true, createdAt: new Date() },
+        { id: '5', xpRequired: 5000, freeHintsReward: 5, rewardDescription: '5000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Lern-Champion!', isActive: true, createdAt: new Date() },
+      ];
+
+      // Find the highest milestone that the user has achieved
+      const lastAchieved = fallbackMilestones
+        .filter(m => m.xpRequired <= userProgress.xp)
+        .sort((a, b) => b.xpRequired - a.xpRequired)[0];
+
+      console.log('🎯 Using fallback for last achieved milestone:', lastAchieved);
+      return lastAchieved || null;
+    }
+  }
 
   return milestone || null;
 }
