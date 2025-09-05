@@ -5,11 +5,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { createLocalizedPath } from '@/lib/navigation';
-import { Home, BookOpen, History, User, Trophy } from 'lucide-react';
+import { Home, BookOpen, History, User, Trophy, ShoppingCart } from 'lucide-react';
 
 const navigationItems = [
   { key: 'home', icon: Home, path: '' },
   { key: 'learn', icon: BookOpen, path: 'learn' },
+  { key: 'shop', icon: ShoppingCart, path: 'shop' },
   { key: 'ranked', icon: Trophy, path: 'ranked' },
   { key: 'review', icon: History, path: 'review' },
   { key: 'profile', icon: User, path: 'profile' },
