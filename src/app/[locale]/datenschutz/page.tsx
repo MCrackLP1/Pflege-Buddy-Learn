@@ -88,6 +88,12 @@ export default function DatenschutzPage() {
               <p>Vercel stellt die technische Infrastruktur für die App bereit.</p>
               <p className="text-sm text-muted-foreground">DPA: {LEGAL_CONFIG.processors.vercel}</p>
             </div>
+
+            <div className="border-l-4 border-green-500 pl-4">
+              <h4 className="font-medium">Zahlungsabwicklung (Art. 6 Abs. 1 lit. b DSGVO)</h4>
+              <p>Stripe verarbeitet Ihre Zahlungsdaten für den Kauf von virtuellen Gegenständen.</p>
+              <p className="text-sm text-muted-foreground">DPA: {LEGAL_CONFIG.processors.stripe}</p>
+            </div>
           </div>
         </section>
 

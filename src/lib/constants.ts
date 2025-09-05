@@ -42,6 +42,7 @@ export const LEGAL_CONFIG = {
   processors: {
     supabase: process.env.LEGAL_PROCESSOR_SUPABASE_DPA || 'https://supabase.com/privacy',
     vercel: process.env.LEGAL_PROCESSOR_VERCEL_DPA || 'https://vercel.com/legal/dpa',
+    stripe: process.env.LEGAL_PROCESSOR_STRIPE_DPA || 'https://stripe.com/de/privacy',
   },
 
   // Legal pages paths

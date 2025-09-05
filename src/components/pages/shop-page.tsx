@@ -226,12 +226,19 @@ export function ShopPage() {
         </div>
 
         {/* Legal Notice */}
-        <div className="mt-6 text-xs text-muted-foreground text-center">
-          Durch den Kauf stimmst du unseren{' '}
-          <a href="/agb" className="underline hover:text-primary">AGB</a>
-          {' '}und der{' '}
-          <a href="/datenschutz" className="underline hover:text-primary">Datenschutzerklärung</a>
-          {' '}zu.
+        <div className="mt-6 text-xs text-muted-foreground text-center space-y-2">
+          <p>
+            Durch den Kauf stimmst du unseren{' '}
+            <a href="/agb" className="underline hover:text-primary">AGB</a>
+            {' '}und der{' '}
+            <a href="/datenschutz" className="underline hover:text-primary">Datenschutzerklärung</a>
+            {' '}zu.
+          </p>
+          <p>
+            <strong>Wichtiger Hinweis:</strong> Digitale Inhalte können nach Lieferung nicht 
+            zurückgegeben werden. Mit dem Kauf stimmst du der sofortigen Bereitstellung zu.{' '}
+            <a href="/widerruf" className="underline hover:text-primary">Mehr zum Widerrufsrecht</a>
+          </p>
         </div>
       </div>
     </MainLayout>

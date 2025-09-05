@@ -74,15 +74,34 @@ export default function AgbPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-semibold">5. Virtuelle Gegenstände</h2>
+          <h2 className="text-2xl font-semibold">5. Virtuelle Gegenstände und Zahlungen</h2>
+          
+          <h3 className="text-xl font-medium">5.1 Verfügbare virtuelle Gegenstände</h3>
           <p>
-            Die App bietet virtuelle Gegenstände (Hinweise, Zeit-Boosts, Schilde etc.)
-            zum Erwerb. Diese Gegenstände:
+            Die App bietet verschiedene virtuelle Gegenstände zum Erwerb:
           </p>
           <ul className="list-disc pl-6">
-            <li>Sind nicht erstattungsfähig, außer bei Mängeln oder gesetzlichen Ansprüchen</li>
-            <li>Können nach Lieferung nicht mehr zurückgenommen werden</li>
-            <li>Verfallen nicht und bleiben im Konto verfügbar</li>
+            <li><strong>Hints:</strong> Zusätzliche Hinweise für schwierige Quiz-Fragen</li>
+            <li>Verfügbare Pakete: 10 Hints (€4,99), 30 Hints (€9,99), 100 Hints (€24,99)</li>
+            <li>Alle Preise verstehen sich als Bruttopreise inkl. gesetzlicher Umsatzsteuer</li>
+          </ul>
+
+          <h3 className="text-xl font-medium">5.2 Zahlungsabwicklung</h3>
+          <p>
+            Zahlungen werden sicher über <strong>Stripe</strong> abgewickelt. Akzeptierte Zahlungsmethoden:
+          </p>
+          <ul className="list-disc pl-6">
+            <li>Kreditkarten (Visa, Mastercard, American Express)</li>
+            <li>Debitkarten</li>
+            <li>Apple Pay und Google Pay (falls verfügbar)</li>
+          </ul>
+
+          <h3 className="text-xl font-medium">5.3 Eigenschaften virtueller Gegenstände</h3>
+          <ul className="list-disc pl-6">
+            <li>Sind <strong>sofort verfügbar</strong> nach erfolgreicher Zahlung</li>
+            <li>Sind <strong>nicht erstattungsfähig</strong> nach Lieferung (außer bei Mängeln)</li>
+            <li><strong>Verfallen nicht</strong> und bleiben dauerhaft im Konto verfügbar</li>
+            <li>Sind <strong>nicht übertragbar</strong> zwischen verschiedenen Konten</li>
           </ul>
 
           <p className="mt-4">
