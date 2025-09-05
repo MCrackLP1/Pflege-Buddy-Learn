@@ -44,10 +44,14 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (attemptsError) {
-      console.error('Database error fetching attempts:', attemptsError);
+    if (attemptsError || !attempts || attempts.length === 0) {
+      if (attemptsError) {
+        console.error('Database error fetching attempts:', attemptsError);
+      } else {
+        console.log('No attempts found for user, using mock data');
+      }
 
-      // Fallback: Return mock data for testing
+      // Fallback: Return mock data for testing or when no attempts exist
       const mockRecentAnswers: RecentAnswer[] = [
         {
           id: 'mock-1',
