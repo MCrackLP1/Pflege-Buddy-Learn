@@ -55,12 +55,12 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     // Convert snake_case to camelCase for frontend
     const nextStreakMilestone = nextStreakMilestoneRaw ? {
       id: nextStreakMilestoneRaw.id,
-      daysRequired: nextStreakMilestoneRaw.days_required,
-      xpBoostMultiplier: nextStreakMilestoneRaw.xp_boost_multiplier,
-      boostDurationHours: nextStreakMilestoneRaw.boost_duration_hours,
-      rewardDescription: nextStreakMilestoneRaw.reward_description,
-      isActive: nextStreakMilestoneRaw.is_active,
-      createdAt: nextStreakMilestoneRaw.created_at,
+      daysRequired: nextStreakMilestoneRaw.daysRequired,
+      xpBoostMultiplier: nextStreakMilestoneRaw.xpBoostMultiplier,
+      boostDurationHours: nextStreakMilestoneRaw.boostDurationHours,
+      rewardDescription: nextStreakMilestoneRaw.rewardDescription,
+      isActive: nextStreakMilestoneRaw.isActive,
+      createdAt: nextStreakMilestoneRaw.createdAt,
     } : null;
 
     // Get active XP boost info
