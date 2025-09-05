@@ -31,6 +31,7 @@ export async function GET() {
         .single();
 
       return NextResponse.json({
+        success: true,
         hintsBalance: newWallet?.hints_balance || 0,
         dailyFreeHintsUsed: newWallet?.daily_free_hints_used || 0,
         freeHintsLeft: 2, // Daily free hints limit
@@ -60,6 +61,7 @@ export async function GET() {
     const freeHintsLeft = Math.max(0, 2 - dailyFreeHintsUsed);
 
     return NextResponse.json({
+      success: true,
       hintsBalance: wallet.hints_balance,
       dailyFreeHintsUsed,
       freeHintsLeft,

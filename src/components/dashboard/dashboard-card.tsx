@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
 import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
 import { XpMilestoneCard } from '@/components/xp/xp-milestone-card';
+import { HintsDisplay } from '@/components/ui/hints-display';
 import { Target } from 'lucide-react';
 import type { StreakMilestone, XpMilestone } from '@/lib/db/schema';
 
@@ -122,6 +123,9 @@ export function DashboardCard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Hints Display */}
+        <HintsDisplay />
 
         {/* Streak Milestone */}
         <StreakMilestoneCard 
