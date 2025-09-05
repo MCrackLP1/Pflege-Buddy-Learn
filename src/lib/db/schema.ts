@@ -151,6 +151,43 @@ export const legalConsentEvents = pgTable('legal_consent_events', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// Ranked mode tables
+export const rankedSessions = pgTable('ranked_sessions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull(),
+  startedAt: timestamp('started_at').defaultNow().notNull(),
+  endedAt: timestamp('ended_at'),
+  totalScore: integer('total_score').notNull().default(0),
+  questionsAnswered: integer('questions_answered').notNull().default(0),
+  correctAnswers: integer('correct_answers').notNull().default(0),
+  totalTimeMs: integer('total_time_ms').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+});
+
+export const rankedAttempts = pgTable('ranked_attempts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  sessionId: uuid('session_id').references(() => rankedSessions.id, { onDelete: 'cascade' }).notNull(),
+  questionId: uuid('question_id').references(() => questions.id).notNull(),
+  isCorrect: boolean('is_correct').notNull(),
+  timeMs: integer('time_ms').notNull(),
+  usedHints: integer('used_hints').notNull().default(0),
+  score: integer('score').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const rankedLeaderboard = pgTable('ranked_leaderboard', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull(),
+  sessionId: uuid('session_id').references(() => rankedSessions.id, { onDelete: 'cascade' }).notNull(),
+  totalScore: integer('total_score').notNull(),
+  questionsAnswered: integer('questions_answered').notNull(),
+  correctAnswers: integer('correct_answers').notNull(),
+  accuracy: integer('accuracy').notNull(), // percentage * 100 for precision
+  averageTimeMs: integer('average_time_ms').notNull(),
+  rank: integer('rank'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 // Relations
 export const topicsRelations = relations(topics, ({ many }) => ({
   questions: many(questions),
@@ -196,6 +233,21 @@ export const userMilestoneAchievementsRelations = relations(userMilestoneAchieve
   }),
 }));
 
+// Ranked mode relations
+export const rankedSessionsRelations = relations(rankedSessions, ({ many }) => ({
+  attempts: many(rankedAttempts),
+  leaderboardEntries: many(rankedLeaderboard),
+}));
+
+export const rankedAttemptsRelations = relations(rankedAttempts, ({ one }) => ({
+  session: one(rankedSessions, { fields: [rankedAttempts.sessionId], references: [rankedSessions.id] }),
+  question: one(questions, { fields: [rankedAttempts.questionId], references: [questions.id] }),
+}));
+
+export const rankedLeaderboardRelations = relations(rankedLeaderboard, ({ one }) => ({
+  session: one(rankedSessions, { fields: [rankedLeaderboard.sessionId], references: [rankedSessions.id] }),
+}));
+
 // Types
 export type Topic = typeof topics.$inferSelect;
 export type Question = typeof questions.$inferSelect;
@@ -210,6 +262,9 @@ export type StreakMilestone = typeof streakMilestones.$inferSelect;
 export type XpMilestone = typeof xpMilestones.$inferSelect;
 export type UserMilestoneAchievement = typeof userMilestoneAchievements.$inferSelect;
 export type LegalConsentEvent = typeof legalConsentEvents.$inferSelect;
+export type RankedSession = typeof rankedSessions.$inferSelect;
+export type RankedAttempt = typeof rankedAttempts.$inferSelect;
+export type RankedLeaderboardEntry = typeof rankedLeaderboard.$inferSelect;
 
 export type QuestionWithChoices = Question & {
   choices: Choice[];
