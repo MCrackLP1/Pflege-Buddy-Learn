@@ -23,12 +23,22 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       .eq('user_id', user.id)
       .eq('is_active', true);
 
-    // Create new session
+    // Get user's current global ranked score
+    const { data: userProgress } = await supabase
+      .from('user_progress')
+      .select('ranked_score, ranked_questions_total, ranked_correct_total, ranked_sessions_played')
+      .eq('user_id', user.id)
+      .single();
+
+    const currentScore = userProgress?.ranked_score || 0;
+
+    // Create new session with current global score
     const { data: session, error: sessionError } = await supabase
       .from('ranked_sessions')
       .insert({
         user_id: user.id,
         is_active: true,
+        total_score: currentScore, // Start with global score
       })
       .select()
       .single();
@@ -39,6 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
 
     return NextResponse.json({
       session,
+      currentGlobalScore: currentScore,
       success: true
     });
 

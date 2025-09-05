@@ -18,12 +18,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse>> 
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '50');
 
-    // Get leaderboard data
+    // Get global leaderboard from view (one entry per user)
     const { data: leaderboard, error: leaderboardError } = await supabase
-      .from('ranked_leaderboard')
+      .from('global_ranked_leaderboard')
       .select('*')
-      .order('total_score', { ascending: false })
-      .order('created_at', { ascending: true }) // For tie-breaking
       .limit(limit);
 
     if (leaderboardError) throw leaderboardError;
@@ -37,24 +35,17 @@ export async function GET(req: NextRequest): Promise<NextResponse<ApiResponse>> 
       });
     }
 
-    // Get user profiles for display names
-    const userIds = leaderboard.map(entry => entry.user_id);
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, display_name')
-      .in('user_id', userIds);
-
-    // Create a map for quick profile lookup
-    const profileMap = new Map(
-      profiles?.map(profile => [profile.user_id, profile.display_name]) || []
-    );
-
-    // Add rank and profile info to each entry
-    const rankedLeaderboard = leaderboard.map((entry, index) => ({
-      ...entry,
-      rank: index + 1,
-      accuracy: entry.accuracy / 100, // Convert back to percentage
-      display_name: profileMap.get(entry.user_id) || 'Unbekannter Nutzer'
+    // Format leaderboard data
+    const rankedLeaderboard = leaderboard.map((entry) => ({
+      id: entry.user_id, // Use user_id as unique identifier
+      user_id: entry.user_id,
+      total_score: entry.total_score,
+      questions_answered: entry.questions_answered,
+      correct_answers: entry.correct_answers,
+      accuracy: entry.accuracy,
+      rank: entry.rank,
+      display_name: entry.display_name || 'Unbekannter Nutzer',
+      created_at: new Date().toISOString(), // Placeholder
     }));
 
     // Find user's rank

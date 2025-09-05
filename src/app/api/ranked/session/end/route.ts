@@ -58,6 +58,30 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
 
     if (updateError) throw updateError;
 
+    // Update global user progress with session results
+    const { data: currentProgress } = await supabase
+      .from('user_progress')
+      .select('ranked_score, ranked_questions_total, ranked_correct_total, ranked_sessions_played')
+      .eq('user_id', user.id)
+      .single();
+
+    // Calculate new global totals (session.total_score already includes previous score)
+    const newGlobalScore = session.total_score; // Session already started with global score
+    const newQuestionTotal = (currentProgress?.ranked_questions_total || 0) + session.questions_answered;
+    const newCorrectTotal = (currentProgress?.ranked_correct_total || 0) + session.correct_answers;
+    const newSessionsPlayed = (currentProgress?.ranked_sessions_played || 0) + 1;
+
+    // Update user's global ranked progress
+    await supabase
+      .from('user_progress')
+      .upsert({
+        user_id: user.id,
+        ranked_score: newGlobalScore,
+        ranked_questions_total: newQuestionTotal,
+        ranked_correct_total: newCorrectTotal,
+        ranked_sessions_played: newSessionsPlayed,
+      });
+
     // Calculate final stats
     const accuracy = session.questions_answered > 0
       ? Math.round((session.correct_answers / session.questions_answered) * 10000) / 100 // percentage with 2 decimal places
@@ -66,31 +90,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
     const averageTimeMs = session.questions_answered > 0
       ? Math.round(session.total_time_ms / session.questions_answered)
       : 0;
-
-    // Add to leaderboard if they answered at least 5 questions
-    let leaderboardEntry = null;
-    if (session.questions_answered >= 5) {
-      const { data: entry, error: leaderboardError } = await supabase
-        .from('ranked_leaderboard')
-        .insert({
-          user_id: user.id,
-          session_id: sessionId,
-          total_score: session.total_score,
-          questions_answered: session.questions_answered,
-          correct_answers: session.correct_answers,
-          accuracy: Math.round(accuracy * 100), // Store as integer (percentage * 100)
-          average_time_ms: averageTimeMs,
-        })
-        .select()
-        .single();
-
-      if (leaderboardError) {
-        console.error('Failed to save leaderboard entry:', leaderboardError);
-        // Don't fail the request if leaderboard save fails
-      } else {
-        leaderboardEntry = entry;
-      }
-    }
 
     return NextResponse.json({
       session: updatedSession,
