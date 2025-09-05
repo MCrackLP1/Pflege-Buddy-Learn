@@ -57,7 +57,7 @@ export function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
         <div>
           <h2 className="text-xl font-semibold mb-2">Ein Fehler ist aufgetreten</h2>
           <p className="text-muted-foreground mb-4">
-            {error.message || 'Unbekannter Fehler'}
+            {error.message || 'Unknown error'}
           </p>
           <button 
             onClick={onRetry}

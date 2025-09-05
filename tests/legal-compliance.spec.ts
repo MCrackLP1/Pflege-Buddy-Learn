@@ -5,25 +5,46 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
     test('should show cookie banner on first visit', async ({ page, context }) => {
       // Clear all cookies and localStorage
       await context.clearCookies();
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        try {
+          localStorage.clear();
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          // Try sessionStorage as fallback
+          try {
+            sessionStorage.clear();
+          } catch (sessionError) {
+            console.warn('sessionStorage also not available in test');
+          }
+        }
+      });
 
       await page.goto('/');
 
       // Cookie banner should be visible
-      const cookieBanner = page.locator('[data-testid="cookie-banner"]').or(
-        page.getByText('Cookie-Einstellungen')
-      );
+      const cookieBanner = page.locator('[data-testid="cookie-banner"]');
       await expect(cookieBanner).toBeVisible();
 
-      // Should have required buttons
-      await expect(page.getByRole('button', { name: /Alle akzeptieren/ })).toBeVisible();
-      await expect(page.getByRole('button', { name: /Nur essenzielle/ })).toBeVisible();
-      await expect(page.getByRole('link', { name: /Einstellungen/ })).toBeVisible();
+      // Should have required buttons (using i18n text)
+      await expect(cookieBanner.getByRole('button', { name: /Alle akzeptieren/ })).toBeVisible();
+      await expect(cookieBanner.getByRole('button', { name: /Nur essenzielle/ })).toBeVisible();
+      await expect(cookieBanner.getByRole('link', { name: /Einstellungen/ })).toBeVisible();
     });
 
     test('should accept only essential cookies', async ({ page, context }) => {
       await context.clearCookies();
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        try {
+          localStorage.clear();
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          try {
+            sessionStorage.clear();
+          } catch (sessionError) {
+            console.warn('sessionStorage also not available in test');
+          }
+        }
+      });
 
       await page.goto('/');
 
@@ -37,9 +58,15 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
       await expect(cookieBanner).not.toBeVisible();
 
       // Check localStorage preferences
-      const preferences = await page.evaluate(() =>
-        JSON.parse(localStorage.getItem('cookiePreferences') || '{}')
-      );
+      const preferences = await page.evaluate(() => {
+        try {
+          const stored = localStorage.getItem('cookiePreferences') || '{}';
+          return JSON.parse(stored);
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          return {};
+        }
+      });
 
       expect(preferences.essential).toBe(true);
       expect(preferences.functional).toBe(false);
@@ -49,7 +76,18 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
 
     test('should accept all cookies', async ({ page, context }) => {
       await context.clearCookies();
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        try {
+          localStorage.clear();
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          try {
+            sessionStorage.clear();
+          } catch (sessionError) {
+            console.warn('sessionStorage also not available in test');
+          }
+        }
+      });
 
       await page.goto('/');
 
@@ -63,9 +101,15 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
       await expect(cookieBanner).not.toBeVisible();
 
       // Check localStorage preferences
-      const preferences = await page.evaluate(() =>
-        JSON.parse(localStorage.getItem('cookiePreferences') || '{}')
-      );
+      const preferences = await page.evaluate(() => {
+        try {
+          const stored = localStorage.getItem('cookiePreferences') || '{}';
+          return JSON.parse(stored);
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          return {};
+        }
+      });
 
       expect(preferences.essential).toBe(true);
       expect(preferences.functional).toBe(true);
@@ -75,7 +119,18 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
 
     test('should allow cookie settings management', async ({ page, context }) => {
       await context.clearCookies();
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        try {
+          localStorage.clear();
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+          try {
+            sessionStorage.clear();
+          } catch (sessionError) {
+            console.warn('sessionStorage also not available in test');
+          }
+        }
+      });
 
       await page.goto('/');
 
@@ -194,7 +249,13 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
 
   test.describe('Age Verification', () => {
     test('should show age gate on first sign-in attempt', async ({ page }) => {
-      await page.evaluate(() => localStorage.removeItem('ageVerified'));
+      await page.evaluate(() => {
+        try {
+          localStorage.removeItem('ageVerified');
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+        }
+      });
 
       await page.goto('/');
 
@@ -218,7 +279,13 @@ test.describe('Legal Compliance - DSGVO/TTDSG/BGB', () => {
 
     test('should bypass age gate after verification', async ({ page }) => {
       // Pre-set age verification
-      await page.evaluate(() => localStorage.setItem('ageVerified', 'true'));
+      await page.evaluate(() => {
+        try {
+          localStorage.setItem('ageVerified', 'true');
+        } catch (error) {
+          console.warn('localStorage not available in test:', error);
+        }
+      });
 
       await page.goto('/');
 

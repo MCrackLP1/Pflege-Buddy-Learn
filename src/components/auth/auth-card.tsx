@@ -6,6 +6,7 @@ import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AgeGateModal } from './age-gate-modal';
+import { getStorageItem, setStorageItem } from '@/lib/utils/safe-storage';
 
 export function AuthCard() {
   const t = useTranslations('auth');
@@ -14,7 +15,7 @@ export function AuthCard() {
 
   const handleSignInClick = () => {
     // Check if age verification has been completed
-    const ageVerified = localStorage.getItem('ageVerified');
+    const ageVerified = getStorageItem('ageVerified');
     if (ageVerified === 'true') {
       signIn();
     } else {
@@ -23,7 +24,7 @@ export function AuthCard() {
   };
 
   const handleAgeConfirm = () => {
-    localStorage.setItem('ageVerified', 'true');
+    setStorageItem('ageVerified', 'true');
     setShowAgeGate(false);
     signIn();
   };

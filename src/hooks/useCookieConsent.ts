@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { getStorageItem, setStorageItem, removeStorageItem } from '@/lib/utils/safe-storage';
 
 interface CookiePreferences {
   essential: boolean;
@@ -22,8 +23,8 @@ export function useCookieConsent() {
 
   // Load preferences from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('cookiePreferences');
-    const consentGiven = localStorage.getItem('cookieConsentGiven');
+    const saved = getStorageItem('cookiePreferences');
+    const consentGiven = getStorageItem('cookieConsentGiven');
 
     if (saved && consentGiven === 'true') {
       try {
@@ -41,8 +42,8 @@ export function useCookieConsent() {
   // Save preferences and trigger consent event
   const updatePreferences = useCallback(async (newPreferences: CookiePreferences) => {
     setPreferences(newPreferences);
-    localStorage.setItem('cookiePreferences', JSON.stringify(newPreferences));
-    localStorage.setItem('cookieConsentGiven', 'true');
+    setStorageItem('cookiePreferences', JSON.stringify(newPreferences));
+    setStorageItem('cookieConsentGiven', 'true');
     setHasConsent(true);
 
     // Trigger custom event for other components to react
@@ -81,8 +82,8 @@ export function useCookieConsent() {
 
   // Reset consent (for testing/development)
   const resetConsent = useCallback(() => {
-    localStorage.removeItem('cookiePreferences');
-    localStorage.removeItem('cookieConsentGiven');
+    removeStorageItem('cookiePreferences');
+    removeStorageItem('cookieConsentGiven');
     setPreferences({
       essential: true,
       functional: false,

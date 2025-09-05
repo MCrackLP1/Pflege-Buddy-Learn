@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { LEGAL_CONFIG } from '@/lib/constants';
+import { getStorageItem, setStorageItem } from '@/lib/utils/safe-storage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -30,7 +31,7 @@ export default function CookieEinstellungenPage() {
 
   // Load saved preferences on mount
   useEffect(() => {
-    const saved = localStorage.getItem('cookiePreferences');
+    const saved = getStorageItem('cookiePreferences');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -53,7 +54,7 @@ export default function CookieEinstellungenPage() {
 
     try {
       // Save to localStorage
-      localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+      setStorageItem('cookiePreferences', JSON.stringify(preferences));
 
       // Here you would also send to your backend for server-side tracking
       // await saveCookieConsent(preferences);

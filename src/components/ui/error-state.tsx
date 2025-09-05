@@ -12,8 +12,8 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ 
-  title = 'Ein Fehler ist aufgetreten',
-  message = 'Bitte versuchen Sie es erneut.',
+  title = 'An error occurred',
+  message = 'Please try again.',
   onRetry,
   showRetry = true,
   icon = <AlertCircle className="h-12 w-12 text-red-500" />

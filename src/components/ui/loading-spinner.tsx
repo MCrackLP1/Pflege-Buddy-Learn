@@ -28,7 +28,7 @@ interface LoadingStateProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function LoadingState({ message = 'Lädt...', size = 'md' }: LoadingStateProps) {
+export function LoadingState({ message = 'Loading...', size = 'md' }: LoadingStateProps) {
   return (
     <div className="flex items-center justify-center py-12">
       <div className="text-center space-y-4">

@@ -151,6 +151,124 @@
     "notFound": "Not found",
     "serverError": "Server error",
     "networkError": "Network error",
-    "invalidInput": "Invalid input"
+    "invalidInput": "Invalid input",
+    "loadingQuestions": "Error loading questions",
+    "savingName": "Error saving name. Please try again.",
+    "usingHint": "Error using hint",
+    "hintNotUsed": "Hint could not be used",
+    "unknownError": "Unknown error",
+    "resetQuiz": "Error resetting quiz attempts. Please try again.",
+    "resetQuizFailed": "Error resetting",
+    "purchaseError": "Unexpected error during purchase. Please try again.",
+    "loadingTopics": "Error loading topics",
+    "loadingReview": "Failed to load review data",
+    "defaultError": "An error occurred",
+    "defaultRetry": "Please try again."
+  },
+  "legal": {
+    "agb": {
+      "title": "Terms of Service",
+      "subtitle": "Terms of use for PflegeBuddy Learn • Version {version} • Last updated: {date}",
+      "widerrufsLink": "Withdrawal policy"
+    },
+    "datenschutz": {
+      "title": "Privacy Policy",
+      "subtitle": "According to GDPR • Version {version} • Last updated: {date}",
+      "cookieSettingsLink": "Cookie Settings"
+    },
+    "impressum": {
+      "title": "Legal Notice",
+      "subtitle": "Information according to § 5 TMG • Last updated: {date}",
+      "contactLabel": "Contact:",
+      "addressLabel": "Address:",
+      "vatIdLabel": "VAT ID:",
+      "vatNoticeLabel": "Note on VAT:"
+    },
+    "cookies": {
+      "bannerTitle": "🍪 Cookie Settings",
+      "bannerDescription": "We use cookies to provide you with the best experience on our website. Some cookies are essential for the operation of the website, others help us improve the website.",
+      "acceptAll": "Accept all",
+      "settings": "Settings",
+      "essentialOnly": "Essential only",
+      "bannerFooter": "By clicking \"Accept all\" you consent to the use of all cookies. More information can be found in our",
+      "cookiePolicyLink": "Cookie Policy",
+      "privacyPolicyLink": "Privacy Policy"
+    },
+    "ageGate": {
+      "title": "Age Verification",
+      "description": "Before you proceed, we need to confirm your age.",
+      "legalNoticeTitle": "Important legal notice:",
+      "legalNotice": "According to Art. 8 GDPR in conjunction with § 25 para. 1 KDG, use of our app is only allowed for persons aged 16 and over.",
+      "confirmAge": "I confirm that I am at least 16 years old.",
+      "confirmAgeDesc": "This app is not intended for children and adolescents under 16 years of age.",
+      "privacyConsequencesTitle": "Privacy consequences:",
+      "privacyConsequences": "• Upon confirmation: Continue with registration\n• Without confirmation: No access to the app possible\n• No storage of personal data of under-16s\n• Immediate deletion if subsequently discovered",
+      "contactNote": "If you have questions about our privacy practices, please contact us.",
+      "proceed": "Continue"
+    },
+    "withdrawal": {
+      "title": "Waiver of withdrawal for digital content",
+      "description": "Before proceeding with your purchase, you must agree to the following legal notices.",
+      "importantNotice": "For digital content (such as virtual hints), your 14-day right of withdrawal expires if the contract is performed with your consent before the end of the withdrawal period (§ 356 para. 5 BGB).",
+      "consent1": "I agree that performance of the contract will begin before the end of the withdrawal period.",
+      "consent1Desc": "Virtual items will be credited to your account immediately upon payment.",
+      "consent2": "I understand that I thereby lose my right of withdrawal.",
+      "consent2Desc": "After performance begins, there is no longer any right to a refund.",
+      "legalConsequencesTitle": "Legal consequences:",
+      "legalConsequences": "• Virtual items will be available immediately after purchase\n• They cannot be returned afterwards\n• A refund is only possible in case of defects or legal exceptions\n• This consent is stored with version control ({version})",
+      "moreInfo": "More information can be found in our",
+      "withdrawalPolicyLink": "Withdrawal policy",
+      "processing": "Processing...",
+      "agreeAndBuy": "Agree & Buy"
+    }
+  },
+  "components": {
+    "saving": "Saving...",
+    "saving2": "Save",
+    "resetting": "Resetting...",
+    "resetting2": "Reset",
+    "processing": "Processing...",
+    "demoModeAlert": "🎮 Demo mode active!\n\n{hints} hints for {price} would be purchased.\n\nThis is only a demo - no real payment will be processed.\n\nFor real purchases, Stripe credentials must be configured.",
+    "successReset": "Quiz attempts successfully reset!",
+    "placeholderName": "Your display name",
+    "selectLanguage": "Select language",
+    "homeStats": {
+      "nurses": "Nurses",
+      "questions": "Quiz questions",
+      "available": "Available",
+      "free": "Free"
+    },
+    "homeFeatures": {
+      "smartLearning": "Intelligent Learning Algorithms",
+      "smartLearningDesc": "Adaptive quiz questions adjust to your knowledge level and focus on areas you want to strengthen.",
+      "fiveMinutes": "Just 5 minutes daily",
+      "fiveMinutesDesc": "Short, focused learning sessions fit perfectly into your work routine and help you learn continuously.",
+      "certificates": "Certificates & Badges",
+      "certificatesDesc": "Collect awards for your learning progress and share your achievements with colleagues.",
+      "gdprCompliant": "GDPR compliant",
+      "gdprCompliantDesc": "Your data is safe and is only used for your learning progress. No advertising or data selling."
+    },
+    "homeTagline": "Developed by nursing professionals for nursing professionals - the perfect tool for your daily continuing education.",
+    "homeFooterTagline": "Your daily companion for nursing knowledge and continuing education."
+  },
+  "validation": {
+    "serverConfigIncomplete": "Server configuration incomplete. Please contact support.",
+    "invalidDisplayName": "Invalid display name",
+    "resetQuizError": "Error resetting quiz attempts",
+    "resetQuizSuccess": "Quiz attempts successfully reset",
+    "accountDeletedSuccess": "Your account has been successfully deleted. All your data has been removed."
+  },
+  "milestones": {
+    "xp100": "100 XP reached! You get 5 free hints for your learning progress.",
+    "xp500": "500 XP reached! You get 5 free hints as a reward.",
+    "xp1000": "1000 XP reached! You get 5 free hints - you're on the right track!",
+    "xp2500": "2500 XP reached! You get 5 free hints for your impressive progress.",
+    "xp5000": "5000 XP reached! You get 5 free hints - you're a learning champion!",
+    "xp10000": "10000 XP reached! You get 5 free hints - you're a learning legend!",
+    "xp20000": "20000 XP reached! You get 5 free hints - exceptional commitment!",
+    "xp35000": "35000 XP reached! You get 5 free hints - you're a nursing expert!",
+    "xp50000": "50000 XP reached! You get 5 free hints - you're a nursing master!",
+    "xp75000": "75000 XP reached! You get 5 free hints - you're a nursing grandmaster!",
+    "xp100000": "100000 XP reached! You get 5 free hints - you're a nursing legend! 🏆"
   }
 }

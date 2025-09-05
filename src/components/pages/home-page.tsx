@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
+import { MainLayout } from '@/components/layout/main-layout';
+import { CookieBanner } from '@/components/legal/cookie-banner';
+import { useTranslations } from 'next-intl';
 import {
   Brain,
   BookOpen,
@@ -76,6 +79,7 @@ function StatCard({ number, label }: { number: string, label: string }) {
 function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; onSkip: () => void }) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const tComponents = useTranslations('components');
 
   const handleSave = async () => {
     if (!name.trim()) return;
@@ -140,7 +144,7 @@ function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; on
                 disabled={!name.trim() || loading}
                 className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
               >
-                {loading ? 'Speichern...' : 'Speichern'}
+                {loading ? tComponents('saving') : tComponents('saving2')}
               </button>
             </div>
           </div>
@@ -154,6 +158,22 @@ export function HomePage() {
   const { session, loading } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
+  
+  // Add translations
+  const tErrors = useTranslations('errors');
+  const tComponents = useTranslations('components');
+  const tHome = useTranslations('components');
+  
+  // Cookie handlers for non-session view
+  const handleCookieAccept = (preferences: Record<string, boolean>) => {
+    console.log('Cookie preferences accepted:', preferences);
+    // Here you would log the consent event to your backend
+  };
+
+  const handleCookieReject = () => {
+    console.log('Only essential cookies accepted');
+    // Here you would log the minimal consent event
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -208,7 +228,7 @@ export function HomePage() {
       }
     } catch (error) {
       console.error('Error saving name:', error);
-      alert('Fehler beim Speichern des Namens. Bitte versuche es erneut.');
+      alert(tErrors('savingName'));
     }
   };
 
@@ -277,10 +297,10 @@ export function HomePage() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-              <StatCard number="5.000+" label="Pflegekräfte" />
-              <StatCard number="500+" label="Quizfragen" />
-              <StatCard number="24/7" label="Verfügbar" />
-              <StatCard number="100%" label="Kostenlos" />
+              <StatCard number="5.000+" label={tHome('homeStats.nurses')} />
+              <StatCard number="500+" label={tHome('homeStats.questions')} />
+              <StatCard number="24/7" label={tHome('homeStats.available')} />
+              <StatCard number="100%" label={tHome('homeStats.free')} />
             </div>
           </div>
         </section>
@@ -300,13 +320,13 @@ export function HomePage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
                 icon={Brain}
-                title="Intelligente Lernalgorithmen"
-                description="Adaptive Quizfragen passen sich deinem Wissensstand an und fokussieren auf Bereiche, die du stärken möchtest."
+                title={tHome('homeFeatures.smartLearning')}
+                description={tHome('homeFeatures.smartLearningDesc')}
               />
               <FeatureCard
                 icon={Clock}
-                title="Nur 5 Minuten täglich"
-                description="Kurze, fokussierte Lernsessions passen perfekt in deinen Arbeitsalltag und helfen dir, kontinuierlich zu lernen."
+                title={tHome('homeFeatures.fiveMinutes')}
+                description={tHome('homeFeatures.fiveMinutesDesc')}
               />
               <FeatureCard
                 icon={Target}
@@ -445,6 +465,9 @@ export function HomePage() {
             <ChevronDown className="w-6 h-6 text-gray-500" />
           </div>
         )}
+        
+        {/* Cookie Banner for non-logged-in users */}
+        <CookieBanner onAccept={handleCookieAccept} onReject={handleCookieReject} />
       </div>
     );
   }

@@ -10,6 +10,8 @@ import { Lightbulb, ShoppingCart, Star } from 'lucide-react';
 
 export function StorePage() {
   const t = useTranslations('store');
+  const tComponents = useTranslations('components');
+  const tErrors = useTranslations('errors');
   const [loading, setLoading] = useState<string | null>(null);
   
   // Mock current balance
@@ -67,9 +69,9 @@ export function StorePage() {
       // Check if it's a demo mode error
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (errorMessage.includes('Demo mode') || errorMessage.includes('demo') || errorMessage.includes('Failed to create checkout session')) {
-        alert(`🎮 Demo-Modus aktiv!\n\n${packInfo?.hints || 'X'} Hints für ${packInfo?.price || 'X'} würden gekauft werden.\n\nDies ist nur eine Demo - keine echte Zahlung wird verarbeitet.\n\nFür echte Käufe müssen Stripe-Credentials konfiguriert werden.`);
+        alert(tComponents('demoModeAlert', { hints: packInfo?.hints || 'X', price: packInfo?.price || 'X' }));
       } else {
-        alert('Unerwarteter Fehler beim Kaufvorgang. Bitte versuchen Sie es erneut.');
+        alert(tErrors('purchaseError'));
         console.error('Purchase error:', error);
       }
     } finally {

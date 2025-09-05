@@ -155,6 +155,124 @@
     "notFound": "Nicht gefunden",
     "serverError": "Server-Fehler",
     "networkError": "Netzwerk-Fehler",
-    "invalidInput": "Ungültige Eingabe"
+    "invalidInput": "Ungültige Eingabe",
+    "loadingQuestions": "Fehler beim Laden der Fragen",
+    "savingName": "Fehler beim Speichern des Namens. Bitte versuche es erneut.",
+    "usingHint": "Fehler beim Verwenden des Hints",
+    "hintNotUsed": "Hint konnte nicht verwendet werden",
+    "unknownError": "Unbekannter Fehler",
+    "resetQuiz": "Fehler beim Zurücksetzen der Quiz-Versuche. Bitte versuchen Sie es erneut.",
+    "resetQuizFailed": "Fehler beim Zurücksetzen",
+    "purchaseError": "Unerwarteter Fehler beim Kaufvorgang. Bitte versuchen Sie es erneut.",
+    "loadingTopics": "Fehler beim Laden der Themen",
+    "loadingReview": "Failed to load review data",
+    "defaultError": "Ein Fehler ist aufgetreten",
+    "defaultRetry": "Bitte versuchen Sie es erneut."
+  },
+  "legal": {
+    "agb": {
+      "title": "Allgemeine Geschäftsbedingungen",
+      "subtitle": "Nutzungsbedingungen für PflegeBuddy Learn • Version {version} • Stand: {date}",
+      "widerrufsLink": "Widerrufsbelehrung"
+    },
+    "datenschutz": {
+      "title": "Datenschutzerklärung",
+      "subtitle": "Gemäß DSGVO • Version {version} • Stand: {date}",
+      "cookieSettingsLink": "Cookie-Einstellungen"
+    },
+    "impressum": {
+      "title": "Impressum",
+      "subtitle": "Angaben gemäß § 5 TMG • Stand: {date}",
+      "contactLabel": "Kontakt:",
+      "addressLabel": "Adresse:",
+      "vatIdLabel": "Umsatzsteuer-ID:",
+      "vatNoticeLabel": "Hinweis zur Umsatzsteuer:"
+    },
+    "cookies": {
+      "bannerTitle": "🍪 Cookie-Einstellungen",
+      "bannerDescription": "Wir verwenden Cookies, um Ihnen das beste Erlebnis auf unserer Website zu bieten. Einige Cookies sind essenziell für den Betrieb der Website, andere helfen uns, die Website zu verbessern.",
+      "acceptAll": "Alle akzeptieren",
+      "settings": "Einstellungen",
+      "essentialOnly": "Nur essenzielle",
+      "bannerFooter": "Durch Klick auf \"Alle akzeptieren\" stimmen Sie der Verwendung aller Cookies zu. Weitere Informationen finden Sie in unserer",
+      "cookiePolicyLink": "Cookie-Richtlinie",
+      "privacyPolicyLink": "Datenschutzerklärung"
+    },
+    "ageGate": {
+      "title": "Altersüberprüfung",
+      "description": "Bevor Sie fortfahren, müssen wir Ihr Alter bestätigen.",
+      "legalNoticeTitle": "Wichtiger rechtlicher Hinweis:",
+      "legalNotice": "Gemäß Art. 8 DSGVO in Verbindung mit § 25 Abs. 1 KDG ist die Nutzung unserer App nur für Personen ab 16 Jahren erlaubt.",
+      "confirmAge": "Ich bestätige, dass ich mindestens 16 Jahre alt bin.",
+      "confirmAgeDesc": "Diese App ist nicht für Kinder und Jugendliche unter 16 Jahren bestimmt.",
+      "privacyConsequencesTitle": "Datenschutzrechtliche Folgen:",
+      "privacyConsequences": "• Bei Bestätigung: Fortsetzung mit der Anmeldung\n• Bei fehlender Bestätigung: Kein Zugriff auf die App möglich\n• Keine Speicherung personenbezogener Daten von unter 16-Jährigen\n• Sofortige Löschung bei nachträglichem Bekanntwerden",
+      "contactNote": "Bei Fragen zu unserer Datenschutzpraxis kontaktieren Sie uns bitte.",
+      "proceed": "Fortfahren"
+    },
+    "withdrawal": {
+      "title": "Widerrufsverzicht für digitale Inhalte",
+      "description": "Bevor Sie mit dem Kauf fortfahren, müssen Sie den folgenden rechtlichen Hinweisen zustimmen.",
+      "importantNotice": "Bei digitalen Inhalten (wie virtuellen Hinweisen) erlischt Ihr 14-tägiges Widerrufsrecht, wenn die Ausführung des Vertrags mit Ihrer Zustimmung vor Ablauf der Widerrufsfrist beginnt (§ 356 Abs. 5 BGB).",
+      "consent1": "Ich stimme zu, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird.",
+      "consent1Desc": "Die virtuellen Gegenstände werden sofort nach Zahlungseingang Ihrem Konto gutgeschrieben.",
+      "consent2": "Mir ist bekannt, dass ich dadurch mein Widerrufsrecht verliere.",
+      "consent2Desc": "Nach Beginn der Ausführung besteht kein Anspruch auf Rückerstattung mehr.",
+      "legalConsequencesTitle": "Rechtliche Folgen:",
+      "legalConsequences": "• Die virtuellen Gegenstände werden sofort nach Kauf verfügbar\n• Sie können danach nicht mehr zurückgegeben werden\n• Eine Erstattung ist nur bei Mängeln oder gesetzlichen Ausnahmen möglich\n• Diese Zustimmung wird versioniert gespeichert ({version})",
+      "moreInfo": "Weitere Informationen finden Sie in unserer",
+      "withdrawalPolicyLink": "Widerrufsbelehrung",
+      "processing": "Verarbeitung...",
+      "agreeAndBuy": "Zustimmen & Kaufen"
+    }
+  },
+  "components": {
+    "saving": "Speichern...",
+    "saving2": "Speichern",
+    "resetting": "Zurücksetzen...",
+    "resetting2": "Zurücksetzen",
+    "processing": "Verarbeitung läuft...",
+    "demoModeAlert": "🎮 Demo-Modus aktiv!\n\n{hints} Hints für {price} würden gekauft werden.\n\nDies ist nur eine Demo - keine echte Zahlung wird verarbeitet.\n\nFür echte Käufe müssen Stripe-Credentials konfiguriert werden.",
+    "successReset": "Quiz-Versuche erfolgreich zurückgesetzt!",
+    "placeholderName": "Ihr Anzeigename",
+    "selectLanguage": "Sprache auswählen",
+    "homeStats": {
+      "nurses": "Pflegekräfte",
+      "questions": "Quizfragen", 
+      "available": "Verfügbar",
+      "free": "Kostenlos"
+    },
+    "homeFeatures": {
+      "smartLearning": "Intelligente Lernalgorithmen",
+      "smartLearningDesc": "Adaptive Quizfragen passen sich deinem Wissensstand an und fokussieren auf Bereiche, die du stärken möchtest.",
+      "fiveMinutes": "Nur 5 Minuten täglich",
+      "fiveMinutesDesc": "Kurze, fokussierte Lernsessions passen perfekt in deinen Arbeitsalltag und helfen dir, kontinuierlich zu lernen.",
+      "certificates": "Zertifikate & Badges",
+      "certificatesDesc": "Sammle Auszeichnungen für deine Lernfortschritte und teile deine Erfolge mit Kollegen.",
+      "gdprCompliant": "DSGVO-konform",
+      "gdprCompliantDesc": "Deine Daten sind sicher und werden nur für deine Lernfortschritte verwendet. Keine Werbung oder Datenverkauf."
+    },
+    "homeTagline": "Entwickelt von Pflegeprofis für Pflegeprofis - das perfekte Tool für deine tägliche Weiterbildung.",
+    "homeFooterTagline": "Dein täglicher Begleiter für Pflegewissen und Weiterbildung."
+  },
+  "validation": {
+    "serverConfigIncomplete": "Server-Konfiguration unvollständig. Bitte wenden Sie sich an den Support.",
+    "invalidDisplayName": "Ungültiger Anzeigename",
+    "resetQuizError": "Fehler beim Zurücksetzen der Quiz-Versuche",
+    "resetQuizSuccess": "Quiz-Versuche erfolgreich zurückgesetzt",
+    "accountDeletedSuccess": "Ihr Konto wurde erfolgreich gelöscht. Alle Ihre Daten wurden entfernt."
+  },
+  "milestones": {
+    "xp100": "100 XP erreicht! Du erhältst 5 gratis Hints für deine Lernfortschritte.",
+    "xp500": "500 XP erreicht! Du erhältst 5 gratis Hints als Belohnung.",
+    "xp1000": "1000 XP erreicht! Du erhältst 5 gratis Hints - du bist auf dem richtigen Weg!",
+    "xp2500": "2500 XP erreicht! Du erhältst 5 gratis Hints für deine beeindruckenden Fortschritte.",
+    "xp5000": "5000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Lern-Champion!",
+    "xp10000": "10000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Lern-Legende!",
+    "xp20000": "20000 XP erreicht! Du erhältst 5 gratis Hints - außergewöhnliches Engagement!",
+    "xp35000": "35000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Pflege-Experte!",
+    "xp50000": "50000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Pflege-Meister!",
+    "xp75000": "75000 XP erreicht! Du erhältst 5 gratis Hints - du bist ein Pflege-Großmeister!",
+    "xp100000": "100000 XP erreicht! Du erhältst 5 gratis Hints - du bist eine Pflege-Legende! 🏆"
   }
 }

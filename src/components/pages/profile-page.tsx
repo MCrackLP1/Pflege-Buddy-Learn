@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { clearStorage } from '@/lib/utils/safe-storage';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LogOut, Download, Trash2, Star, Flame, Target, TrendingUp, RotateCcw, Shield, FileText, Cookie, AlertTriangle } from 'lucide-react';
@@ -36,6 +37,10 @@ export function ProfilePage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const t = useTranslations('profile');
+  const tCommon = useTranslations('common');
+  const tComponents = useTranslations('components');
+  const tErrors = useTranslations('errors');
+  const tValidation = useTranslations('validation');
   const locale = useLocale();
   const { user, signOut } = useAuth();
   const router = useRouter();
@@ -106,8 +111,14 @@ export function ProfilePage() {
 
       if (data.success) {
         // Clear local storage and cache
-        localStorage.clear();
-        sessionStorage.clear();
+        clearStorage();
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          try {
+            window.sessionStorage.clear();
+          } catch (error) {
+            console.warn('Could not clear sessionStorage:', error);
+          }
+        }
 
         // Clear any cached data
         if ('caches' in window) {
@@ -131,7 +142,7 @@ export function ProfilePage() {
         // Redirect to home
         router.push('/');
       } else {
-        throw new Error(data.error || 'Unbekannter Fehler');
+        throw new Error(data.error || tErrors('unknownError'));
       }
     } catch (error) {
       console.error('Error deleting account:', error);
@@ -173,13 +184,13 @@ export function ProfilePage() {
 
         setShowResetDialog(false);
         // Optional: Show success message
-        alert('Quiz-Versuche erfolgreich zurückgesetzt!');
+        alert(tComponents('successReset'));
       } else {
-        throw new Error(data.error || 'Fehler beim Zurücksetzen');
+        throw new Error(data.error || tErrors('resetQuizFailed'));
       }
     } catch (error) {
       console.error('Error resetting quiz:', error);
-      alert('Fehler beim Zurücksetzen der Quiz-Versuche. Bitte versuchen Sie es erneut.');
+      alert(tErrors('resetQuiz'));
     } finally {
       setResetLoading(false);
     }
@@ -203,7 +214,7 @@ export function ProfilePage() {
               <Input
                 id="displayName"
                 value={userStats?.displayName || ''}
-                placeholder="Ihr Anzeigename"
+                placeholder={tComponents('placeholderName')}
                 readOnly
               />
             </div>
@@ -212,7 +223,7 @@ export function ProfilePage() {
               <Label htmlFor="language">{t('language')}</Label>
               <Select onValueChange={handleLanguageChange} defaultValue="de">
                 <SelectTrigger>
-                  <SelectValue placeholder="Sprache auswählen" />
+                  <SelectValue placeholder={tComponents('selectLanguage')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="de">{t('german')}</SelectItem>
@@ -381,7 +392,7 @@ export function ProfilePage() {
                 className="flex-1"
                 disabled={resetLoading}
               >
-                Abbrechen
+                {tCommon('cancel')}
               </Button>
               <Button
                 onClick={handleResetQuiz}
@@ -389,7 +400,7 @@ export function ProfilePage() {
                 className="flex-1"
                 disabled={resetLoading}
               >
-                {resetLoading ? 'Zurücksetzen...' : 'Zurücksetzen'}
+                {resetLoading ? tComponents('resetting') : tComponents('resetting2')}
               </Button>
             </div>
           </div>
@@ -457,7 +468,7 @@ export function ProfilePage() {
                 className="flex-1"
                 disabled={deleteLoading}
               >
-                Abbrechen
+                {tCommon('cancel')}
               </Button>
               <Button
                 onClick={handleDeleteAccount}

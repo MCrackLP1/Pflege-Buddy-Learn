@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
@@ -75,6 +75,9 @@ const mockQuestionsFallback: QuestionWithChoices[] = [
 ];
 
 export function QuizPage({ topic }: QuizPageProps) {
+  // Translations
+  const tErrors = useTranslations('errors');
+  
   // API Data loading
   const [questions, setQuestions] = useState<QuestionWithChoices[]>([]);
   const [loading, setLoading] = useState(true);
@@ -249,11 +252,11 @@ export function QuizPage({ topic }: QuizPageProps) {
         setFreeHintsLeft(data.freeHintsLeft);
       } else {
         console.error('Failed to use hint:', data.error);
-        alert('Hint konnte nicht verwendet werden: ' + (data.error || 'Unbekannter Fehler'));
+        alert(tErrors('hintNotUsed') + ': ' + (data.error || tErrors('unknownError')));
       }
     } catch (error) {
       console.error('Error using hint:', error);
-      alert('Fehler beim Verwenden des Hints');
+      alert(tErrors('usingHint'));
     }
   };
 
