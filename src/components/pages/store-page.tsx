@@ -69,6 +69,14 @@ export function StorePage() {
           }));
           return;
         }
+
+        // Check if it's a configuration error
+        if (data.stripe_config_error) {
+          setIsDemoMode(true);
+          alert('Stripe-Konfiguration fehlt. Bitte wenden Sie sich an den Support.');
+          return;
+        }
+
         throw new Error(data.error || 'Failed to create checkout session');
       }
     } catch (error: unknown) {
