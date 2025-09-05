@@ -42,13 +42,13 @@ export async function POST(req: NextRequest) {
 
     const pack = HINT_PACKS[pack_key as keyof typeof HINT_PACKS];
 
-    // Demo mode fallback for development
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('demo')) {
+    // Check for proper Stripe configuration
+    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('sk_test_')) {
       return NextResponse.json({
-        error: 'Demo mode: Stripe checkout would open here',
-        demo_mode: true,
+        error: 'Stripe not properly configured. Please check your environment variables.',
+        stripe_config_error: true,
         pack_details: pack
-      }, { status: 400 });
+      }, { status: 500 });
     }
 
     // Get price ID from environment or use default
