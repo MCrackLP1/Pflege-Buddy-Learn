@@ -74,15 +74,6 @@ export function XpMilestoneCard({
               </div>
             </div>
 
-            {/* Milestone Reward Preview */}
-            <div className="bg-secondary/50 rounded-lg p-3 text-xs">
-              <div className="font-medium text-foreground mb-1">
-                {t('xp.rewardPreview') || 'Belohnung'}:
-              </div>
-              <div className="text-muted-foreground">
-                {nextMilestone.rewardDescription}
-              </div>
-            </div>
           </div>
         )}
 
@@ -110,13 +101,6 @@ export function XpMilestoneCard({
           </div>
         )}
 
-        {/* Motivational Message */}
-        <div className="text-center text-sm text-muted-foreground">
-          {currentXp === 0 && (t('xp.startLearning') || 'Beginne zu lernen und sammle XP!')}
-          {currentXp > 0 && currentXp < 100 && (t('xp.keepGoing') || 'Mach weiter so!')}
-          {currentXp >= 100 && currentXp < 500 && (t('xp.greatProgress') || 'Tolles Fortschritte!')}
-          {currentXp >= 500 && (t('xp.excellentWork') || 'Ausgezeichnete Arbeit!')}
-        </div>
       </CardContent>
     </Card>
   );
