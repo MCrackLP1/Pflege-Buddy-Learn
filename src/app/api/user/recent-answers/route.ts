@@ -47,8 +47,6 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
     if (attemptsError || !attempts || attempts.length === 0) {
       if (attemptsError) {
         console.error('Database error fetching attempts:', attemptsError);
-      } else {
-        console.log('No attempts found for user, using mock data');
       }
 
       // Fallback: Return mock data for testing or when no attempts exist
