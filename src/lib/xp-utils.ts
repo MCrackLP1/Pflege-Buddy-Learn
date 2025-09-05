@@ -118,8 +118,6 @@ export async function updateXpMilestones(userId: string, currentXp: number): Pro
 export async function getNextXpMilestone(userId: string): Promise<XpMilestone | null> {
   const supabase = createServerClient();
 
-  console.log('🔍 Getting next XP milestone for user:', userId);
-
   const { data: progress, error: progressError } = await supabase
     .from('user_progress')
     .select('xp')
@@ -127,16 +125,12 @@ export async function getNextXpMilestone(userId: string): Promise<XpMilestone | 
     .single();
 
   if (progressError) {
-    console.log('❌ Error getting user progress:', progressError);
     return null;
   }
 
   if (!progress) {
-    console.log('❌ No user progress found');
     return null;
   }
-
-  console.log('📊 User XP:', progress.xp);
 
   const { data: milestones, error: milestonesError } = await supabase
     .from('xp_milestones')
@@ -150,8 +144,6 @@ export async function getNextXpMilestone(userId: string): Promise<XpMilestone | 
   let nextMilestone = milestones?.[0] || null;
 
   if (!nextMilestone || milestonesError) {
-    console.log('⚠️ Using fallback XP milestones due to error or empty result:', milestonesError);
-
     // Hardcoded XP milestones as fallback
     const fallbackMilestones = [
       { id: '1', xpRequired: 100, freeHintsReward: 5, rewardDescription: '100 XP erreicht! Du erhältst 5 gratis Hints für deine Lernfortschritte.', isActive: true, createdAt: new Date() },
@@ -162,9 +154,6 @@ export async function getNextXpMilestone(userId: string): Promise<XpMilestone | 
     ];
 
     nextMilestone = fallbackMilestones.find(m => m.xpRequired > progress.xp) || null;
-    console.log('🎯 Using fallback milestone:', nextMilestone);
-  } else {
-    console.log('🎯 Found database milestone:', nextMilestone);
   }
 
   return nextMilestone;
@@ -197,8 +186,6 @@ export async function getLastAchievedXpMilestone(userId: string): Promise<XpMile
     .single();
 
   if (milestoneError || !milestone) {
-    console.log('⚠️ Milestone not found in database, using fallback for last achieved');
-
     // Find the last achieved milestone based on user progress
     const { data: userProgress } = await supabase
       .from('user_progress')
@@ -220,7 +207,6 @@ export async function getLastAchievedXpMilestone(userId: string): Promise<XpMile
         .filter(m => m.xpRequired <= userProgress.xp)
         .sort((a, b) => b.xpRequired - a.xpRequired)[0];
 
-      console.log('🎯 Using fallback for last achieved milestone:', lastAchieved);
       return lastAchieved || null;
     }
   }
