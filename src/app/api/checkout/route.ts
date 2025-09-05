@@ -102,8 +102,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Better error handling for missing environment variables
+    if (error instanceof Error) {
+      if (error.message.includes('STRIPE_SECRET_KEY')) {
+        return NextResponse.json(
+          { 
+            error: 'Stripe configuration error. Please contact support.', 
+            debug: 'Missing Stripe credentials' 
+          },
+          { status: 500 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error. Please try again.' },
+      { 
+        error: 'Internal server error. Please try again.', 
+        debug: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
