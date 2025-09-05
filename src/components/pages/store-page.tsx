@@ -115,7 +115,7 @@ export function StorePage() {
       }
 
       // Show error with context
-      alert(`Fehler beim Kauf\n\nPaket: ${packInfo?.name || packId}\n${userMessage}`);
+      alert(`Fehler beim Kauf\n\nPaket: ${packInfo ? `${packInfo.hints} Hints` : packId}\n${userMessage}`);
       
       // In development, also show technical details
       if (process.env.NODE_ENV === 'development') {

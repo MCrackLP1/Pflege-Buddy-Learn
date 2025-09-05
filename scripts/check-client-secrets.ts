@@ -12,7 +12,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import glob from 'fast-glob';
 
 console.log('🔍 Checking client bundles for leaked secrets...\n');
 
@@ -64,7 +63,7 @@ async function checkClientBundles(): Promise<SecurityIssue[]> {
 
   try {
     // Find all JavaScript files in the static directory
-    const jsFiles = await glob([
+    const jsFiles = await globFiles([
       `${staticDir}/**/*.js`,
       `${buildDir}/server/**/*.js`, // Check server files too for leakage
     ]);
@@ -211,8 +210,8 @@ async function main() {
   }
 }
 
-// Add fast-glob as a simple alternative
-async function glob(patterns: string[]): Promise<string[]> {
+// Simple file globbing implementation
+async function globFiles(patterns: string[]): Promise<string[]> {
   const fs = await import('fs');
   const path = await import('path');
   

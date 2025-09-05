@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
               .where(eq(purchases.stripeSessionId, session.id));
 
             // Handle withdrawal waiver if present in metadata
-            if (session.metadata.withdrawal_waiver_version) {
+            if (session.metadata?.withdrawal_waiver_version) {
               await updatePurchaseWithdrawalWaiver(
                 session.id,
                 session.metadata.withdrawal_waiver_version

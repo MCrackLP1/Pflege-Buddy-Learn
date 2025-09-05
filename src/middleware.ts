@@ -2,7 +2,6 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { LEGAL_CONFIG } from '@/lib/constants';
-import crypto from 'crypto';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['de', 'en'],
@@ -11,8 +10,8 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(req: NextRequest) {
-  // Generate CSP nonce for inline scripts/styles
-  const nonce = crypto.randomBytes(16).toString('base64');
+  // Generate CSP nonce for inline scripts/styles (Edge Runtime compatible)
+  const nonce = btoa(Array.from({ length: 16 }, () => String.fromCharCode(Math.floor(Math.random() * 256))).join(''));
 
   // Handle internationalization first
   const intlResponse = intlMiddleware(req);

@@ -106,7 +106,7 @@ export function validateStripeEnvironment(): EnvironmentValidationResult {
     overallMode = 'mixed';
     errors.push('Mixed test/live mode detected - all Stripe keys must be in the same mode');
   } else {
-    overallMode = [...modes][0];
+    overallMode = Array.from(modes)[0];
   }
 
   // Environment-specific validation
