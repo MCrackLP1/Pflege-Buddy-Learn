@@ -42,13 +42,13 @@ export async function POST(req: NextRequest) {
 
     const pack = HINT_PACKS[pack_key as keyof typeof HINT_PACKS];
 
-    // Check for proper Stripe configuration
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes('sk_test_')) {
+    // Check for proper Stripe configuration - LIVE MODE ONLY
+    if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_SECRET_KEY.startsWith('sk_live_')) {
       return NextResponse.json({
-        error: 'Stripe not properly configured. Please check your environment variables.',
-        stripe_config_error: true,
+        error: 'Stripe Live-Modus nicht konfiguriert. Bitte überprüfen Sie die Environment-Variablen.',
+        demo_mode: true,
         pack_details: pack
-      }, { status: 500 });
+      }, { status: 400 });
     }
 
     // Get price ID from environment or use default
