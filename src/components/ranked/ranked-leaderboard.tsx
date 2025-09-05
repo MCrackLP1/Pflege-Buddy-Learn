@@ -112,15 +112,6 @@ export function RankedLeaderboard() {
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    {getRankIcon(entry.rank)}
-                    {entry.rank === userRank && (
-                      <Badge variant="outline" className="text-xs">
-                        Du
-                      </Badge>
-                    )}
-                  </div>
-
                   <div>
                     <div className="font-semibold">
                       {entry.display_name || 'Anonymous User'}
