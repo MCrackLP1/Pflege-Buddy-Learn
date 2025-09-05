@@ -35,34 +35,52 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
   let currentStreakStart = progress?.current_streak_start;
   const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
 
-  // Check if user was active yesterday or today
-  const { data: recentActivity } = await supabase
+  const lastSeen = progress?.last_seen;
+
+  // Check if user played today
+  const { data: todayActivity } = await supabase
+    .from('attempts')
+    .select('created_at')
+    .eq('user_id', userId)
+    .gte('created_at', today + ' 00:00:00')
+    .lt('created_at', today + ' 23:59:59')
+    .limit(1);
+
+  const playedToday = todayActivity && todayActivity.length > 0;
+
+  // Check if user played yesterday
+  const { data: yesterdayActivity } = await supabase
     .from('attempts')
     .select('created_at')
     .eq('user_id', userId)
     .gte('created_at', yesterday + ' 00:00:00')
+    .lt('created_at', yesterday + ' 23:59:59')
     .limit(1);
 
-  const hasRecentActivity = recentActivity && recentActivity.length > 0;
-  const lastSeen = progress?.last_seen;
+  const playedYesterday = yesterdayActivity && yesterdayActivity.length > 0;
 
   // Calculate new streak
-  if (!hasRecentActivity) {
-    // No recent activity - reset streak if it's been more than 1 day
+  if (playedToday) {
+    // User played today
+    if (lastSeen === yesterday && playedYesterday) {
+      // Played yesterday too - continue streak
+      currentStreak += 1;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    } else if (lastSeen !== today) {
+      // Either didn't play yesterday or this is first time today - start new streak
+      currentStreak = 1;
+      currentStreakStart = today;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    }
+    // If lastSeen is already today, don't increment (already counted today)
+  } else {
+    // User didn't play today
     if (lastSeen && lastSeen < yesterday) {
+      // More than 1 day since last play - reset streak
       currentStreak = 0;
       currentStreakStart = null;
     }
-  } else {
-    // Has recent activity - update streak
-    if (!lastSeen || lastSeen < today) {
-      // First activity today - increment streak
-      currentStreak += 1;
-      if (!currentStreakStart) {
-        currentStreakStart = today;
-      }
-      longestStreak = Math.max(longestStreak, currentStreak);
-    }
+    // If lastSeen is yesterday or today, keep current streak (they might play later today)
   }
 
   // Get available milestones
