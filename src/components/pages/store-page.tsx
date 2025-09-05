@@ -13,6 +13,7 @@ export function StorePage() {
   const tComponents = useTranslations('components');
   const tErrors = useTranslations('errors');
   const [loading, setLoading] = useState<string | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   
   // Mock current balance
   const currentBalance = 3;
@@ -40,7 +41,7 @@ export function StorePage() {
 
   const handlePurchase = async (packId: string) => {
     setLoading(packId);
-    
+
     try {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -49,26 +50,37 @@ export function StorePage() {
         },
         body: JSON.stringify({
           pack_key: packId,
+          withdrawal_waiver_consent: true, // User must consent to digital delivery waiver
         }),
       });
 
       const data = await response.json();
-      
+
       if (data.url) {
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
+        // Check if it's a demo mode response
+        if (data.demo_mode) {
+          setIsDemoMode(true);
+          alert(tComponents('demoModeAlert', {
+            hints: hintPacks.find(p => p.id === packId)?.hints || 'X',
+            price: hintPacks.find(p => p.id === packId)?.price || 'X'
+          }));
+          return;
+        }
         throw new Error(data.error || 'Failed to create checkout session');
       }
     } catch (error: unknown) {
       console.error('Purchase failed:', error);
-      
+
       // Get pack info for error message
       const packInfo = hintPacks.find(p => p.id === packId);
-      
+
       // Check if it's a demo mode error
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (errorMessage.includes('Demo mode') || errorMessage.includes('demo') || errorMessage.includes('Failed to create checkout session')) {
+        setIsDemoMode(true);
         alert(tComponents('demoModeAlert', { hints: packInfo?.hints || 'X', price: packInfo?.price || 'X' }));
       } else {
         alert(tErrors('purchaseError'));
@@ -86,16 +98,18 @@ export function StorePage() {
           <h1 className="text-2xl font-bold">{t('title')}</h1>
         </div>
 
-        {/* Demo Mode Banner */}
-        <Card className="border-blue-500/30 bg-blue-500/10">
-          <CardContent className="p-4 text-center">
-            <p className="text-sm font-medium text-blue-400 mb-1">🎮 Demo-Modus aktiv</p>
-            <p className="text-xs text-blue-300/80 leading-relaxed">
-              Klicken Sie auf &quot;Kaufen&quot; um die Demo-Kaufabwicklung zu testen. 
-              Keine echten Zahlungen werden verarbeitet.
-            </p>
-          </CardContent>
-        </Card>
+        {/* Demo Mode Banner - only show when demo mode is active */}
+        {isDemoMode && (
+          <Card className="border-blue-500/30 bg-blue-500/10">
+            <CardContent className="p-4 text-center">
+              <p className="text-sm font-medium text-blue-400 mb-1">🎮 Demo-Modus aktiv</p>
+              <p className="text-xs text-blue-300/80 leading-relaxed">
+                Klicken Sie auf &quot;Kaufen&quot; um die Demo-Kaufabwicklung zu testen.
+                Keine echten Zahlungen werden verarbeitet.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Current Balance */}
         <Card className="border-primary/20 bg-primary/5">
