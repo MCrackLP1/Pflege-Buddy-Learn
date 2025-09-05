@@ -100,7 +100,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         accuracy: accuracy,
         averageTimeMs: averageTimeMs,
       },
-      leaderboardEntry,
+      globalScore: newGlobalScore,
       success: true
     });
 
