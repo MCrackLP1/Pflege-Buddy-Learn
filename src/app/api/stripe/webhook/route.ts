@@ -7,16 +7,20 @@ import Stripe from 'stripe';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  console.log('🎯 Webhook received!');
+  
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
   if (!signature) {
-    console.error('Webhook Error: Missing Stripe signature');
+    console.error('❌ Webhook Error: Missing Stripe signature');
     return NextResponse.json(
       { error: 'Missing Stripe signature' },
       { status: 400 }
     );
   }
+
+  console.log('✅ Webhook signature present, verifying...');
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     console.error('Webhook Error: Missing STRIPE_WEBHOOK_SECRET environment variable');
@@ -45,14 +49,19 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    console.log('🎉 Webhook event received:', event.type);
+
     // Handle the checkout.session.completed event
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      console.log('Processing completed checkout session:', session.id);
+      console.log('💰 Processing completed checkout session:', session.id);
+      console.log('📋 Session metadata:', session.metadata);
 
       // Extract metadata
       const { userId, packageSize, hintsQuantity } = session.metadata || {};
+
+      console.log('🔍 Extracted data:', { userId, packageSize, hintsQuantity });
 
       if (!userId || !hintsQuantity) {
         console.error('Missing required metadata in session:', session.id);
@@ -76,14 +85,25 @@ export async function POST(request: NextRequest) {
 
       try {
         // Get or create user wallet
-        const { data: existingWallet } = await supabase
+        console.log('🔍 Looking up user wallet for user:', userId);
+        
+        const { data: existingWallet, error: selectError } = await supabase
           .from('user_wallet')
           .select('hints_balance')
           .eq('user_id', userId)
           .single();
+          
+        if (selectError && selectError.code !== 'PGRST116') {
+          console.error('❌ Error querying user wallet:', selectError);
+          throw selectError;
+        }
+        
+        console.log('💰 Existing wallet:', existingWallet);
 
         if (existingWallet) {
           // Update existing wallet
+          console.log(`📈 Updating existing wallet: ${existingWallet.hints_balance} + ${hintsToAdd}`);
+          
           const { error: updateError } = await supabase
             .from('user_wallet')
             .update({
@@ -92,13 +112,15 @@ export async function POST(request: NextRequest) {
             .eq('user_id', userId);
 
           if (updateError) {
-            console.error('Error updating user wallet:', updateError);
+            console.error('❌ Error updating user wallet:', updateError);
             throw updateError;
           }
 
-          console.log(`Added ${hintsToAdd} hints to user ${userId}. New balance: ${existingWallet.hints_balance + hintsToAdd}`);
+          console.log(`✅ Added ${hintsToAdd} hints to user ${userId}. New balance: ${existingWallet.hints_balance + hintsToAdd}`);
         } else {
           // Create new wallet with purchased hints
+          console.log(`🆕 Creating new wallet for user ${userId} with ${hintsToAdd} hints`);
+          
           const { error: insertError } = await supabase
             .from('user_wallet')
             .insert({
@@ -109,11 +131,11 @@ export async function POST(request: NextRequest) {
             });
 
           if (insertError) {
-            console.error('Error creating user wallet:', insertError);
+            console.error('❌ Error creating user wallet:', insertError);
             throw insertError;
           }
 
-          console.log(`Created new wallet for user ${userId} with ${hintsToAdd} hints`);
+          console.log(`✅ Created new wallet for user ${userId} with ${hintsToAdd} hints`);
         }
 
         // TODO: Optional - Log the purchase for analytics/support
@@ -150,10 +172,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle unsupported methods
+// Handle unsupported methods - but also allow GET for testing
 export async function GET() {
-  return NextResponse.json(
-    { error: 'Webhook endpoint only accepts POST requests' },
-    { status: 405 }
-  );
+  return NextResponse.json({
+    message: 'Stripe Webhook Endpoint',
+    status: 'Ready to receive webhooks',
+    timestamp: new Date().toISOString(),
+    endpoint: '/api/stripe/webhook'
+  });
 }
