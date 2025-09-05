@@ -87,13 +87,17 @@ export function DashboardCard() {
   useEffect(() => {
     async function loadRecentAnswers() {
       try {
+        console.log('🔍 Loading recent answers...');
         const response = await fetch('/api/user/recent-answers');
         const data = await response.json();
 
+        console.log('📊 Recent answers API response:', data);
+
         if (data.success) {
+          console.log('✅ Setting recent answers:', data.recent_answers?.length || 0, 'items');
           setRecentAnswers(data.recent_answers || []);
         } else {
-          console.error('API returned error:', data.error);
+          console.error('❌ API returned error:', data.error);
           setRecentAnswers([]);
         }
       } catch (err) {
@@ -268,7 +272,9 @@ export function DashboardCard() {
         </Card>
 
         {/* Review Light - Recent Answers Carousel */}
-        {recentAnswers.length > 0 ? (
+        {(() => {
+          console.log('🎯 Rendering recent answers section:', recentAnswers.length, 'items');
+          return recentAnswers.length > 0 ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
@@ -370,20 +376,26 @@ export function DashboardCard() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <div className="text-muted-foreground mb-2">Lade Antworten...</div>
-                <div className="text-xs text-muted-foreground">
-                  Beantworte einige Fragen, um hier deine letzten Antworten zu sehen
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+          (() => {
+            console.log('⚠️ Showing fallback message - no recent answers found');
+            return (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">📚 {t('home.recentAnswers') || 'Letzte Antworten'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <div className="text-muted-foreground mb-2">Lade Antworten...</div>
+                    <div className="text-xs text-muted-foreground">
+                      Beantworte einige Fragen, um hier deine letzten Antworten zu sehen
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()
+        );
+        })()}
 
         {/* Disclaimer */}
         <Card className="border-yellow-500/20 bg-yellow-500/5">
