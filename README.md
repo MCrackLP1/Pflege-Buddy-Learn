@@ -62,6 +62,135 @@ Eine **Enterprise-Ready Mobile-Web-App** für medizinische Fortbildung von Pfleg
 
 ---
 
+## 💳 **Stripe Setup & Configuration**
+
+### **🚀 Quick Setup**
+
+1. **Get Stripe Keys**
+   ```bash
+   # 1. Create Stripe account: https://dashboard.stripe.com/register
+   # 2. Get your API keys from: https://dashboard.stripe.com/apikeys
+   ```
+
+2. **Configure Environment Variables**
+   ```bash
+   cp env.template .env.local
+   ```
+   
+   Fill in your Stripe configuration:
+   ```env
+   # Test Mode (Development)
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   STRIPE_SECRET_KEY=sk_test_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   NEXT_PUBLIC_STRIPE_PRICE_IDS={"10_hints":"price_test_123","50_hints":"price_test_456","200_hints":"price_test_789"}
+
+   # Live Mode (Production)
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+   STRIPE_SECRET_KEY=sk_live_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   NEXT_PUBLIC_STRIPE_PRICE_IDS={"10_hints":"price_live_123","50_hints":"price_live_456","200_hints":"price_live_789"}
+   ```
+
+3. **Create Stripe Products**
+   ```bash
+   # In Stripe Dashboard: Products → Add Product
+   # Create three products:
+   # - 10 Hints Pack (€2.99)
+   # - 50 Hints Pack (€9.99)  
+   # - 200 Hints Pack (€24.99)
+   
+   # Copy the price IDs to your NEXT_PUBLIC_STRIPE_PRICE_IDS
+   ```
+
+4. **Setup Webhooks**
+   ```bash
+   # 1. Go to: https://dashboard.stripe.com/webhooks
+   # 2. Add endpoint: https://your-domain.com/api/stripe/webhook
+   # 3. Events: checkout.session.completed, checkout.session.expired, payment_intent.payment_failed
+   # 4. Copy webhook secret to STRIPE_WEBHOOK_SECRET
+   ```
+
+5. **Validate Configuration**
+   ```bash
+   npm run stripe:check
+   # ✅ Should show "Stripe configured correctly"
+   ```
+
+### **🛠️ Development & Testing**
+
+**Local Testing with Stripe CLI:**
+```bash
+# Install Stripe CLI
+npm install -g stripe-cli
+
+# Login to your Stripe account
+stripe login
+
+# Forward webhooks to local development
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+
+# Test webhook events
+stripe trigger checkout.session.completed
+```
+
+**Run Tests:**
+```bash
+# Environment validation
+npm run stripe:check
+
+# Security check (ensures no secrets in client bundle)
+npm run build && npm run check:secrets
+
+# Full test suite including payment flows
+npm test
+```
+
+**Health Check API:**
+```bash
+# Check configuration status
+curl http://localhost:3000/api/health/stripe
+```
+
+### **🚨 Security & Production Checklist**
+
+- [x] **Environment Separation**: Test keys for development, live keys for production
+- [x] **Secret Management**: No secrets in client bundle (`npm run check:secrets`)
+- [x] **Webhook Verification**: All webhooks verify Stripe signatures
+- [x] **Idempotency**: Webhooks handle duplicate events gracefully
+- [x] **Error Handling**: User-friendly error messages for all failure cases
+- [x] **Legal Compliance**: DE/EU GDPR compliance with withdrawal waivers
+- [x] **Transaction Safety**: Atomic database operations prevent double-crediting
+
+### **🔧 Troubleshooting**
+
+| Issue | Symptoms | Solution |
+|-------|----------|----------|
+| **500 Error on Checkout** | "Failed to log consent event" | ✅ **FIXED** - User context now passed correctly |
+| **Configuration Invalid** | "Stripe nicht konfiguriert" | Check `npm run stripe:check` output |
+| **Mixed Test/Live Mode** | Warnings about key mismatches | Ensure all keys are same mode (test or live) |
+| **Webhook Not Working** | Payments succeed but hints not credited | Verify webhook URL and secret |
+| **Client Secrets Exposed** | Security warnings | Run `npm run check:secrets` after build |
+| **Price ID Not Found** | "Price configuration missing" | Update NEXT_PUBLIC_STRIPE_PRICE_IDS with your price IDs |
+
+**Common Error Patterns:**
+```bash
+# Check logs for these patterns:
+tail -f .next/trace | grep -i stripe
+tail -f .next/trace | grep -i error
+
+# Development debugging:
+STRIPE_LOG_LEVEL=debug npm run dev
+```
+
+**Support Resources:**
+- 📚 [Stripe Integration Guide](https://stripe.com/docs/checkout)
+- 🔧 [Webhook Testing](https://stripe.com/docs/webhooks/test)
+- 🛡️ [Security Best Practices](https://stripe.com/docs/security)
+- ⚖️ [EU Compliance Guide](https://stripe.com/guides/strong-customer-authentication)
+
+---
+
 ## 🏗️ **Enterprise Architecture**
 
 ### **🔧 Tech Stack (Production-Ready)**

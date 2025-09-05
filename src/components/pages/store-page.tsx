@@ -54,45 +54,76 @@ export function StorePage() {
         }),
       });
 
+      if (!response.ok) {
+        const data = await response.json();
+        
+        // Handle different error types
+        if (response.status === 401) {
+          throw new Error('Bitte melden Sie sich an, um fortzufahren.');
+        }
+        
+        if (response.status === 400) {
+          if (data.requires_waiver) {
+            throw new Error('Widerrufsbelehrung muss akzeptiert werden.');
+          }
+          throw new Error(data.error || 'Ungültige Anfrage.');
+        }
+        
+        if (response.status === 500) {
+          if (data.configuration_error) {
+            setIsDemoMode(true);
+            alert('Die Zahlungsfunktion ist derzeit nicht verfügbar. Bitte wenden Sie sich an den Support.');
+            return;
+          }
+          throw new Error('Ein Server-Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+        }
+        
+        throw new Error(data.error || 'Ein unerwarteter Fehler ist aufgetreten.');
+      }
+
       const data = await response.json();
 
       if (data.url) {
         // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
-        // Check if it's a demo mode response
-        if (data.demo_mode) {
-          setIsDemoMode(true);
-          alert(tComponents('demoModeAlert', {
-            hints: hintPacks.find(p => p.id === packId)?.hints || 'X',
-            price: hintPacks.find(p => p.id === packId)?.price || 'X'
-          }));
-          return;
-        }
-
-        // Check if it's a configuration error
-        if (data.stripe_config_error) {
-          setIsDemoMode(true);
-          alert('Stripe-Konfiguration fehlt. Bitte wenden Sie sich an den Support.');
-          return;
-        }
-
-        throw new Error(data.error || 'Failed to create checkout session');
+        throw new Error('Keine Checkout-URL erhalten. Bitte versuchen Sie es erneut.');
       }
     } catch (error: unknown) {
       console.error('Purchase failed:', error);
 
-      // Get pack info for error message
+      // Get pack info for error context
       const packInfo = hintPacks.find(p => p.id === packId);
+      
+      let userMessage: string;
 
-      // Check if it's a demo mode error
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('Demo mode') || errorMessage.includes('demo') || errorMessage.includes('Failed to create checkout session')) {
-        setIsDemoMode(true);
-        alert(tComponents('demoModeAlert', { hints: packInfo?.hints || 'X', price: packInfo?.price || 'X' }));
+      if (error instanceof Error) {
+        // Handle specific error types with user-friendly messages
+        if (error.message.includes('fetch') || error.message.includes('network')) {
+          userMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.';
+        } else if (error.message.includes('anmelden')) {
+          userMessage = 'Sie müssen sich anmelden, um Hint-Pakete zu kaufen.';
+        } else if (error.message.includes('Widerrufsbelehrung')) {
+          userMessage = 'Die Widerrufsbelehrung muss vor dem Kauf akzeptiert werden.';
+        } else if (error.message.includes('nicht verfügbar')) {
+          userMessage = 'Der Zahlungsservice ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.';
+        } else {
+          userMessage = error.message;
+        }
       } else {
-        alert(tErrors('purchaseError'));
-        console.error('Purchase error:', error);
+        userMessage = 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
+      }
+
+      // Show error with context
+      alert(`Fehler beim Kauf\n\nPaket: ${packInfo?.name || packId}\n${userMessage}`);
+      
+      // In development, also show technical details
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Technical error details:', {
+          packId,
+          error: error instanceof Error ? error.stack : error,
+          timestamp: new Date().toISOString()
+        });
       }
     } finally {
       setLoading(null);

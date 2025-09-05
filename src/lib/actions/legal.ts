@@ -12,6 +12,7 @@ interface ConsentEventData {
   version: string;
   locale: string;
   categories?: Record<string, boolean>;
+  userId?: string; // Allow passing user ID directly
 }
 
 /**
@@ -19,16 +20,22 @@ interface ConsentEventData {
  */
 export async function logConsentEvent(data: ConsentEventData) {
   try {
-    const supabase = createServerClient();
+    let userId: string;
+    
+    if (data.userId) {
+      // Use directly passed user ID (for API routes where user is already authenticated)
+      userId = data.userId;
+    } else {
+      // Fall back to getting session (for client-side usage)
+      const supabase = createServerClient();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-    // Get the current session explicitly
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session?.user) {
+        throw new Error(`No valid session: ${sessionError?.message || 'Session not found'}`);
+      }
 
-    if (sessionError || !session?.user) {
-      throw new Error(`No valid session: ${sessionError?.message || 'Session not found'}`);
+      userId = session.user.id;
     }
-
-    const user = session.user;
 
     // Get IP address (hashed for privacy)
     const headersList = headers();
@@ -42,7 +49,7 @@ export async function logConsentEvent(data: ConsentEventData) {
 
     // Create consent event record
     await db.insert(legalConsentEvents).values({
-      userId: user.id,
+      userId: userId,
       type: data.type,
       version: data.version,
       locale: data.locale,
