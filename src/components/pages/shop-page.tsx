@@ -6,9 +6,16 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/providers/auth-provider';
-import { formatCurrency } from '@/lib/stripe';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, ArrowLeft, ShoppingCart, Zap } from 'lucide-react';
+
+// Format currency helper
+function formatCurrency(amountInCents: number, currency = 'EUR', locale = 'de-DE'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amountInCents / 100);
+}
 
 interface HintPackage {
   sku: 'S' | 'M' | 'L';

@@ -1,21 +1,44 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error(
-    'Missing required environment variable STRIPE_SECRET_KEY. ' +
-    'Make sure to add your Stripe secret key to .env.local'
-  );
+// Server-side Stripe instance (only use on server)
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    if (typeof window !== 'undefined') {
+      throw new Error('Stripe secret key should never be used on the client side');
+    }
+    
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error(
+        'Missing required environment variable STRIPE_SECRET_KEY. ' +
+        'Make sure to add your Stripe secret key to your deployment environment'
+      );
+    }
+
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-08-27.basil',
+    });
+  }
+  
+  return _stripe;
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-08-27.basil',
-});
+// For backwards compatibility (server-side only)
+export const stripe = {
+  get checkout() {
+    return getStripe().checkout;
+  },
+  get webhooks() {
+    return getStripe().webhooks;
+  }
+};
 
-// Price IDs for hints packages
+// Price IDs for hints packages (safe to access on client)
 export const HINTS_PRICES = {
-  S: process.env.STRIPE_PRICE_HINTS_S!,
-  M: process.env.STRIPE_PRICE_HINTS_M!,
-  L: process.env.STRIPE_PRICE_HINTS_L!,
+  S: process.env.STRIPE_PRICE_HINTS_S || 'price_1S47GBHcAFSVUhHPdO1Bnyil',
+  M: process.env.STRIPE_PRICE_HINTS_M || 'price_1S47GDHcAFSVUhHPE0xO4Asj',
+  L: process.env.STRIPE_PRICE_HINTS_L || 'price_1S47GEHcAFSVUhHPfw6xh04q',
 } as const;
 
 // Package configurations

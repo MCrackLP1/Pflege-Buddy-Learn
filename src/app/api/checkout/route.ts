@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { stripe, HINTS_PRICES, HINTS_PACKAGES } from '@/lib/stripe';
+import { getStripe, HINTS_PRICES, HINTS_PACKAGES } from '@/lib/stripe';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Stripe checkout session
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],

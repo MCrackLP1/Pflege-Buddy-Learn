@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { createServerClient } from '@/lib/supabase/server';
 import Stripe from 'stripe';
 
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Verify the webhook signature
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(
       body,
       signature,
