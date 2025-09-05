@@ -55,11 +55,14 @@ export function RankedPage() {
   };
 
   const handleViewLeaderboard = () => {
-    // Scroll to leaderboard section
-    const leaderboardElement = document.getElementById('leaderboard');
-    if (leaderboardElement) {
-      leaderboardElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Go back to menu and scroll to leaderboard
+    setPageState('menu');
+    setTimeout(() => {
+      const leaderboardElement = document.getElementById('leaderboard');
+      if (leaderboardElement) {
+        leaderboardElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   if (pageState === 'playing') {

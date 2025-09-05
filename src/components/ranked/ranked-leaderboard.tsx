@@ -23,24 +23,37 @@ export function RankedLeaderboard() {
   const [userRank, setUserRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadLeaderboard = async () => {
-      try {
-        const response = await fetch('/api/ranked/leaderboard');
-        const data = await response.json();
+  const loadLeaderboard = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/ranked/leaderboard');
+      const data = await response.json();
 
-        if (data.success) {
-          setLeaderboard(data.leaderboard);
-          setUserRank(data.userRank);
-        }
-      } catch (error) {
-        console.error('Failed to load leaderboard:', error);
-      } finally {
-        setLoading(false);
+      if (data.success) {
+        setLeaderboard(data.leaderboard);
+        setUserRank(data.userRank);
+      }
+    } catch (error) {
+      console.error('Failed to load leaderboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, []);
+
+  // Refresh leaderboard when component becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadLeaderboard();
       }
     };
 
-    loadLeaderboard();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const getRankIcon = (rank: number) => {
