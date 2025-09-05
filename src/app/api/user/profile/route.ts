@@ -6,6 +6,21 @@ export async function GET(
   req: NextRequest
 ): Promise<NextResponse<ApiResponse>> {
   try {
+    // Check if Supabase environment variables are configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Supabase environment variables not configured');
+      return NextResponse.json(
+        {
+          error: 'Server-Konfiguration unvollständig. Bitte wenden Sie sich an den Support.',
+          success: false
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createServerClient();
 
     // Get authenticated user
@@ -21,7 +36,7 @@ export async function GET(
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('*')
+      .select('user_id, display_name, role, locale')
       .eq('user_id', user.id)
       .single();
 
@@ -35,11 +50,15 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: profile || { userId: user.id, displayName: null, role: 'user' }
+      data: profile || { user_id: user.id, display_name: null, role: 'user', locale: 'de' }
     });
 
   } catch (error) {
     console.error('Error getting profile:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return NextResponse.json(
       { error: 'Interner Serverfehler', success: false },
       { status: 500 }
@@ -51,6 +70,21 @@ export async function PUT(
   req: NextRequest
 ): Promise<NextResponse<ApiResponse>> {
   try {
+    // Check if Supabase environment variables are configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Supabase environment variables not configured');
+      return NextResponse.json(
+        {
+          error: 'Server-Konfiguration unvollständig. Bitte wenden Sie sich an den Support.',
+          success: false
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createServerClient();
 
     // Get authenticated user
@@ -76,7 +110,7 @@ export async function PUT(
     // Check if profile exists
     const { data: existingProfile } = await supabase
       .from('profiles')
-      .select('*')
+      .select('user_id, display_name, role, locale')
       .eq('user_id', user.id)
       .single();
 
@@ -86,11 +120,10 @@ export async function PUT(
       const { data, error } = await supabase
         .from('profiles')
         .update({
-          displayName: displayName.trim(),
-          updatedAt: new Date().toISOString()
+          display_name: displayName.trim()
         })
         .eq('user_id', user.id)
-        .select()
+        .select('user_id, display_name, role, locale')
         .single();
 
       if (error) throw error;
@@ -101,10 +134,11 @@ export async function PUT(
         .from('profiles')
         .insert({
           user_id: user.id,
-          displayName: displayName.trim(),
-          role: 'user'
+          display_name: displayName.trim(),
+          role: 'user',
+          locale: 'de'
         })
-        .select()
+        .select('user_id, display_name, role, locale')
         .single();
 
       if (error) throw error;
@@ -118,6 +152,10 @@ export async function PUT(
 
   } catch (error) {
     console.error('Error updating profile:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
     return NextResponse.json(
       { error: 'Fehler beim Aktualisieren des Profils', success: false },
       { status: 500 }

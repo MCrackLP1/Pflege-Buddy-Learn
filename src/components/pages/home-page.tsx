@@ -178,11 +178,12 @@ export function HomePage() {
           // Check if user has a display name in the profiles table
           const response = await fetch('/api/user/profile');
           if (response.ok) {
-            const profile = await response.json();
+            const responseData = await response.json();
+            const profile = responseData.data;
             setUserProfile(profile);
 
             // Show modal if no display name is set
-            if (!profile.displayName) {
+            if (!profile?.display_name) {
               setShowNameModal(true);
             }
           }
@@ -206,11 +207,13 @@ export function HomePage() {
       });
 
       if (response.ok) {
-        const updatedProfile = await response.json();
+        const responseData = await response.json();
+        const updatedProfile = responseData.data;
         setUserProfile(updatedProfile);
         setShowNameModal(false);
       } else {
-        throw new Error('Failed to save name');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save name');
       }
     } catch (error) {
       console.error('Error saving name:', error);
