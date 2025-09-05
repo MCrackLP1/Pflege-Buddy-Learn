@@ -81,28 +81,49 @@ export async function POST(request: NextRequest) {
       }
 
       // Initialize Supabase ADMIN client (bypasses RLS for webhooks)
+      console.log('🔍 Checking for SUPABASE_SERVICE_ROLE...', !!process.env.SUPABASE_SERVICE_ROLE);
+      
       if (!process.env.SUPABASE_SERVICE_ROLE) {
         console.error('❌ Missing SUPABASE_SERVICE_ROLE environment variable');
         throw new Error('Webhook requires Supabase service role key');
       }
       
+      console.log('🔑 Service role key found, length:', process.env.SUPABASE_SERVICE_ROLE.length);
+      
       // Create admin client that bypasses RLS
       const supabase = createServerClient(true); // Admin mode
       
-      console.log('🔐 Testing Supabase connection...');
+      console.log('🔧 Admin client created, testing write permissions...');
       
-      // Test basic connection
-      const { data: testQuery, error: testError } = await supabase
-        .from('user_wallet')
-        .select('user_id')
-        .limit(1);
+      // Test admin permissions with a simple write test
+      console.log('🔐 Testing admin write permissions...');
+      
+      try {
+        // Try to insert a test row to verify admin permissions
+        const testUserId = 'test-webhook-permissions-' + Date.now();
+        const { data: testInsert, error: testInsertError } = await supabase
+          .from('user_wallet')
+          .insert({
+            user_id: testUserId,
+            hints_balance: 999,
+            daily_free_hints_used: 0,
+            daily_reset_date: new Date().toISOString().split('T')[0]
+          })
+          .select();
+          
+        if (testInsertError) {
+          console.error('❌ Admin write test FAILED:', testInsertError);
+          throw new Error(`Admin client lacks write permissions: ${testInsertError.message}`);
+        }
         
-      if (testError) {
-        console.error('❌ Supabase connection test failed:', testError);
-        throw new Error(`Supabase connection failed: ${testError.message}`);
+        // Clean up test entry
+        await supabase.from('user_wallet').delete().eq('user_id', testUserId);
+        console.log('✅ Admin write permissions confirmed - test insert/delete successful');
+        
+      } catch (adminTestError) {
+        console.error('❌ Admin permission test failed:', adminTestError);
+        throw new Error(`Webhook admin setup failed: ${adminTestError instanceof Error ? adminTestError.message : 'Unknown admin error'}`);
       }
-      
-      console.log('✅ Supabase connection working, found wallets:', testQuery?.length || 0);
 
       try {
         // Simple approach: Get existing wallet
