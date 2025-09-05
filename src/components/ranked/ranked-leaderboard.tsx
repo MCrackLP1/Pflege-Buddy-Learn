@@ -15,9 +15,7 @@ interface LeaderboardEntry {
   average_time_ms: number;
   rank: number;
   created_at: string;
-  profiles: {
-    display_name?: string;
-  } | null;
+  display_name?: string;
 }
 
 export function RankedLeaderboard() {
@@ -125,7 +123,7 @@ export function RankedLeaderboard() {
 
                   <div>
                     <div className="font-semibold">
-                      {entry.profiles?.display_name || 'Anonymous User'}
+                      {entry.display_name || 'Anonymous User'}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {new Date(entry.created_at).toLocaleDateString('de-DE')}
@@ -137,27 +135,6 @@ export function RankedLeaderboard() {
                   <div className="text-center">
                     <div className="font-bold text-lg">{entry.total_score.toLocaleString()}</div>
                     <div className="text-muted-foreground">Punkte</div>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="font-semibold">{entry.questions_answered}</div>
-                    <div className="text-muted-foreground flex items-center gap-1">
-                      <Target className="h-3 w-3" />
-                      Fragen
-                    </div>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="font-semibold">{entry.accuracy}%</div>
-                    <div className="text-muted-foreground">Genau</div>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="font-semibold">{Math.round(entry.average_time_ms / 1000)}s</div>
-                    <div className="text-muted-foreground flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Ø Zeit
-                    </div>
                   </div>
                 </div>
               </div>

@@ -1,16 +1,22 @@
 /**
  * Calculate ranked mode score for a question attempt
- * Formula: (difficulty * 100) + timeBonus - hintPenalty
+ * Formula: Correct = (difficulty * 100) + timeBonus - hintPenalty, Wrong = -(difficulty * 50)
  */
 export function calculateRankedScore(
   difficulty: number,
   timeMs: number,
-  usedHints: number
+  usedHints: number,
+  isCorrect: boolean
 ): number {
-  const baseScore = difficulty * 100;
-  const timeBonus = Math.max(0, 20000 - timeMs) / 200; // Max 100 bonus for answering in < 20s
-  const hintPenalty = usedHints * 25;
-  return Math.round(baseScore + timeBonus - hintPenalty);
+  if (isCorrect) {
+    const baseScore = difficulty * 100;
+    const timeBonus = Math.max(0, 20000 - timeMs) / 200; // Max 100 bonus for answering in < 20s
+    const hintPenalty = usedHints * 25;
+    return Math.round(baseScore + timeBonus - hintPenalty);
+  } else {
+    // Wrong answer: lose points based on difficulty
+    return -(difficulty * 50); // Lose half the base score for wrong answers
+  }
 }
 
 /**

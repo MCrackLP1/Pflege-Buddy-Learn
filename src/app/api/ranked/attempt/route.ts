@@ -81,11 +81,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       isCorrect = answer === correctChoice?.id;
     }
 
-    // Calculate score: (difficulty * 100) + timeBonus - hintPenalty
-    const baseScore = question.difficulty * 100;
-    const timeBonus = Math.max(0, 20000 - timeMs) / 200; // Max 100 bonus for answering in < 20s
-    const hintPenalty = usedHints * 25;
-    const score = Math.round(baseScore + timeBonus - hintPenalty);
+    // Calculate score: Only positive points for correct answers, negative for wrong answers
+    let score = 0;
+    if (isCorrect) {
+      const baseScore = question.difficulty * 100;
+      const timeBonus = Math.max(0, 20000 - timeMs) / 200; // Max 100 bonus for answering in < 20s
+      const hintPenalty = usedHints * 25;
+      score = Math.round(baseScore + timeBonus - hintPenalty);
+    } else {
+      // Wrong answer: lose points based on difficulty
+      score = -(question.difficulty * 50); // Lose half the base score for wrong answers
+    }
 
     // Save attempt
     const { data: attempt, error: attemptError } = await supabase
