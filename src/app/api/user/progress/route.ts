@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { updateUserStreak, getNextMilestone, getActiveXPBoost } from '@/lib/streak-utils';
-import { updateXpMilestones, getNextXpMilestone } from '@/lib/xp-utils';
+import { updateXpMilestones, getNextXpMilestone, getLastAchievedXpMilestone } from '@/lib/xp-utils';
 import type { ApiResponse, UserProgressData } from '@/types/api.types';
 import type { StreakMilestone } from '@/lib/db/schema';
 
@@ -12,8 +12,9 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     xp_boost_active: boolean;
     xp_boost_multiplier: number;
     xp_boost_expiry?: string;
-    next_streak_milestone?: StreakMilestone;
-    next_xp_milestone?: any;
+            next_streak_milestone?: StreakMilestone;
+        next_xp_milestone?: any;
+        last_xp_milestone?: any;
   }
 }>>> {
   try {
@@ -49,6 +50,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     // Get next milestones
     const nextStreakMilestone = await getNextMilestone(user.id);
     const nextXpMilestone = await getNextXpMilestone(user.id);
+    const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
 
     // Get active XP boost info
     const xpBoostInfo = await getActiveXPBoost(user.id);
@@ -69,6 +71,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
         xp_boost_expiry: xpBoostInfo.expiry?.toISOString(),
         next_streak_milestone: nextStreakMilestone || undefined,
         next_xp_milestone: nextXpMilestone || undefined,
+        last_xp_milestone: lastXpMilestone || undefined,
       },
       topic_progress: [],
       success: true

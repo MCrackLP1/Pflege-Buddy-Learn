@@ -11,11 +11,13 @@ import type { XpMilestone } from '@/lib/db/schema';
 interface XpMilestoneCardProps {
   currentXp: number;
   nextMilestone?: XpMilestone;
+  lastMilestone?: XpMilestone;
 }
 
 export function XpMilestoneCard({
   currentXp,
   nextMilestone,
+  lastMilestone,
 }: XpMilestoneCardProps) {
   const t = useTranslations();
 
@@ -84,14 +86,27 @@ export function XpMilestoneCard({
           </div>
         )}
 
-        {!nextMilestone && currentXp > 0 && (
+        {/* Last Achieved Milestone */}
+        {lastMilestone && (
           <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
-              <Trophy className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                {t('xp.allMilestonesAchieved') || 'Alle Meilensteine erreicht!'}
-              </span>
+            <div className="flex items-start gap-2">
+              <Trophy className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-xs">
+                <div className="font-medium text-green-700 dark:text-green-300 mb-1">
+                  {t('xp.lastMilestone') || 'Zuletzt erreicht'}:
+                </div>
+                <div className="text-muted-foreground">
+                  {lastMilestone.rewardDescription}
+                </div>
+              </div>
             </div>
+          </div>
+        )}
+
+        {/* No milestones available yet */}
+        {!nextMilestone && !lastMilestone && currentXp === 0 && (
+          <div className="bg-secondary/50 rounded-lg p-3 text-xs text-center text-muted-foreground">
+            {t('xp.startLearning') || 'Beginne zu lernen und sammle XP!'}
           </div>
         )}
 

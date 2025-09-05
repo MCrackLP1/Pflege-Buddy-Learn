@@ -21,6 +21,7 @@ interface UserProgress {
   accuracy: number;
   next_streak_milestone?: StreakMilestone;
   next_xp_milestone?: any;
+  last_xp_milestone?: any;
   today_attempts: number;
   xp_boost_active: boolean;
   xp_boost_multiplier: number;
@@ -246,6 +247,7 @@ export function DashboardCard() {
           <XpMilestoneCard
             currentXp={userProgress?.xp || 0}
             nextMilestone={userProgress?.next_xp_milestone}
+            lastMilestone={userProgress?.last_xp_milestone}
           />
         </div>
 
