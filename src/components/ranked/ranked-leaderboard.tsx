@@ -125,9 +125,6 @@ export function RankedLeaderboard() {
                     <div className="font-semibold">
                       {entry.display_name || 'Anonymous User'}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(entry.created_at).toLocaleDateString('de-DE')}
-                    </div>
                   </div>
                 </div>
 
