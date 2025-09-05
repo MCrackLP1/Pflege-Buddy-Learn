@@ -4,9 +4,9 @@ import { cookies } from 'next/headers';
 export const createServerClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!url || !key) {
-    throw new Error('Missing Supabase environment variables. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+
+  if (!url || !key || url.includes('your-project') || key.includes('your_')) {
+    throw new Error('Missing or placeholder Supabase environment variables. Please configure your actual Supabase credentials in .env.local. Visit https://supabase.com/dashboard/project/tkqofzynpyvmivmxhoef/settings/api');
   }
   
   const cookieStore = cookies();
