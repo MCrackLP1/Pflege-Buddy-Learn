@@ -24,7 +24,7 @@ keys/
 *_key
 *_secret
 
-# Next.js
+# Next.js build artifacts
 .next/
 out/
 build/
@@ -33,15 +33,18 @@ dist/
 # Vercel
 .vercel
 
-# TypeScript
+# TypeScript build cache
 *.tsbuildinfo
 next-env.d.ts
 
-# Logs
+# ALL log files
+*.log
+*.log.*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
 
 # Runtime data
 pids
@@ -53,14 +56,20 @@ pids
 coverage
 *.lcov
 
-# IDE
+# COMPREHENSIVE IDE Coverage
 .vscode/
 .idea/
 *.swp
 *.swo
+*.swn
 *~
+.project
+.classpath
+.settings/
+*.sublime-*
+*.code-workspace
 
-# OS
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -69,15 +78,62 @@ coverage
 ehthumbs.db
 Thumbs.db
 
-# Database
+# Database files
 *.db
 *.sqlite
+*.sqlite3
 
-# AI generated content (optional - can be committed)
-# data/seed/*.json
+# CRITICAL: Prevent Git command fragments (exactly what we cleaned up!)
+# Files that might be created by accident with git commands
+h\ -u\ origin\ master*
+ign\ -\ remove\ redundant*
+ive\ streak\ milestone*
+s\ padding*
+tatus*
 
-# Playwright
+# Temporary and backup files (PREVENT ALTLASTEN!)
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*~
+*#
+.#*
+*_backup
+*_alt
+*_copy
+copy_of_*
+*-copy
+*-Kopie
+*_final
+*_master
+aktuell_master*
+
+# Test artifacts
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Additional development artifacts
+*.lock
+package-lock.json.backup
+.npmrc.backup
+.yarnrc.backup
+
+# Medical content drafts (should go through review process)
+data/drafts/
+data/review/
+data/temp/
+medical-review-*.md
+content-draft-*.json
+
+# AI generated content (optional - can be committed)
+# data/seed/*.json
+
+# Cache directories
+.cache/
+.eslintcache
+.stylelintcache
