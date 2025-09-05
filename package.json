@@ -21,8 +21,6 @@
     "content:review": "tsx scripts/generate_review_template.ts",
     "content:demo": "tsx scripts/content_demo.ts",
     "content:pipeline": "tsx scripts/content_demo.ts",
-    "stripe:check": "tsx scripts/stripe-check.ts",
-    "stripe:test:webhook": "echo 'Start Stripe CLI: stripe listen --forward-to localhost:3000/api/stripe/webhook' && echo 'Test webhook: stripe trigger checkout.session.completed'",
     "check:secrets": "tsx scripts/check-client-secrets.ts",
     "test": "playwright test",
     "test:ui": "playwright test --ui"
@@ -52,7 +50,6 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "react-hook-form": "^7.52.0",
-    "stripe": "^16.12.0",
     "tailwind-merge": "^2.5.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.0"

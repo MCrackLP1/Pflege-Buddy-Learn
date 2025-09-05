@@ -2,7 +2,7 @@
 
 import { createServerClient } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
-import { legalConsentEvents, purchases } from '@/lib/db/schema';
+import { legalConsentEvents } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
@@ -116,25 +116,3 @@ export async function checkUserConsent(userId: string, type: 'terms' | 'privacy'
   }
 }
 
-/**
- * Update purchase with withdrawal waiver information
- */
-export async function updatePurchaseWithdrawalWaiver(
-  stripeSessionId: string,
-  waiverVersion: string
-) {
-  try {
-    await db
-      .update(purchases)
-      .set({
-        withdrawalWaiverVersion: waiverVersion,
-        withdrawalWaiverAt: new Date(),
-      })
-      .where(eq(purchases.stripeSessionId, stripeSessionId));
-
-    return { success: true };
-  } catch (error) {
-    console.error('Failed to update purchase withdrawal waiver:', error);
-    throw new Error('Failed to update purchase withdrawal waiver');
-  }
-}

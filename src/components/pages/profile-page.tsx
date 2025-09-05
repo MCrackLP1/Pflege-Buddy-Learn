@@ -427,12 +427,6 @@ export function ProfilePage() {
                 </pre>
               </div>
 
-              <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-                <AlertTriangle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <AlertDescription className="text-blue-800 dark:text-blue-200">
-                  {t('deleteAccountStripeNote')}
-                </AlertDescription>
-              </Alert>
 
               <div className="space-y-2">
                 <Label htmlFor="deleteConfirmation" className="text-sm font-medium text-gray-900 dark:text-gray-100">

@@ -42,7 +42,6 @@ export const LEGAL_CONFIG = {
   processors: {
     supabase: process.env.LEGAL_PROCESSOR_SUPABASE_DPA || 'https://supabase.com/privacy',
     vercel: process.env.LEGAL_PROCESSOR_VERCEL_DPA || 'https://vercel.com/legal/dpa',
-    stripe: process.env.LEGAL_PROCESSOR_STRIPE_DPA || 'https://stripe.com/de/privacy',
   },
 
   // Legal pages paths
@@ -83,7 +82,7 @@ export const LEGAL_CONFIG = {
       name: 'Marketing',
       description: 'Für personalisierte Werbung',
       required: false,
-      providers: ['Stripe'],
+      providers: [],
     },
   },
 
@@ -96,7 +95,7 @@ export const LEGAL_CONFIG = {
 
   // Security headers
   securityHeaders: {
-    csp: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://api.stripe.com wss://*.supabase.co;",
+    csp: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co;",
     hsts: 'max-age=31536000; includeSubDomains; preload',
     xFrameOptions: 'SAMEORIGIN',
     xContentTypeOptions: 'nosniff',

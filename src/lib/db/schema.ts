@@ -4,7 +4,6 @@ import { relations } from 'drizzle-orm';
 // Enums
 export const questionTypeEnum = pgEnum('question_type', ['mc', 'tf']);
 export const userRoleEnum = pgEnum('user_role', ['user', 'admin']);
-export const purchaseStatusEnum = pgEnum('purchase_status', ['pending', 'succeeded', 'failed']);
 export const consentTypeEnum = pgEnum('consent_type', ['terms', 'privacy', 'cookie', 'withdrawal']);
 
 // Topics table
@@ -112,20 +111,6 @@ export const userWallet = pgTable('user_wallet', {
   hintsBalance: integer('hints_balance').notNull().default(0),
   dailyFreeHintsUsed: integer('daily_free_hints_used').notNull().default(0),
   dailyResetDate: date('daily_reset_date'),
-});
-
-// Purchases table for Stripe transactions
-export const purchases = pgTable('purchases', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull(),
-  stripeSessionId: text('stripe_session_id').notNull().unique(),
-  packKey: text('pack_key').notNull(), // e.g., "10_hints", "50_hints", "200_hints"
-  hintsDelta: integer('hints_delta').notNull(),
-  status: purchaseStatusEnum('status').notNull().default('pending'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  // Legal compliance fields for withdrawal waiver (DSGVO/BGB §356(5))
-  withdrawalWaiverVersion: text('withdrawal_waiver_version'),
-  withdrawalWaiverAt: timestamp('withdrawal_waiver_at'),
 });
 
 // Citations table for question sources
@@ -256,7 +241,6 @@ export type Attempt = typeof attempts.$inferSelect;
 export type UserProgress = typeof userProgress.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
 export type UserWallet = typeof userWallet.$inferSelect;
-export type Purchase = typeof purchases.$inferSelect;
 export type Citation = typeof citations.$inferSelect;
 export type StreakMilestone = typeof streakMilestones.$inferSelect;
 export type XpMilestone = typeof xpMilestones.$inferSelect;

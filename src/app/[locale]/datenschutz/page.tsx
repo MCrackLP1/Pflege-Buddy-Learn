@@ -82,11 +82,6 @@ export default function DatenschutzPage() {
               <p className="text-sm text-muted-foreground">DPA: {LEGAL_CONFIG.processors.supabase}</p>
             </div>
 
-            <div className="border-l-4 border-green-500 pl-4">
-              <h4 className="font-medium">Zahlungsabwicklung (Art. 6 Abs. 1 lit. b DSGVO)</h4>
-              <p>Stripe verarbeitet Zahlungsdaten für den Kauf von virtuellen Gegenständen.</p>
-              <p className="text-sm text-muted-foreground">DPA: {LEGAL_CONFIG.processors.stripe}</p>
-            </div>
 
             <div className="border-l-4 border-purple-500 pl-4">
               <h4 className="font-medium">Hosting und Bereitstellung (Art. 6 Abs. 1 lit. f DSGVO)</h4>

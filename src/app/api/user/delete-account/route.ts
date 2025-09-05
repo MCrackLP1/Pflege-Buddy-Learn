@@ -129,13 +129,7 @@ export async function POST(
       // Continue with other deletions even if this fails
     }
 
-    // Step 4: Handle purchases - DO NOT delete for legal/financial compliance
-    // Instead, anonymize by removing user reference if possible
-    console.log('Anonymizing purchases (keeping for legal compliance)...');
-    // Note: We keep purchases for legal/financial compliance but could potentially
-    // anonymize them by removing user_id if that's acceptable under local laws
-
-    // Step 5: Delete user wallet
+    // Step 4: Delete user wallet
     console.log('Deleting user wallet...');
     const { error: walletError } = await supabase
       .from('user_wallet')
