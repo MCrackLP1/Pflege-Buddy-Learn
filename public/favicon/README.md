@@ -29,3 +29,4 @@ public/favicon/
 ├── favicon-32x32.png
 └── apple-touch-icon.png
 ```
+
