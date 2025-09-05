@@ -82,60 +82,76 @@ export async function POST(request: NextRequest) {
 
       // Initialize Supabase admin client
       const supabase = createServerClient();
+      
+      console.log('🔐 Testing Supabase connection...');
+      
+      // Test basic connection
+      const { data: testQuery, error: testError } = await supabase
+        .from('user_wallet')
+        .select('user_id')
+        .limit(1);
+        
+      if (testError) {
+        console.error('❌ Supabase connection test failed:', testError);
+        throw new Error(`Supabase connection failed: ${testError.message}`);
+      }
+      
+      console.log('✅ Supabase connection working, found wallets:', testQuery?.length || 0);
 
       try {
-        // Get or create user wallet
+        // Simple approach: Get existing wallet
         console.log('🔍 Looking up user wallet for user:', userId);
         
         const { data: existingWallet, error: selectError } = await supabase
           .from('user_wallet')
           .select('hints_balance')
           .eq('user_id', userId)
-          .single();
-          
-        if (selectError && selectError.code !== 'PGRST116') {
-          console.error('❌ Error querying user wallet:', selectError);
-          throw selectError;
+          .maybeSingle(); // Use maybeSingle instead of single to avoid errors
+        
+        if (selectError) {
+          console.error('❌ Error selecting user wallet:', selectError);
+          throw new Error(`Database select failed: ${selectError.message}`);
         }
         
-        console.log('💰 Existing wallet:', existingWallet);
-
+        console.log('💰 Existing wallet found:', !!existingWallet);
+        
         if (existingWallet) {
-          // Update existing wallet
-          console.log(`📈 Updating existing wallet: ${existingWallet.hints_balance} + ${hintsToAdd}`);
+          // User has wallet - add to existing balance
+          const newBalance = existingWallet.hints_balance + hintsToAdd;
+          console.log(`📈 Updating: ${existingWallet.hints_balance} + ${hintsToAdd} = ${newBalance}`);
           
           const { error: updateError } = await supabase
             .from('user_wallet')
-            .update({
-              hints_balance: existingWallet.hints_balance + hintsToAdd
-            })
+            .update({ hints_balance: newBalance })
             .eq('user_id', userId);
-
+            
           if (updateError) {
-            console.error('❌ Error updating user wallet:', updateError);
-            throw updateError;
+            console.error('❌ Update failed:', updateError);
+            throw new Error(`Database update failed: ${updateError.message}`);
           }
-
-          console.log(`✅ Added ${hintsToAdd} hints to user ${userId}. New balance: ${existingWallet.hints_balance + hintsToAdd}`);
+          
+          console.log(`✅ Updated wallet to ${newBalance} hints`);
         } else {
-          // Create new wallet with purchased hints
-          console.log(`🆕 Creating new wallet for user ${userId} with ${hintsToAdd} hints`);
+          // User has no wallet - create new with starting hints + purchased
+          const startingBalance = 5 + hintsToAdd; // 5 starting + purchased
+          console.log(`🆕 Creating wallet with ${startingBalance} hints (5 start + ${hintsToAdd} purchased)`);
           
           const { error: insertError } = await supabase
             .from('user_wallet')
             .insert({
               user_id: userId,
-              hints_balance: hintsToAdd,
+              hints_balance: startingBalance,
               daily_free_hints_used: 0,
               daily_reset_date: new Date().toISOString().split('T')[0]
             });
-
+            
           if (insertError) {
-            console.error('❌ Error creating user wallet:', insertError);
-            throw insertError;
+            console.error('❌ Insert failed:', insertError);
+            console.error('❌ Insert error details:', JSON.stringify(insertError, null, 2));
+            throw new Error(`Database insert failed: ${insertError.message}`);
           }
-
-          console.log(`✅ Created new wallet for user ${userId} with ${hintsToAdd} hints`);
+          
+          console.log(`✅ Created wallet with ${startingBalance} hints`);
         }
 
         // TODO: Optional - Log the purchase for analytics/support
