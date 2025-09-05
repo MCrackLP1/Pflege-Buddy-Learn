@@ -19,11 +19,15 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
     const supabase = createServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
+    console.log('Auth check - User:', user?.id, 'Error:', authError);
+
     if (authError || !user) {
+      console.log('❌ User not authenticated');
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get last 10 attempts with detailed question info
+    console.log('Querying attempts for user:', user.id);
     const { data: attempts, error: attemptsError } = await supabase
       .from('attempts')
       .select(`
@@ -44,8 +48,20 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
       .order('created_at', { ascending: false })
       .limit(10);
 
+    console.log('Attempts query error:', attemptsError);
+
     if (attemptsError) {
       console.error('Database error fetching attempts:', attemptsError);
+      // Try a simpler query to check if any attempts exist
+      const { data: simpleAttempts, error: simpleError } = await supabase
+        .from('attempts')
+        .select('id, is_correct, created_at')
+        .eq('user_id', user.id)
+        .limit(5);
+
+      console.log('Simple attempts check:', simpleAttempts?.length || 0, 'attempts found');
+      console.log('Simple query error:', simpleError);
+
       // Return empty array instead of throwing error
       return NextResponse.json({
         recent_answers: [],
@@ -53,7 +69,8 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ recent_answers: 
       });
     }
 
-    console.log(`Found ${attempts?.length || 0} attempts for user`);
+    console.log(`Found ${attempts?.length || 0} attempts for user ${user.id}`);
+    console.log('Raw attempts data:', attempts);
 
     const recentAnswers: RecentAnswer[] = (attempts || []).map((attempt: any) => {
       try {
