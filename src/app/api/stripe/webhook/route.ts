@@ -95,35 +95,7 @@ export async function POST(request: NextRequest) {
       
       console.log('🔧 Admin client created, testing write permissions...');
       
-      // Test admin permissions with a simple write test
-      console.log('🔐 Testing admin write permissions...');
-      
-      try {
-        // Try to insert a test row to verify admin permissions
-        const testUserId = 'test-webhook-permissions-' + Date.now();
-        const { data: testInsert, error: testInsertError } = await supabase
-          .from('user_wallet')
-          .insert({
-            user_id: testUserId,
-            hints_balance: 999,
-            daily_free_hints_used: 0,
-            daily_reset_date: new Date().toISOString().split('T')[0]
-          })
-          .select();
-          
-        if (testInsertError) {
-          console.error('❌ Admin write test FAILED:', testInsertError);
-          throw new Error(`Admin client lacks write permissions: ${testInsertError.message}`);
-        }
-        
-        // Clean up test entry
-        await supabase.from('user_wallet').delete().eq('user_id', testUserId);
-        console.log('✅ Admin write permissions confirmed - test insert/delete successful');
-        
-      } catch (adminTestError) {
-        console.error('❌ Admin permission test failed:', adminTestError);
-        throw new Error(`Webhook admin setup failed: ${adminTestError instanceof Error ? adminTestError.message : 'Unknown admin error'}`);
-      }
+      console.log('✅ Admin client ready - proceeding with wallet operation');
 
       try {
         // Simple approach: Get existing wallet
