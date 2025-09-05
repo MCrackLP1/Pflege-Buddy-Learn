@@ -1,5 +1,5 @@
 import { createServerClient } from './supabase/server';
-import type { UserProgress, XpMilestone, UserMilestoneAchievement } from './db/schema';
+import type { UserProgress, XpMilestone } from './db/schema';
 
 export interface XpMilestoneResult {
   updatedProgress: UserProgress;

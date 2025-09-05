@@ -8,8 +8,7 @@ import type { QuestionWithChoices } from '@/lib/db/schema';
  */
 export async function getQuestionsByTopic(
   topicSlug: string, 
-  limit: number = 10, 
-  offset: number = 0
+  limit: number = 10
 ): Promise<QuestionWithChoices[]> {
   try {
     const supabase = createServerClient();
@@ -34,19 +33,6 @@ export async function getQuestionsByTopic(
     }
     
     const topic = topics[0];
-
-    // Get questions that user has already answered correctly
-    const { data: correctAttempts, error: attemptsError } = await supabase
-      .from('attempts')
-      .select('question_id')
-      .eq('user_id', user.id)
-      .eq('is_correct', true);
-
-    if (attemptsError) throw attemptsError;
-
-    const answeredQuestionIds = new Set(
-      (correctAttempts || []).map(a => a.question_id)
-    );
 
     // Get ALL questions for this topic
     const { data: allQuestionsData, error: allQuestionsError } = await supabase
@@ -122,19 +108,6 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
       throw new Error('User not authenticated');
     }
 
-    // Get questions that user has already answered correctly
-    const { data: correctAttempts, error: attemptsError } = await supabase
-      .from('attempts')
-      .select('question_id')
-      .eq('user_id', user.id)
-      .eq('is_correct', true);
-
-    if (attemptsError) throw attemptsError;
-
-    const answeredQuestionIds = new Set(
-      (correctAttempts || []).map(a => a.question_id)
-    );
-
     // Get ALL questions from all topics
     const { data: allQuestionsData, error: allQuestionsError } = await supabase
       .from('questions')
@@ -145,11 +118,6 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
       `);
 
     if (allQuestionsError) throw allQuestionsError;
-
-    // Filter out questions user has already answered correctly
-    const unansweredQuestions = (allQuestionsData || []).filter(q =>
-      !answeredQuestionIds.has(q.id)
-    );
 
     // Get truly random questions from all available questions
     const randomQuestions = (allQuestionsData || [])

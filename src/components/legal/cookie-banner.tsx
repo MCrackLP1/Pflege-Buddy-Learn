@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Settings, Check } from 'lucide-react';
 import Link from 'next/link';
-import { LEGAL_CONFIG } from '@/lib/constants';
 import { createLocalizedPath } from '@/lib/navigation';
 
 interface CookieBannerProps {
@@ -16,7 +15,6 @@ interface CookieBannerProps {
 
 export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const t = useTranslations();
   const locale = useLocale();
 
   useEffect(() => {
@@ -100,7 +98,7 @@ export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
 
           <div className="mt-4 text-xs text-muted-foreground">
             <p>
-              Durch Klick auf "Alle akzeptieren" stimmen Sie der Verwendung aller Cookies zu.
+              Durch Klick auf &quot;Alle akzeptieren&quot; stimmen Sie der Verwendung aller Cookies zu.
               Weitere Informationen finden Sie in unserer{' '}
               <Link href={createLocalizedPath(locale, 'cookies')} className="underline hover:no-underline">
                 Cookie-Richtlinie

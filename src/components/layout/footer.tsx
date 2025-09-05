@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { LEGAL_CONFIG } from '@/lib/constants';
@@ -11,7 +11,6 @@ interface FooterProps {
 }
 
 export function Footer({ showFullFooter = true }: FooterProps) {
-  const t = useTranslations();
   const locale = useLocale();
 
   const currentYear = new Date().getFullYear();

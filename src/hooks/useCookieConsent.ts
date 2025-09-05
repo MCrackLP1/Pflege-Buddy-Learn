@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { LEGAL_CONFIG } from '@/lib/constants';
 
 interface CookiePreferences {
   essential: boolean;

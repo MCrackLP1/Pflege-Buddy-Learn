@@ -1,19 +1,15 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { LEGAL_CONFIG, LEGAL_CONTENT } from '@/lib/constants';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'AGB | PflegeBuddy Learn',
     description: 'Allgemeine Geschäftsbedingungen für PflegeBuddy Learn',
   };
 }
 
-export default function AgbPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function AgbPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -29,8 +25,8 @@ export default function AgbPage({ params }: { params: { locale: string } }) {
           <h2 className="text-2xl font-semibold">1. Geltungsbereich</h2>
           <p>
             Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für die Nutzung der
-            mobilen Webanwendung "PflegeBuddy Learn" (nachfolgend "App") durch natürliche
-            Personen (nachfolgend "Nutzer").
+            mobilen Webanwendung &quot;PflegeBuddy Learn&quot; (nachfolgend &quot;App&quot;) durch natürliche
+            Personen (nachfolgend &quot;Nutzer&quot;).
           </p>
         </section>
 

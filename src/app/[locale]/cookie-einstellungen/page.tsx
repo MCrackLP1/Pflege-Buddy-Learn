@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Metadata } from 'next';
 import { LEGAL_CONFIG } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +17,7 @@ interface CookiePreferences {
   marketing: boolean;
 }
 
-export default function CookieEinstellungenPage({ params }: { params: { locale: string } }) {
+export default function CookieEinstellungenPage() {
   const [preferences, setPreferences] = useState<CookiePreferences>({
     essential: true, // Always true, cannot be disabled
     functional: false,

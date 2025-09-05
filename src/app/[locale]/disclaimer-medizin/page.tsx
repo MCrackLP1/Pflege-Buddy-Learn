@@ -1,18 +1,14 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { LEGAL_CONFIG, LEGAL_CONTENT } from '@/lib/constants';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Medizinischer Haftungsausschluss | PflegeBuddy Learn',
     description: 'Wichtiger medizinischer Haftungsausschluss für PflegeBuddy Learn',
   };
 }
 
-export default function DisclaimerMedizinPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function DisclaimerMedizinPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -141,7 +137,7 @@ export default function DisclaimerMedizinPage({ params }: { params: { locale: st
           <div className="bg-muted p-4 rounded-lg">
             <p><strong>{LEGAL_CONFIG.provider.name}</strong></p>
             <p>E-Mail: {LEGAL_CONFIG.provider.email}</p>
-            <p>Betreff: "Inhaltliche Bedenken PflegeBuddy Learn"</p>
+            <p>Betreff: &quot;Inhaltliche Bedenken PflegeBuddy Learn&quot;</p>
           </div>
         </section>
 

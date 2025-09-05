@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, Shield } from 'lucide-react';
-import { LEGAL_CONFIG } from '@/lib/constants';
 
 interface AgeGateModalProps {
   isOpen: boolean;
@@ -24,7 +22,6 @@ interface AgeGateModalProps {
 
 export function AgeGateModal({ isOpen, onConfirm, onCancel }: AgeGateModalProps) {
   const [isOver16, setIsOver16] = useState(false);
-  const t = useTranslations();
 
   const handleConfirm = () => {
     if (isOver16) {

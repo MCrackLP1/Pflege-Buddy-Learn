@@ -1,18 +1,14 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { LEGAL_CONFIG, LEGAL_CONTENT, getFullLegalAddress, getVatNotice } from '@/lib/constants';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Impressum | PflegeBuddy Learn',
     description: 'Impressum und rechtliche Informationen gemäß § 5 TMG',
   };
 }
 
-export default function ImpressumPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function ImpressumPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">

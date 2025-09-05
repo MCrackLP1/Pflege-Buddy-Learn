@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true npm run build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -53,6 +54,7 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.2",
     "@playwright/test": "^1.47.0",
     "@types/node": "^22.5.0",
     "@types/react": "^18.3.0",

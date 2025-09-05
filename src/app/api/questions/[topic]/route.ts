@@ -30,7 +30,7 @@ export async function GET(
       questions = await getRandomQuestions(limit);
     } else {
       // Get questions for specific topic with pagination
-      questions = await getQuestionsByTopic(topic, limit, offset);
+      questions = await getQuestionsByTopic(topic, limit);
     }
     
     const response = NextResponse.json({

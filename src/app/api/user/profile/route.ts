@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { ApiResponse } from '@/types/api.types';
 
-export async function GET(
-  req: NextRequest
-): Promise<NextResponse<ApiResponse>> {
+export async function GET(): Promise<NextResponse<ApiResponse>> {
   try {
     // Check if Supabase environment variables are configured
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

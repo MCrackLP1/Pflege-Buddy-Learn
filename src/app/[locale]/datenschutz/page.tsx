@@ -1,19 +1,15 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { LEGAL_CONFIG, LEGAL_CONTENT, getFullLegalAddress } from '@/lib/constants';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Datenschutzerklärung | PflegeBuddy Learn',
     description: 'Datenschutzerklärung gemäß DSGVO für PflegeBuddy Learn',
   };
 }
 
-export default function DatenschutzPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function DatenschutzPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">

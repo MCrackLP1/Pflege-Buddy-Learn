@@ -1,18 +1,14 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { LEGAL_CONFIG, LEGAL_CONTENT, getFullLegalAddress } from '@/lib/constants';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Widerrufsbelehrung | PflegeBuddy Learn',
     description: 'Widerrufsrecht für digitale Inhalte gemäß § 356 BGB',
   };
 }
 
-export default function WiderrufPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function WiderrufPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">

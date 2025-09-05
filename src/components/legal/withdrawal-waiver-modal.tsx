@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -31,7 +30,6 @@ export function WithdrawalWaiverModal({
 }: WithdrawalWaiverModalProps) {
   const [consent1, setConsent1] = useState(false);
   const [consent2, setConsent2] = useState(false);
-  const t = useTranslations();
 
   const canProceed = consent1 && consent2;
 

@@ -1,5 +1,5 @@
 import { createServerClient } from './supabase/server';
-import type { UserProgress, StreakMilestone, UserMilestoneAchievement } from './db/schema';
+import type { UserProgress, StreakMilestone } from './db/schema';
 
 export interface StreakUpdateResult {
   updatedProgress: UserProgress;
@@ -33,7 +33,7 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
   let currentStreak = progress?.streak_days || 0;
   let longestStreak = progress?.longest_streak || 0;
   let currentStreakStart = progress?.current_streak_start;
-  let lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
+  const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
 
   // Check if user was active yesterday or today
   const { data: recentActivity } = await supabase

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
@@ -16,13 +15,9 @@ import {
   Sparkles,
   ArrowRight,
   Play,
-  CheckCircle,
-  Users,
-  Star,
-  Zap,
   ChevronDown,
   User,
-  X
+  type LucideIcon
 } from 'lucide-react';
 
 // Loading Animation Component
@@ -53,7 +48,7 @@ function LoadingAnimation() {
 }
 
 // Feature Card Component
-function FeatureCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
+function FeatureCard({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100 dark:border-gray-700">
       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
@@ -156,11 +151,9 @@ function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; on
 }
 
 export function HomePage() {
-  const t = useTranslations();
   const { session, loading } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
-  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -180,7 +173,6 @@ export function HomePage() {
           if (response.ok) {
             const responseData = await response.json();
             const profile = responseData.data;
-            setUserProfile(profile);
 
             // Show modal if no display name is set
             if (!profile?.display_name) {
@@ -209,7 +201,6 @@ export function HomePage() {
       if (response.ok) {
         const responseData = await response.json();
         const updatedProfile = responseData.data;
-        setUserProfile(updatedProfile);
         setShowNameModal(false);
       } else {
         const errorData = await response.json();
@@ -346,7 +337,7 @@ export function HomePage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                So einfach geht's
+                So einfach geht&apos;s
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
                 In 3 Schritten zu deinem täglichen Pflegewissen

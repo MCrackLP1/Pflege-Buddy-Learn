@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, Target, Gift, Lightbulb } from 'lucide-react';
+import { Trophy, Target, Lightbulb } from 'lucide-react';
 import type { XpMilestone } from '@/lib/db/schema';
 
 interface XpMilestoneCardProps {

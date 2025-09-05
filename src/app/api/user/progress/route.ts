@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { updateUserStreak, getNextMilestone, getActiveXPBoost } from '@/lib/streak-utils';
-import { updateXpMilestones, getNextXpMilestone, getLastAchievedXpMilestone } from '@/lib/xp-utils';
+import { getNextXpMilestone, getLastAchievedXpMilestone } from '@/lib/xp-utils';
 import type { ApiResponse, UserProgressData } from '@/types/api.types';
 import type { StreakMilestone } from '@/lib/db/schema';
 

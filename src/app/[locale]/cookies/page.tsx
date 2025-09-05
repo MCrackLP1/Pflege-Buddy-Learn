@@ -1,19 +1,11 @@
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+'use client';
+
+import { useLocale } from 'next-intl';
 import { LEGAL_CONFIG, LEGAL_CONTENT } from '@/lib/constants';
 import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale });
-
-  return {
-    title: 'Cookie-Richtlinie | PflegeBuddy Learn',
-    description: 'Cookie-Richtlinie und Datenschutzbestimmungen für PflegeBuddy Learn',
-  };
-}
-
-export default function CookiesPage({ params }: { params: { locale: string } }) {
-  const isGerman = params.locale === 'de';
+export default function CookiesPage() {
+  const locale = useLocale();
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -126,7 +118,7 @@ export default function CookiesPage({ params }: { params: { locale: string } }) 
 
           <p>
             Weitere Informationen finden Sie in unserer{' '}
-            <Link href={`/${params.locale}/datenschutz`} className="text-primary hover:underline">
+            <Link href={`/${locale}/datenschutz`} className="text-primary hover:underline">
               Datenschutzerklärung
             </Link>
             .

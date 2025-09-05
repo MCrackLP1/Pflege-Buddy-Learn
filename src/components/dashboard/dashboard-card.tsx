@@ -10,8 +10,8 @@ import { Progress } from '@/components/ui/progress';
 import { MainLayout } from '@/components/layout/main-layout';
 import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
 import { XpMilestoneCard } from '@/components/xp/xp-milestone-card';
-import { Flame, Star, Target, CheckCircle, XCircle } from 'lucide-react';
-import type { StreakMilestone } from '@/lib/db/schema';
+import { Target, CheckCircle, XCircle } from 'lucide-react';
+import type { StreakMilestone, XpMilestone } from '@/lib/db/schema';
 
 interface UserProgress {
   xp: number;
@@ -20,8 +20,8 @@ interface UserProgress {
   total_questions: number;
   accuracy: number;
   next_streak_milestone?: StreakMilestone;
-  next_xp_milestone?: any;
-  last_xp_milestone?: any;
+  next_xp_milestone?: XpMilestone;
+  last_xp_milestone?: XpMilestone;
   today_attempts: number;
   xp_boost_active: boolean;
   xp_boost_multiplier: number;
@@ -281,7 +281,7 @@ export function DashboardCard() {
                   msOverflowStyle: 'none', // IE/Edge
                 }}
               >
-                {recentAnswers.map((answer, index) => (
+                {recentAnswers.map((answer) => (
                   <div
                     key={answer.id}
                     className="flex-shrink-0 w-80 bg-card border border-border rounded-lg p-4 hover:bg-accent/30 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"

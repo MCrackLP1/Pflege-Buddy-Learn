@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { createServerClient } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
 import { purchases } from '@/lib/db/schema';
-import { logConsentEvent, updatePurchaseWithdrawalWaiver } from '@/lib/actions/legal';
+import { logConsentEvent } from '@/lib/actions/legal';
 import { LEGAL_CONFIG } from '@/lib/constants';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
