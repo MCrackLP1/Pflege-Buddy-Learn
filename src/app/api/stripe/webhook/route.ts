@@ -7,20 +7,16 @@ import Stripe from 'stripe';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  console.log('🎯 Webhook received!');
-  
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
   if (!signature) {
-    console.error('❌ Webhook Error: Missing Stripe signature');
+    console.error('Webhook Error: Missing Stripe signature');
     return NextResponse.json(
       { error: 'Missing Stripe signature' },
       { status: 400 }
     );
   }
-
-  console.log('✅ Webhook signature present, verifying...');
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     console.error('Webhook Error: Missing STRIPE_WEBHOOK_SECRET environment variable');
@@ -49,19 +45,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    console.log('🎉 Webhook event received:', event.type);
-
     // Handle the checkout.session.completed event
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      console.log('💰 Processing completed checkout session:', session.id);
-      console.log('📋 Session metadata:', session.metadata);
+      console.log('Processing checkout session:', session.id);
 
       // Extract metadata
       const { userId, packageSize, hintsQuantity } = session.metadata || {};
-
-      console.log('🔍 Extracted data:', { userId, packageSize, hintsQuantity });
 
       if (!userId || !hintsQuantity) {
         console.error('Missing required metadata in session:', session.id);
@@ -81,43 +72,30 @@ export async function POST(request: NextRequest) {
       }
 
       // Initialize Supabase ADMIN client (bypasses RLS for webhooks)
-      console.log('🔍 Checking for SUPABASE_SERVICE_ROLE...', !!process.env.SUPABASE_SERVICE_ROLE);
-      
       if (!process.env.SUPABASE_SERVICE_ROLE) {
-        console.error('❌ Missing SUPABASE_SERVICE_ROLE environment variable');
+        console.error('Missing SUPABASE_SERVICE_ROLE environment variable');
         throw new Error('Webhook requires Supabase service role key');
       }
       
-      console.log('🔑 Service role key found, length:', process.env.SUPABASE_SERVICE_ROLE.length);
-      
       // Create admin client that bypasses RLS
       const supabase = createServerClient(true); // Admin mode
-      
-      console.log('🔧 Admin client created, testing write permissions...');
-      
-      console.log('✅ Admin client ready - proceeding with wallet operation');
 
       try {
-        // Simple approach: Get existing wallet
-        console.log('🔍 Looking up user wallet for user:', userId);
-        
+        // Get existing wallet
         const { data: existingWallet, error: selectError } = await supabase
           .from('user_wallet')
           .select('hints_balance')
           .eq('user_id', userId)
-          .maybeSingle(); // Use maybeSingle instead of single to avoid errors
+          .maybeSingle();
         
         if (selectError) {
-          console.error('❌ Error selecting user wallet:', selectError);
+          console.error('Error selecting user wallet:', selectError);
           throw new Error(`Database select failed: ${selectError.message}`);
         }
-        
-        console.log('💰 Existing wallet found:', !!existingWallet);
         
         if (existingWallet) {
           // User has wallet - add to existing balance
           const newBalance = existingWallet.hints_balance + hintsToAdd;
-          console.log(`📈 Updating: ${existingWallet.hints_balance} + ${hintsToAdd} = ${newBalance}`);
           
           const { error: updateError } = await supabase
             .from('user_wallet')
@@ -125,15 +103,14 @@ export async function POST(request: NextRequest) {
             .eq('user_id', userId);
             
           if (updateError) {
-            console.error('❌ Update failed:', updateError);
+            console.error('Error updating user wallet:', updateError);
             throw new Error(`Database update failed: ${updateError.message}`);
           }
           
-          console.log(`✅ Updated wallet to ${newBalance} hints`);
+          console.log(`Added ${hintsToAdd} hints to user. New balance: ${newBalance}`);
         } else {
           // User has no wallet - create new with starting hints + purchased
           const startingBalance = 5 + hintsToAdd; // 5 starting + purchased
-          console.log(`🆕 Creating wallet with ${startingBalance} hints (5 start + ${hintsToAdd} purchased)`);
           
           const { error: insertError } = await supabase
             .from('user_wallet')
@@ -145,24 +122,12 @@ export async function POST(request: NextRequest) {
             });
             
           if (insertError) {
-            console.error('❌ Insert failed:', insertError);
-            console.error('❌ Insert error details:', JSON.stringify(insertError, null, 2));
+            console.error('Error creating user wallet:', insertError);
             throw new Error(`Database insert failed: ${insertError.message}`);
           }
           
-          console.log(`✅ Created wallet with ${startingBalance} hints`);
+          console.log(`Created wallet with ${startingBalance} hints for user`);
         }
-
-        // TODO: Optional - Log the purchase for analytics/support
-        // You could create a purchases table to track all transactions
-        
-        console.log('Successfully processed hints purchase:', {
-          userId,
-          packageSize,
-          hintsQuantity: hintsToAdd,
-          sessionId: session.id,
-          paymentIntentId: session.payment_intent,
-        });
 
       } catch (dbError) {
         console.error('Database error processing hints purchase:', dbError);

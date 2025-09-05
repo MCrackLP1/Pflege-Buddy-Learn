@@ -17,7 +17,7 @@ export const createServerClient = (useServiceRole = false) => {
       throw new Error('Missing SUPABASE_SERVICE_ROLE key. Required for webhook operations that bypass RLS.');
     }
     
-    console.log('🔑 Using Supabase admin client (service role) - bypasses RLS');
+    // Using service role for admin operations (bypasses RLS)
     
     return createSupabaseClient(url, serviceRoleKey, {
       auth: {
