@@ -10,6 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Head from 'next/head';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import React from 'react';
+import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
+import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
 import {
   Brain,
   BookOpen,
@@ -25,6 +29,8 @@ import {
   User,
   CheckCircle,
   Instagram,
+  Star,
+  Users,
   type LucideIcon
 } from 'lucide-react';
 
@@ -55,38 +61,85 @@ function LoadingAnimation() {
   );
 }
 
-// Reusable Components
-function FeatureCard({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) {
-  return (
-    <Card className="transition-all duration-300 hover:shadow-lg">
+// Enhanced Feature Card Component
+function FeatureCard({ icon: Icon, title, description, delay = 0, link }: {
+  icon: LucideIcon,
+  title: string,
+  description: string,
+  delay?: number,
+  link?: string
+}) {
+  const { shouldAnimate, getTransition } = useOptimizedAnimation({ delay });
+
+  const cardContent = (
+    <Card className="h-full transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 bg-gradient-to-br from-card to-card/95 border-border/50 group-hover:border-primary/30">
       <CardHeader className="pb-4">
-        <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-2">
-          <Icon className="w-6 h-6 text-primary-foreground" />
-        </div>
-        <CardTitle className="text-lg">{title}</CardTitle>
+        <motion.div
+          className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300"
+          whileHover={shouldAnimate ? { rotate: 5, scale: 1.1 } : {}}
+        >
+          <Icon className="w-7 h-7 text-primary-foreground" />
+        </motion.div>
+        <CardTitle className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription className="text-base">{description}</CardDescription>
+        <CardDescription className="text-base leading-relaxed">
+          {description}
+        </CardDescription>
+        <motion.div
+          className="mt-4 h-1 bg-gradient-to-r from-primary/20 to-primary/40 rounded-full overflow-hidden"
+          initial={shouldAnimate ? { scaleX: 0 } : { scaleX: 1 }}
+          whileInView={shouldAnimate ? { scaleX: 1 } : { scaleX: 1 }}
+          transition={getTransition({ delay: delay + 0.3, duration: 0.8 })}
+        >
+          <motion.div
+            className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
+            initial={shouldAnimate ? { x: "-100%" } : { x: "0%" }}
+            whileInView={shouldAnimate ? { x: "100%" } : { x: "0%" }}
+            transition={getTransition({ delay: delay + 0.5, duration: 1.2 })}
+          />
+        </motion.div>
       </CardContent>
     </Card>
   );
+
+  return (
+    <motion.div
+      initial={shouldAnimate ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }}
+      animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+      transition={getTransition()}
+      whileHover={shouldAnimate ? { y: -8, scale: 1.02 } : {}}
+      className="group"
+    >
+      {link ? (
+        <a href={link} className="block h-full">
+          {cardContent}
+        </a>
+      ) : (
+        cardContent
+      )}
+    </motion.div>
+  );
 }
 
-function CategoryCard({ icon: Icon, title, description, example }: {
+function CategoryCard({ icon: Icon, title, description, example, link }: {
   icon: LucideIcon;
   title: string;
   description: string;
   example?: { question: string; answer: string };
+  link?: string;
 }) {
-  return (
-    <Card className="h-full">
+  const categoryContent = (
+    <Card className="h-full transition-all duration-300 hover:shadow-lg group">
       <CardHeader>
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
             <Icon className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-lg">{title}</CardTitle>
+            <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
         </div>
@@ -102,6 +155,12 @@ function CategoryCard({ icon: Icon, title, description, example }: {
       )}
     </Card>
   );
+
+  return link ? (
+    <a href={link} className="block h-full">
+      {categoryContent}
+    </a>
+  ) : categoryContent;
 }
 
 function ProcessStep({ step, title, description }: { step: number; title: string; description: string }) {
@@ -114,6 +173,369 @@ function ProcessStep({ step, title, description }: { step: number; title: string
       <p className="text-muted-foreground">{description}</p>
     </div>
   );
+}
+
+// Floating Card Component
+const FloatingCard = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => {
+  const { shouldAnimate, getTransition } = useOptimizedAnimation({ delay });
+
+  return (
+    <motion.div
+      initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
+      animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+      transition={getTransition()}
+      whileHover={shouldAnimate ? { y: -5, scale: 1.02 } : {}}
+      className={`bg-background/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-lg ${className}`}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+// Animated Counter Component - handles both numbers and text
+const AnimatedCounter = ({ value, duration = 2 }: { value: string, duration?: number }) => {
+  const [count, setCount] = useState(0)
+  const [displayText, setDisplayText] = useState('')
+  const ref = React.useRef(null)
+  const isInView = useInView(ref)
+
+  useEffect(() => {
+    // Check if value is purely numeric (like "250", "14")
+    const isNumeric = /^\d+$/.test(value)
+
+    if (isNumeric && isInView) {
+      const numericValue = parseInt(value)
+      let start = 0
+      const increment = numericValue / (duration * 60)
+
+      const timer = setInterval(() => {
+        start += increment
+        if (start >= numericValue) {
+          setCount(numericValue)
+          clearInterval(timer)
+        } else {
+          setCount(Math.floor(start))
+        }
+      }, 1000 / 60)
+
+      return () => clearInterval(timer)
+    } else if (!isNumeric) {
+      // For non-numeric values like "24/7", show immediately
+      setDisplayText(value)
+    }
+  }, [isInView, value, duration])
+
+  const isNumeric = /^\d+$/.test(value)
+  return <span ref={ref}>{isNumeric ? count.toLocaleString() : displayText}</span>
+}
+
+// Modern Hero Section Component
+function ModernHeroSection() {
+  const { shouldAnimate, getTransition, variants } = useOptimizedAnimation();
+  const controls = useAnimation()
+  const [isVisible, setIsVisible] = useState(false)
+  const tHomeHero = useTranslations('components.homeHero');
+
+  useEffect(() => {
+    if (shouldAnimate) {
+      setIsVisible(true)
+      controls.start("visible")
+    }
+  }, [controls, shouldAnimate])
+
+  const containerVariants = shouldAnimate ? {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  } : {
+    hidden: { opacity: 1 },
+    visible: { opacity: 1 }
+  }
+
+  const itemVariants = shouldAnimate ? {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  } : {
+    hidden: { opacity: 1, y: 0 },
+    visible: { opacity: 1, y: 0 }
+  }
+
+  const stats = [
+    { value: "14", label: "Themenbereiche", icon: <BookOpen className="w-5 h-5" /> },
+    { value: "+588", label: "Fragen", icon: <BookOpen className="w-5 h-5" /> },
+    { value: "24/7", label: "Verfügbar", icon: <Users className="w-5 h-5" /> }
+  ]
+
+  const features = [
+    "Erfahrungspunkte sammeln",
+    "Intelligente Hinweise",
+    "Lernfortschritt verfolgen",
+    "Tägliche Lernserie"
+  ]
+
+  const trustIndicators = [
+    {
+      title: "Medizinisch fundiert",
+      description: "Alle Inhalte basieren auf aktuellen medizinischen Leitlinien und werden regelmäßig aktualisiert",
+      icon: <Shield className="w-6 h-6" />
+    },
+    {
+      title: "DSGVO-konform",
+      description: "Ihre Daten sind sicher und werden streng vertraulich behandelt",
+      icon: <Heart className="w-6 h-6" />
+    },
+    {
+      title: "Für Profis entwickelt",
+      description: "Spezialisiert auf die Bedürfnisse von Pflegefachkräften und medizinischem Personal",
+      icon: <Award className="w-6 h-6" />
+    }
+  ]
+
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200/20 dark:bg-blue-800/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-200/20 dark:bg-green-800/20 rounded-full blur-3xl"
+        />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-16">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={controls}
+          className="grid lg:grid-cols-2 gap-12 items-center min-h-screen"
+        >
+          {/* Left Column - Content */}
+          <div className="space-y-8">
+            <motion.div variants={itemVariants} className="space-y-4">
+              <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Für professionelle Pflegekräfte
+              </Badge>
+
+              <motion.h2
+                variants={itemVariants}
+                className="text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide uppercase"
+              >
+                Medizinisch fundiert & DSGVO-konform
+              </motion.h2>
+
+              <motion.h1
+                variants={itemVariants}
+                className="text-5xl lg:text-6xl font-bold leading-tight"
+              >
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-blue-600 dark:text-blue-400"
+                >
+                  Ihr digitaler Pflegeassistent{' '}
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="text-foreground"
+                >
+                  für Fachwissen & Weiterbildung
+                </motion.span>
+              </motion.h1>
+
+              {/* SEO-optimized hidden H1 for screen readers and search engines */}
+              <h1 className="sr-only">
+                PflegeBuddy Learn - Ihr digitaler Pflegeassistent für Fachwissen & Weiterbildung
+              </h1>
+
+              <motion.p
+                variants={itemVariants}
+                className="text-xl text-muted-foreground leading-relaxed max-w-2xl"
+              >
+                {tHomeHero('description')}
+              </motion.p>
+            </motion.div>
+
+            {/* Features List */}
+            <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                  className="flex items-center space-x-2"
+                >
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <span className="text-sm font-medium text-foreground">{feature}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* CTA Buttons */}
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
+              <Button
+                size="lg"
+                onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg font-semibold group"
+                aria-label={`${tHomeHero('primaryCta')} - Jetzt mit dem Lernen beginnen`}
+              >
+                {tHomeHero('primaryCta')}
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                className="px-8 py-6 text-lg font-semibold group"
+                aria-label={`${tHomeHero('secondaryCta')} - Erfahre mehr über unsere Features`}
+              >
+                <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
+                {tHomeHero('secondaryCta')}
+              </Button>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div variants={itemVariants} className="grid grid-cols-3 gap-6 pt-8">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.2 + index * 0.1 }}
+                  className="text-center"
+                >
+                  <div className="flex justify-center mb-2 text-blue-600 dark:text-blue-400">
+                    {stat.icon}
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    <AnimatedCounter value={stat.value} />
+                  </div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Right Column - Visual Elements */}
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-6">
+              {/* Main Feature Card */}
+              <FloatingCard delay={0.5} className="col-span-2">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Komplette Lernplattform</h3>
+                    <p className="text-sm text-muted-foreground">
+                      <a href="/de/learn" className="text-blue-600 hover:text-blue-700 underline">
+                        14 Fachbereiche sofort verfügbar
+                      </a>
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full h-2 bg-gradient-to-r from-blue-100 to-green-100 dark:from-blue-900 dark:to-green-900 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ delay: 1, duration: 2 }}
+                    className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center">
+                  <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+                  Vollständig verfügbar - Start jederzeit möglich
+                </p>
+              </FloatingCard>
+
+              {/* Stats Card */}
+              <FloatingCard delay={0.7}>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-foreground">
+                    <AnimatedCounter value="+588" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Fragen</p>
+                </div>
+              </FloatingCard>
+
+              {/* Community Card */}
+              <FloatingCard delay={0.9}>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="text-lg font-bold text-foreground">
+                    <AnimatedCounter value="14" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Fachbereiche</p>
+                </div>
+              </FloatingCard>
+
+              {/* Trust Indicators Card */}
+              <FloatingCard delay={1.1} className="col-span-2">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                    Warum PflegeBuddy vertrauen?
+                  </h3>
+                  <div className="space-y-3">
+                    {trustIndicators.map((indicator, index) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="text-blue-600 dark:text-blue-400">
+                            {indicator.icon}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{indicator.title}</p>
+                          <p className="text-xs text-muted-foreground">{indicator.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </FloatingCard>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  )
 }
 
 // Name Input Modal Component
@@ -289,42 +711,112 @@ export function HomePage() {
   }
 
   if (!session) {
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "PflegeBuddy Learn",
-      "description": "Interaktives Lernquiz für Pflegekräfte mit Multiple-Choice Fragen",
-      "url": "https://www.pflegebuddy.app",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR"
+    const structuredData = [
+      // WebApplication Schema
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PflegeBuddy Learn",
+        "description": "Interaktives Lernquiz für Pflegekräfte mit Multiple-Choice Fragen zu medizinischen Themen",
+        "url": "https://www.pflegebuddy.app",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web Browser",
+        "browserRequirements": "Modern Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "PflegeBuddy",
+          "url": "https://www.pflegebuddy.app",
+          "logo": "https://www.pflegebuddy.app/favicon/logo.webp"
+        },
+        "featureList": [
+          "Interaktive Multiple-Choice Fragen",
+          "Erfahrungspunkt-System (XP)",
+          "Intelligente Hinweise",
+          "Lernfortschritt-Tracking",
+          "Tägliche Lernserie",
+          "14 Fachbereiche verfügbar"
+        ],
+        "screenshot": "https://www.pflegebuddy.app/favicon/logo.webp",
+        "datePublished": "2025-01-01",
+        "softwareVersion": "1.0"
       },
-      "creator": {
+      // Organization Schema
+      {
+        "@context": "https://schema.org",
         "@type": "Organization",
         "name": "PflegeBuddy",
-        "url": "https://www.pflegebuddy.app"
+        "url": "https://www.pflegebuddy.app",
+        "logo": "https://www.pflegebuddy.app/favicon/logo.webp",
+        "description": "Digitale Lernplattform für Pflegefachkräfte und medizinisches Personal",
+        "foundingDate": "2025",
+        "knowsAbout": [
+          "Pflegeausbildung",
+          "Medizinische Weiterbildung",
+          "Multiple-Choice Lernsysteme",
+          "DSGVO-konforme Gesundheitsdaten",
+          "Medizinische Fachkenntnisse"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+491741632129",
+          "email": "deinpflegebuddy@gmail.com",
+          "contactType": "customer service"
+        },
+        "sameAs": [
+          "https://www.instagram.com/pflege.buddy/"
+        ]
       },
-      "featureList": [
-        "Interaktive Multiple-Choice Fragen",
-        "Erfahrungspunkt-System",
-        "Intelligente Hinweise",
-        "Lernfortschritt-Tracking",
-        "Tägliche Lernserie"
-      ]
-    };
+      // Course Schema
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Pflegefachwissen Weiterbildung",
+        "description": "Umfassende Lernplattform mit 14 Fachbereichen für Pflegekräfte",
+        "provider": {
+          "@type": "Organization",
+          "name": "PflegeBuddy"
+        },
+        "courseMode": "online",
+        "educationalCredentialAwarded": "Lernzertifikat",
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online",
+          "instructor": {
+            "@type": "Organization",
+            "name": "PflegeBuddy Team"
+          }
+        },
+        "teaches": [
+          "Notfallmanagement",
+          "Medikamentengabe",
+          "Hygiene & Infektionsschutz",
+          "Pflegedokumentation",
+          "Schmerzmanagement",
+          "Palliative Pflege"
+        ],
+        "educationalLevel": "Professional",
+        "occupationalCategory": "Pflegefachkraft"
+      }
+    ];
 
     return (
       <>
         <Head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(structuredData),
-            }}
-          />
+          {structuredData.map((data, index) => (
+            <script
+              key={index}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(data),
+              }}
+            />
+          ))}
         </Head>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* Navigation */}
@@ -338,6 +830,8 @@ export function HomePage() {
                     src="/favicon/logo.webp"
                     alt="PflegeBuddy Logo"
                     className="h-10 w-auto"
+                    width="40"
+                    height="40"
                   />
                 </div>
                 <div className="hidden sm:block">
@@ -370,95 +864,130 @@ export function HomePage() {
           </div>
         </nav>
 
-        {/* Hero Section */}
-        <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8" aria-labelledby="hero-heading">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-6">
-                <Shield className="w-4 h-4 mr-2" />
-                {tHomeHero('badge')}
-              </Badge>
-              <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-                {tHomeHero('title')}
-                <span className="block text-primary">
-                  {tHomeHero('subtitle')}
-                </span>
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-                {tHomeHero('description')}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-                <Button
-                  size="lg"
-                  onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-xl font-bold px-12 py-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20 hover:border-white/30 rounded-xl"
-                  style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
-                >
-                  <Play className="w-6 h-6 mr-3 animate-pulse" />
-                  {tHomeHero('primaryCta')}
-                  <ArrowRight className="w-6 h-6 ml-3 animate-bounce" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-lg px-8 py-4 border-2 hover:bg-primary/10"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  {tHomeHero('secondaryCta')}
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {tHomeHero('disclaimer')}
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Modern Hero Section */}
+        <ModernHeroSection />
 
-        {/* Features Section */}
-        <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-labelledby="features-heading">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 id="features-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        {/* Enhanced Features Section */}
+        <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background relative overflow-hidden" aria-labelledby="features-heading">
+          {/* Background decoration */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+          </div>
+
+          <div className="max-w-6xl mx-auto relative z-10">
+            <motion.div
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary border-primary/20">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Warum PflegeBuddy Learn?
+                </Badge>
+              </motion.div>
+              <h2 id="features-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-6">
                 {tHomeFeatures('title')}
               </h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <motion.p
+                className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                viewport={{ once: true }}
+              >
                 {tHomeFeatures('subtitle')}
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.15,
+                    delayChildren: 0.2
+                  }
+                }
+              }}
+            >
               <FeatureCard
                 icon={Award}
                 title={tHomeFeatures('xpSystem.title')}
-                description={tHomeFeatures('xpSystem.description')}
+                description={`${tHomeFeatures('xpSystem.description')} Erfahre mehr über das Punktesystem.`}
+                delay={0}
+                link="/de/learn"
               />
               <FeatureCard
                 icon={Sparkles}
                 title={tHomeFeatures('hints.title')}
-                description={tHomeFeatures('hints.description')}
+                description={`${tHomeFeatures('hints.description')} Spare Zeit mit intelligenten Hinweisen.`}
+                delay={0.1}
+                link="/de/learn"
               />
               <FeatureCard
                 icon={Target}
                 title={tHomeFeatures('progress.title')}
-                description={tHomeFeatures('progress.description')}
+                description={`${tHomeFeatures('progress.description')} Verfolge deinen Lernfortschritt.`}
+                delay={0.2}
+                link="/de/profile"
               />
               <FeatureCard
                 icon={Clock}
                 title={tHomeFeatures('streak.title')}
-                description={tHomeFeatures('streak.description')}
+                description={`${tHomeFeatures('streak.description')} Halte deine Lernserie aufrecht.`}
+                delay={0.3}
+                link="/de/learn"
               />
               <FeatureCard
                 icon={Shield}
                 title={tHomeFeatures('leaderboard.title')}
-                description={tHomeFeatures('leaderboard.description')}
+                description={`${tHomeFeatures('leaderboard.description')} Vergleiche dich mit anderen.`}
+                delay={0.4}
+                link="/de/ranked"
               />
               <FeatureCard
                 icon={Brain}
                 title={tHomeFeatures('adaptive.title')}
-                description={tHomeFeatures('adaptive.description')}
+                description={`${tHomeFeatures('adaptive.description')} Passe dich an dein Lerntempo an.`}
+                delay={0.5}
+                link="/de/learn"
               />
-            </div>
+            </motion.div>
+
+            {/* Additional visual element */}
+            <motion.div
+              className="text-center mt-16"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full border border-primary/20">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                >
+                  <Heart className="w-5 h-5 text-primary" />
+                </motion.div>
+                <span className="text-sm font-medium text-foreground">
+                  Entwickelt mit ❤️ für Pflegeprofis
+                </span>
+              </div>
+            </motion.div>
           </div>
         </section>
 
@@ -600,6 +1129,8 @@ export function HomePage() {
                     src="/favicon/logo.webp"
                     alt="PflegeBuddy Logo"
                     className="h-8 w-auto"
+                    width="32"
+                    height="32"
                   />
                   <span className="text-lg font-bold text-foreground">{tNavbar('brand')}</span>
                 </div>
