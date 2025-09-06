@@ -285,7 +285,7 @@ export function HomePage() {
                       document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
-                  className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-blue-500/25 animate-pulse"
+                  className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-blue-400/60 hover:shadow-blue-400/90 ring-2 ring-blue-400/40 ring-opacity-50"
                 >
                   <Play className="w-6 h-6 mr-3" />
                   Jetzt Spielen
