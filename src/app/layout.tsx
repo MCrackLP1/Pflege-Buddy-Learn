@@ -73,25 +73,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 
-        {/* Preload critical fonts */}
+        {/* Google Fonts - Inter */}
         <link
-          rel="preload"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-          as="style"
-          onLoad={() => {
-            const link = document.querySelector('link[rel="preload"][as="style"]') as HTMLLinkElement;
-            if (link) {
-              link.onload = null;
-              link.rel = 'stylesheet';
-            }
-          }}
+          rel="stylesheet"
         />
-        <noscript>
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-          />
-        </noscript>
       </head>
       <body className={inter.className}>
         {children}

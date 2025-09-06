@@ -14,13 +14,19 @@ export interface AnimationConfig {
 
 export const useOptimizedAnimation = (config: AnimationConfig = {}) => {
   const [isReady, setIsReady] = useState(false);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const [shouldAnimate, setShouldAnimate] = useState(false); // Start with false for SSR
   const [deviceCapabilities, setDeviceCapabilities] = useState({
     isLowEnd: false,
     supportsWebGL: false
   });
 
   useEffect(() => {
+    // Only run device detection on client side
+    if (typeof window === 'undefined') {
+      setIsReady(true);
+      return;
+    }
+
     // Check user preferences and device capabilities
     const userPrefersReducedMotion = prefersReducedMotion();
     const capabilities = getDeviceCapabilities();

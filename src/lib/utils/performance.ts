@@ -7,46 +7,56 @@
 export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined') return false;
 
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  return mediaQuery.matches;
+  try {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    return mediaQuery.matches;
+  } catch (error) {
+    // Fallback for older browsers or SSR
+    return false;
+  }
 };
 
 // Check device performance capabilities
 export const getDeviceCapabilities = () => {
   if (typeof window === 'undefined') return { isLowEnd: false, supportsWebGL: false };
 
-  const connection = (navigator as any).connection;
-  const deviceMemory = (navigator as any).deviceMemory;
-  const hardwareConcurrency = navigator.hardwareConcurrency;
-
-  // Check for low-end device indicators
-  const isSlowConnection = connection && (
-    connection.effectiveType === 'slow-2g' ||
-    connection.effectiveType === '2g' ||
-    connection.saveData === true
-  );
-
-  const isLowMemory = deviceMemory && deviceMemory < 4;
-  const isLowConcurrency = hardwareConcurrency && hardwareConcurrency < 4;
-
-  const isLowEnd = isSlowConnection || isLowMemory || isLowConcurrency;
-
-  // Check WebGL support for complex animations
-  let supportsWebGL = false;
   try {
-    const canvas = document.createElement('canvas');
-    supportsWebGL = !!(window.WebGLRenderingContext && canvas.getContext('webgl'));
-  } catch (e) {
-    supportsWebGL = false;
-  }
+    const connection = (navigator as any).connection;
+    const deviceMemory = (navigator as any).deviceMemory;
+    const hardwareConcurrency = navigator.hardwareConcurrency;
 
-  return {
-    isLowEnd,
-    supportsWebGL,
-    connectionType: connection?.effectiveType || 'unknown',
-    deviceMemory: deviceMemory || 'unknown',
-    hardwareConcurrency: hardwareConcurrency || 'unknown'
-  };
+    // Check for low-end device indicators
+    const isSlowConnection = connection && (
+      connection.effectiveType === 'slow-2g' ||
+      connection.effectiveType === '2g' ||
+      connection.saveData === true
+    );
+
+    const isLowMemory = deviceMemory && deviceMemory < 4;
+    const isLowConcurrency = hardwareConcurrency && hardwareConcurrency < 4;
+
+    const isLowEnd = isSlowConnection || isLowMemory || isLowConcurrency;
+
+    // Check WebGL support for complex animations
+    let supportsWebGL = false;
+    try {
+      const canvas = document.createElement('canvas');
+      supportsWebGL = !!(window.WebGLRenderingContext && canvas.getContext('webgl'));
+    } catch (e) {
+      supportsWebGL = false;
+    }
+
+    return {
+      isLowEnd,
+      supportsWebGL,
+      connectionType: connection?.effectiveType || 'unknown',
+      deviceMemory: deviceMemory || 'unknown',
+      hardwareConcurrency: hardwareConcurrency || 'unknown'
+    };
+  } catch (error) {
+    // Fallback for any detection errors
+    return { isLowEnd: false, supportsWebGL: false };
+  }
 };
 
 // Debounce function for performance optimization
@@ -136,11 +146,35 @@ export const measurePerformance = (name: string, fn: () => void) => {
 
 // Check if animations should be disabled
 export const shouldDisableAnimations = (): boolean => {
+  // During build time or SSR, always disable animations to prevent hydration issues
+  if (typeof window === 'undefined') return true;
+
   return prefersReducedMotion() || getDeviceCapabilities().isLowEnd;
 };
 
 // Optimized animation variants for Framer Motion
 export const getOptimizedVariants = () => {
+  // During build time or SSR, disable animations to prevent hydration issues
+  if (typeof window === 'undefined') {
+    return {
+      fadeIn: {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        transition: { duration: 0 }
+      },
+      slideUp: {
+        initial: { opacity: 1, y: 0 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0 }
+      },
+      scaleIn: {
+        initial: { opacity: 1, scale: 1 },
+        animate: { opacity: 1, scale: 1 },
+        transition: { duration: 0 }
+      }
+    };
+  }
+
   const disableAnimations = shouldDisableAnimations();
 
   return {
