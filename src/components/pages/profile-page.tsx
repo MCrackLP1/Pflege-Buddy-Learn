@@ -26,9 +26,18 @@ interface UserStats {
   displayName: string;
 }
 
+interface UserProfile {
+  user_id: string;
+  display_name: string | null;
+  role: string;
+  locale: string;
+}
+
 export function ProfilePage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -52,7 +61,7 @@ export function ProfilePage() {
         setLoading(true);
         const response = await fetch('/api/user/progress');
         const data = await response.json();
-        
+
         if (data.success) {
           const progress = data.user_progress;
           setUserStats({
@@ -79,13 +88,70 @@ export function ProfilePage() {
         setLoading(false);
       }
     }
-    
+
     loadUserStats();
+  }, [user]);
+
+  // Load user profile from API
+  useEffect(() => {
+    async function loadUserProfile() {
+      try {
+        const response = await fetch('/api/user/profile');
+        const data = await response.json();
+
+        if (data.success) {
+          setUserProfile(data.data);
+        }
+      } catch (err) {
+        console.error('Error loading user profile:', err);
+      }
+    }
+
+    if (user) {
+      loadUserProfile();
+    }
   }, [user]);
 
   const handleLanguageChange = (locale: string) => {
     // Will implement locale switching
     console.log('Switch to locale:', locale);
+  };
+
+  const handleDisplayNameChange = async (newDisplayName: string) => {
+    if (!user) return;
+
+    try {
+      setProfileLoading(true);
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          displayName: newDisplayName.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setUserProfile(data.data);
+        // Also update userStats for consistency
+        if (userStats) {
+          setUserStats({
+            ...userStats,
+            displayName: newDisplayName.trim(),
+          });
+        }
+      } else {
+        throw new Error(data.error || 'Failed to update display name');
+      }
+    } catch (error) {
+      console.error('Error updating display name:', error);
+      alert('Fehler beim Aktualisieren des Anzeigenamens');
+    } finally {
+      setProfileLoading(false);
+    }
   };
 
   const handleExportData = () => {
@@ -178,7 +244,7 @@ export function ProfilePage() {
             currentStreak: progress.streak_days || 0,
             totalQuestions: progress.total_questions || 0,
             accuracy: progress.accuracy || 0,
-            displayName: user?.user_metadata?.name || user?.email?.split('@')[0] || '',
+            displayName: userProfile?.display_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '',
           });
         }
 
@@ -213,9 +279,10 @@ export function ProfilePage() {
               <Label htmlFor="displayName">{t('displayName')}</Label>
               <Input
                 id="displayName"
-                value={userStats?.displayName || ''}
+                value={userProfile?.display_name || ''}
                 placeholder={tComponents('placeholderName')}
-                readOnly
+                onChange={(e) => handleDisplayNameChange(e.target.value)}
+                disabled={profileLoading}
               />
             </div>
 
