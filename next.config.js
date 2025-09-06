@@ -6,7 +6,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['postgres']
+    serverComponentsExternalPackages: ['postgres'],
+    webVitalsAttribution: ['CLS', 'LCP'],
   },
   eslint: {
     ignoreDuringBuilds: true
@@ -24,48 +25,44 @@ const nextConfig = {
   swcMinify: true,
   // Enable compression
   compress: true,
-  // Enable service worker
-  headers: [
-    {
-      source: '/(.*)',
-      headers: [
-        {
-          key: 'X-Frame-Options',
-          value: 'DENY'
-        },
-        {
-          key: 'X-Content-Type-Options',
-          value: 'nosniff'
-        },
-        {
-          key: 'Referrer-Policy',
-          value: 'origin-when-cross-origin'
-        }
-      ]
-    },
-    {
-      source: '/static/(.*)',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'public, max-age=31536000, immutable'
-        }
-      ]
-    },
-    {
-      source: '/_next/image(.*)',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'public, max-age=31536000, immutable'
-        }
-      ]
-    }
-  ],
-  // Web Vitals Attribution
-  experimental: {
-    serverComponentsExternalPackages: ['postgres'],
-    webVitalsAttribution: ['CLS', 'LCP'],
+  headers: async () => {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          }
+        ]
+      },
+      {
+        source: '/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      },
+      {
+        source: '/_next/image(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      }
+    ];
   },
 };
 
