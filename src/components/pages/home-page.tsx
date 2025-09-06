@@ -340,9 +340,9 @@ export function HomePage() {
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-foreground tracking-tight">
+                  <span className="text-xl font-bold text-foreground tracking-tight">
                     {tNavbar('brand')}
-                  </h1>
+                  </span>
                   <p className="text-xs text-muted-foreground leading-tight">
                     {tNavbar('subtitle')}
                   </p>

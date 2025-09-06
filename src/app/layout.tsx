@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PflegeBuddy Learn - Interaktives Lernquiz für Pflegekräfte',
-  description: 'Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz. Sammeln Sie Erfahrungspunkte und verbessern Sie Ihre Fachkenntnisse. Medizinisch fundiert & DSGVO-konform.',
+  description: 'Interaktives Lernquiz für Pflegekräfte. Sammeln Sie XP, testen Sie Ihr Fachwissen. Medizinisch fundiert & DSGVO-konform.',
   keywords: 'Pflege, Lernquiz, Weiterbildung, Multiple-Choice, Fachwissen, Pflegekräfte, Medizin',
   authors: [{ name: 'PflegeBuddy Team' }],
   creator: 'PflegeBuddy',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   robots: 'index, follow',
   openGraph: {
     title: 'PflegeBuddy Learn - Interaktives Lernquiz für Pflegekräfte',
-    description: 'Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz. Sammeln Sie Erfahrungspunkte und verbessern Sie Ihre Fachkenntnisse.',
+    description: 'Interaktives Lernquiz für Pflegekräfte. Sammeln Sie XP, testen Sie Ihr Fachwissen. Medizinisch fundiert & DSGVO-konform.',
     url: 'https://www.pflegebuddy.app',
     siteName: 'PflegeBuddy Learn',
     locale: 'de_DE',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'PflegeBuddy Learn - Interaktives Lernquiz für Pflegekräfte',
-    description: 'Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz.',
+    description: 'Interaktives Lernquiz für Pflegekräfte. Sammeln Sie XP, testen Sie Ihr Fachwissen.',
     creator: '@pflegebuddy',
   },
   icons: {
