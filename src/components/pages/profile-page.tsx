@@ -38,6 +38,8 @@ export function ProfilePage() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [, setLoading] = useState(true);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [editingDisplayName, setEditingDisplayName] = useState(false);
+  const [tempDisplayName, setTempDisplayName] = useState('');
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -112,13 +114,30 @@ export function ProfilePage() {
     }
   }, [user]);
 
+  // Update tempDisplayName when userProfile changes
+  useEffect(() => {
+    if (userProfile?.display_name) {
+      setTempDisplayName(userProfile.display_name);
+    }
+  }, [userProfile]);
+
   const handleLanguageChange = (locale: string) => {
     // Will implement locale switching
     console.log('Switch to locale:', locale);
   };
 
-  const handleDisplayNameChange = async (newDisplayName: string) => {
-    if (!user) return;
+  const startEditingDisplayName = () => {
+    setTempDisplayName(userProfile?.display_name || '');
+    setEditingDisplayName(true);
+  };
+
+  const cancelEditingDisplayName = () => {
+    setTempDisplayName('');
+    setEditingDisplayName(false);
+  };
+
+  const saveDisplayName = async () => {
+    if (!user || !tempDisplayName.trim()) return;
 
     try {
       setProfileLoading(true);
@@ -128,7 +147,7 @@ export function ProfilePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          displayName: newDisplayName.trim(),
+          displayName: tempDisplayName.trim(),
         }),
       });
 
@@ -140,9 +159,11 @@ export function ProfilePage() {
         if (userStats) {
           setUserStats({
             ...userStats,
-            displayName: newDisplayName.trim(),
+            displayName: tempDisplayName.trim(),
           });
         }
+        setEditingDisplayName(false);
+        setTempDisplayName('');
       } else {
         throw new Error(data.error || 'Failed to update display name');
       }
@@ -277,13 +298,51 @@ export function ProfilePage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="displayName">{t('displayName')}</Label>
-              <Input
-                id="displayName"
-                value={userProfile?.display_name || ''}
-                placeholder={tComponents('placeholderName')}
-                onChange={(e) => handleDisplayNameChange(e.target.value)}
-                disabled={profileLoading}
-              />
+              {editingDisplayName ? (
+                <div className="flex gap-2">
+                  <Input
+                    id="displayName"
+                    value={tempDisplayName}
+                    placeholder={tComponents('placeholderName')}
+                    onChange={(e) => setTempDisplayName(e.target.value)}
+                    disabled={profileLoading}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={saveDisplayName}
+                    disabled={profileLoading || !tempDisplayName.trim()}
+                    size="sm"
+                  >
+                    {profileLoading ? '...' : 'Speichern'}
+                  </Button>
+                  <Button
+                    onClick={cancelEditingDisplayName}
+                    variant="outline"
+                    disabled={profileLoading}
+                    size="sm"
+                  >
+                    Abbrechen
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="displayName"
+                    value={userProfile?.display_name || ''}
+                    placeholder={tComponents('placeholderName')}
+                    readOnly
+                    className="cursor-pointer"
+                    onClick={startEditingDisplayName}
+                  />
+                  <Button
+                    onClick={startEditingDisplayName}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Bearbeiten
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
