@@ -1,0 +1,24 @@
+{
+  "topic": "hygiene",
+  "sources": [
+    {
+      "url": "https://www.rki.de/DE/Content/Infekt/Krankenhaushygiene/krankenhaushygiene_node.html",
+      "title": "RKI - Krankenhaushygiene",
+      "published_date": "2024-01-20",
+      "description": "Hygienemaßnahmen im Krankenhaus"
+    },
+    {
+      "url": "https://www.who.int/gpsc/5may/Hand_Hygiene_Why_How_and_When_Brochure.pdf",
+      "title": "WHO - Hand Hygiene Guidelines",
+      "published_date": "2024-01-12",
+      "description": "WHO Handhygiene-Richtlinien"
+    },
+    {
+      "url": "https://www.cdc.gov/handhygiene/providers/guideline.html",
+      "title": "CDC Hand Hygiene Guidelines",
+      "published_date": "2024-01-08",
+      "description": "Centers for Disease Control hand hygiene recommendations"
+    }
+  ],
+  "updated_at": "2025-09-03T22:35:28.767Z"
+}

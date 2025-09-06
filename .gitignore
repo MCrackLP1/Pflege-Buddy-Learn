@@ -1,0 +1,139 @@
+# Dependencies
+node_modules/
+.pnpm
+.npm
+
+# Environment files (CRITICAL: Never commit these!)
+.env*
+!.env.template
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Security-sensitive files
+.config/
+.secrets/
+credentials/
+keys/
+*.pem
+*.key
+*.p12
+*.cert
+*_key
+*_secret
+
+# Next.js build artifacts
+.next/
+out/
+build/
+dist/
+
+# Vercel
+.vercel
+
+# TypeScript build cache
+*.tsbuildinfo
+next-env.d.ts
+
+# ALL log files
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# COMPREHENSIVE IDE Coverage
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+.project
+.classpath
+.settings/
+*.sublime-*
+*.code-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# CRITICAL: Prevent Git command fragments (exactly what we cleaned up!)
+# Files that might be created by accident with git commands
+h\ -u\ origin\ master*
+ign\ -\ remove\ redundant*
+ive\ streak\ milestone*
+s\ padding*
+tatus*
+
+# Temporary and backup files (PREVENT ALTLASTEN!)
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+*~
+*#
+.#*
+*_backup
+*_alt
+*_copy
+copy_of_*
+*-copy
+*-Kopie
+*_final
+*_master
+aktuell_master*
+
+# Test artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Additional development artifacts
+*.lock
+package-lock.json.backup
+.npmrc.backup
+.yarnrc.backup
+
+# Medical content drafts (should go through review process)
+data/drafts/
+data/review/
+data/temp/
+medical-review-*.md
+content-draft-*.json
+
+# AI generated content (optional - can be committed)
+# data/seed/*.json
+
+# Cache directories
+.cache/
+.eslintcache
+.stylelintcache

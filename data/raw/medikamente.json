@@ -1,0 +1,18 @@
+{
+  "topic": "medikamente",
+  "sources": [
+    {
+      "url": "https://www.bfarm.de/DE/Arzneimittel/Pharmakovigilanz/_node.html",
+      "title": "BfArM - Arzneimittelsicherheit",
+      "published_date": "2024-01-18",
+      "description": "Bundesinstitut für Arzneimittel und Medizinprodukte"
+    },
+    {
+      "url": "https://www.who.int/publications/guidelines/medicines/en/",
+      "title": "WHO Medicine Guidelines",
+      "published_date": "2024-01-14",
+      "description": "WHO guidelines for medication administration"
+    }
+  ],
+  "updated_at": "2025-09-03T22:35:28.768Z"
+}
