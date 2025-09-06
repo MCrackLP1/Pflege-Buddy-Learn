@@ -208,6 +208,7 @@ export function HomePage() {
   const tHomeProcess = useTranslations('components.homeProcess');
   const tHomeCta = useTranslations('components.homeCta');
   const tHomeFooter = useTranslations('components.homeFooter');
+  const tNavbar = useTranslations('components.navbar');
   
   // Cookie handlers for non-session view
   const handleCookieAccept = (preferences: Record<string, boolean>) => {
@@ -326,15 +327,43 @@ export function HomePage() {
         </Head>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-50">
+        <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-lg border-b border-border/50 shadow-sm z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-2">
-                <Heart className="w-8 h-8 text-primary" />
-                <span className="text-xl font-bold text-foreground">PflegeBuddy Learn</span>
+              {/* Logo & Brand */}
+              <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0">
+                  <img
+                    src="/favicon/logo.webp"
+                    alt="PflegeBuddy Logo"
+                    className="h-10 w-auto"
+                  />
+                </div>
+                <div className="hidden sm:block">
+                  <h1 className="text-xl font-bold text-foreground tracking-tight">
+                    {tNavbar('brand')}
+                  </h1>
+                  <p className="text-xs text-muted-foreground leading-tight">
+                    {tNavbar('subtitle')}
+                  </p>
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                🎓 Lernen für Pflegeprofis
+
+              {/* Tagline - Desktop only */}
+              <div className="hidden md:flex items-center space-x-2">
+                <div className="h-4 w-px bg-border"></div>
+                <div className="text-sm text-muted-foreground font-medium">
+                  🎓 {tNavbar('tagline')}
+                </div>
+              </div>
+
+              {/* Mobile menu button (placeholder for future expansion) */}
+              <div className="sm:hidden">
+                <button className="text-muted-foreground hover:text-foreground p-2 rounded-md hover:bg-muted transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -563,12 +592,16 @@ export function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-3 gap-8">
               <div>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Heart className="w-6 h-6 text-primary" />
-                  <span className="text-lg font-bold text-foreground">{tHomeFooter('brand')}</span>
+                <div className="flex items-center space-x-3 mb-4">
+                  <img
+                    src="/favicon/logo.webp"
+                    alt="PflegeBuddy Logo"
+                    className="h-8 w-auto"
+                  />
+                  <span className="text-lg font-bold text-foreground">{tNavbar('brand')}</span>
                 </div>
                 <p className="text-muted-foreground">
-                  {tHomeFooter('tagline')}
+                  {tNavbar('subtitle')}
                 </p>
               </div>
               <div>

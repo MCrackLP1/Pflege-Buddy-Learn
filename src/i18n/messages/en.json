@@ -318,6 +318,11 @@
       "tagline": "Your companion for nursing knowledge and continuing education",
       "legal": "Legal",
       "support": "Support"
+    },
+    "navbar": {
+      "brand": "PflegeBuddy Learn",
+      "subtitle": "Interactive quiz for nursing professionals",
+      "tagline": "Professional nursing education"
     }
   },
   "validation": {

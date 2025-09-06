@@ -321,6 +321,11 @@
       "tagline": "Ihr Begleiter für Pflegewissen und Weiterbildung",
       "legal": "Rechtliches",
       "support": "Support"
+    },
+    "navbar": {
+      "brand": "PflegeBuddy Learn",
+      "subtitle": "Interaktives Lernquiz für Pflegekräfte",
+      "tagline": "Professionelle Pflegeausbildung"
     }
   },
   "validation": {
