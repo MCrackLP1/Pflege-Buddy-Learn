@@ -121,9 +121,36 @@ export function ProfilePage() {
     }
   }, [userProfile]);
 
-  const handleLanguageChange = (locale: string) => {
-    // Will implement locale switching
-    console.log('Switch to locale:', locale);
+  const handleLanguageChange = async (locale: string) => {
+    if (!user) return;
+
+    try {
+      setProfileLoading(true);
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          locale: locale,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setUserProfile(data.data);
+        // Reload the page to apply the new locale
+        window.location.reload();
+      } else {
+        throw new Error(data.error || 'Failed to update language');
+      }
+    } catch (error) {
+      console.error('Error updating language:', error);
+      alert('Fehler beim Aktualisieren der Sprache');
+    } finally {
+      setProfileLoading(false);
+    }
   };
 
   const startEditingDisplayName = () => {
@@ -347,7 +374,7 @@ export function ProfilePage() {
 
             <div className="space-y-2">
               <Label htmlFor="language">{t('language')}</Label>
-              <Select onValueChange={handleLanguageChange} defaultValue="de">
+              <Select onValueChange={handleLanguageChange} value={userProfile?.locale || 'de'}>
                 <SelectTrigger>
                   <SelectValue placeholder={tComponents('selectLanguage')} />
                 </SelectTrigger>

@@ -96,11 +96,19 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { displayName } = body;
+    const { displayName, locale } = body;
 
-    if (!displayName || typeof displayName !== 'string' || displayName.trim().length === 0) {
+    // Validate inputs
+    if (displayName !== undefined && (!displayName || typeof displayName !== 'string' || displayName.trim().length === 0)) {
       return NextResponse.json(
         { error: 'Ungültiger Anzeigename', success: false },
+        { status: 400 }
+      );
+    }
+
+    if (locale !== undefined && (!locale || typeof locale !== 'string' || !['de', 'en'].includes(locale))) {
+      return NextResponse.json(
+        { error: 'Ungültige Sprache', success: false },
         { status: 400 }
       );
     }
@@ -112,14 +120,21 @@ export async function PUT(
       .eq('user_id', user.id)
       .single();
 
+    // Prepare update object
+    const updateData: any = {};
+    if (displayName !== undefined) {
+      updateData.display_name = displayName.trim();
+    }
+    if (locale !== undefined) {
+      updateData.locale = locale;
+    }
+
     let result;
     if (existingProfile) {
       // Update existing profile
       const { data, error } = await supabase
         .from('profiles')
-        .update({
-          display_name: displayName.trim()
-        })
+        .update(updateData)
         .eq('user_id', user.id)
         .select('user_id, display_name, role, locale')
         .single();
@@ -127,15 +142,17 @@ export async function PUT(
       if (error) throw error;
       result = data;
     } else {
-      // Create new profile
+      // Create new profile with defaults
+      const newProfileData = {
+        user_id: user.id,
+        display_name: displayName ? displayName.trim() : null,
+        role: 'user',
+        locale: locale || 'de'
+      };
+
       const { data, error } = await supabase
         .from('profiles')
-        .insert({
-          user_id: user.id,
-          display_name: displayName.trim(),
-          role: 'user',
-          locale: 'de'
-        })
+        .insert(newProfileData)
         .select('user_id, display_name, role, locale')
         .single();
 
