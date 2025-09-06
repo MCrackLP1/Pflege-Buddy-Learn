@@ -224,23 +224,104 @@
     "placeholderName": "Ihr Anzeigename",
     "selectLanguage": "Sprache auswählen",
     "homeStats": {
-      "nurses": "Pflegekräfte",
-      "questions": "Quizfragen", 
+      "nurses": "Aktive Nutzer",
+      "questions": "Quizfragen",
       "available": "Verfügbar",
       "free": "Kostenlos"
     },
-    "homeFeatures": {
-      "smartLearning": "Intelligente Lernalgorithmen",
-      "smartLearningDesc": "Adaptive Quizfragen passen sich deinem Wissensstand an und fokussieren auf Bereiche, die du stärken möchtest.",
-      "fiveMinutes": "Nur 5 Minuten täglich",
-      "fiveMinutesDesc": "Kurze, fokussierte Lernsessions passen perfekt in deinen Arbeitsalltag und helfen dir, kontinuierlich zu lernen.",
-      "certificates": "Zertifikate & Badges",
-      "certificatesDesc": "Sammle Auszeichnungen für deine Lernfortschritte und teile deine Erfolge mit Kollegen.",
-      "gdprCompliant": "DSGVO-konform",
-      "gdprCompliantDesc": "Deine Daten sind sicher und werden nur für deine Lernfortschritte verwendet. Keine Werbung oder Datenverkauf."
+    "homeHero": {
+      "badge": "Medizinisch fundiert & DSGVO-konform",
+      "title": "Ihr digitaler Pflegeassistent",
+      "subtitle": "für Notfälle & Fachwissen",
+      "description": "Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz. Sammeln Sie Erfahrungspunkte und verbessern Sie Ihre Fachkenntnisse mit jeder Frage.",
+      "primaryCta": "Jetzt kostenlos starten",
+      "secondaryCta": "Mehr erfahren",
+      "disclaimer": "Nicht medizinische Beratung ersetzen"
     },
-    "homeTagline": "Entwickelt von Pflegeprofis für Pflegeprofis - das perfekte Tool für deine tägliche Weiterbildung.",
-    "homeFooterTagline": "Dein täglicher Begleiter für Pflegewissen und Weiterbildung."
+    "homeFeatures": {
+      "title": "Warum PflegeBuddy Learn?",
+      "subtitle": "Entwickelt von Pflegeprofis für Pflegeprofis - mit bewährten Lernfeatures für maximale Effektivität.",
+      "xpSystem": {
+        "title": "Erfahrungspunkte sammeln",
+        "description": "Verdienen Sie Punkte für jede richtige Antwort. Verfolgen Sie Ihre Lernkurve über die Zeit und erreichen Sie neue Meilensteine."
+      },
+      "hints": {
+        "title": "Intelligente Hinweise",
+        "description": "Bei schwierigen Fragen erhalten Sie gezielte Tipps, ohne die Antwort komplett zu verraten."
+      },
+      "progress": {
+        "title": "Lernfortschritt verfolgen",
+        "description": "Detaillierte Statistiken zeigen Ihnen genau, welche Themen Sie beherrschen und wo noch Verbesserungsbedarf besteht."
+      },
+      "streak": {
+        "title": "Tägliche Lernserie",
+        "description": "Bauen Sie eine Lerngruppe auf und erhalten Sie Bonuspunkte für tägliches Lernen."
+      },
+      "leaderboard": {
+        "title": "Wettkampf-Modus",
+        "description": "Messen Sie sich mit anderen Pflegekräften und klettern Sie in der Rangliste auf."
+      },
+      "adaptive": {
+        "title": "Anpassung an Ihr Niveau",
+        "description": "Das System passt sich an Ihren Wissensstand an - von Grundlagen bis zu komplexen Fachfragen."
+      }
+    },
+    "homeCategories": {
+      "title": "Themenbereiche",
+      "subtitle": "Testen Sie Ihr Fachwissen in verschiedenen pflegerischen Themenbereichen mit authentischen Multiple-Choice Fragen.",
+      "emergency": {
+        "title": "Notfallmanagement",
+        "description": "Sofortmaßnahmen und Krisenversorgung"
+      },
+      "hygiene": {
+        "title": "Hygiene & Infektionsschutz",
+        "description": "Hygienemaßnahmen und Infektionsprävention"
+      },
+      "medication": {
+        "title": "Medikamentengabe",
+        "description": "Sichere Arzneimittelverabreichung"
+      },
+      "basics": {
+        "title": "Pflegegrundlagen",
+        "description": "Grundlagen der Pflege"
+      },
+      "pain": {
+        "title": "Schmerzmanagement",
+        "description": "Schmerzerfassung und Schmerztherapie"
+      },
+      "more": {
+        "title": "Weitere Themen",
+        "description": "Wundmanagement, Mobilität, Dokumentation & mehr"
+      }
+    },
+    "homeProcess": {
+      "title": "So funktioniert's",
+      "subtitle": "Von der Registrierung bis zum Expertenstatus - Ihr Weg zur pflegerischen Exzellenz",
+      "step1": {
+        "title": "Kostenlos registrieren",
+        "description": "Mit Google-Konto für professionelle Pflegekräfte"
+      },
+      "step2": {
+        "title": "Quiz spielen",
+        "description": "Beantworten Sie Fragen, sammeln Sie Punkte und nutzen Sie Hinweise bei Bedarf"
+      },
+      "step3": {
+        "title": "Fortschritt feiern",
+        "description": "Verfolgen Sie Ihren Lernfortschritt und erreichen Sie neue Meilensteine"
+      }
+    },
+    "homeCta": {
+      "title": "Bereit anzufangen?",
+      "subtitle": "Starten Sie Ihr interaktives Quiz und sammeln Sie Erfahrungspunkte!",
+      "primaryCta": "Jetzt kostenlos spielen",
+      "disclaimer": "DSGVO-konform • Medizinisch fundiert • Keine medizinische Beratung"
+    },
+    "homeFooter": {
+      "brand": "PflegeBuddy Learn",
+      "tagline": "Ihr Begleiter für Pflegewissen und Weiterbildung",
+      "legal": "Rechtliches",
+      "support": "Support"
+    }
   },
   "validation": {
     "serverConfigIncomplete": "Server-Konfiguration unvollständig. Bitte wenden Sie sich an den Support.",

@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
-import { MainLayout } from '@/components/layout/main-layout';
 import { CookieBanner } from '@/components/legal/cookie-banner';
 import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import Head from 'next/head';
 import {
   Brain,
   BookOpen,
@@ -20,17 +23,18 @@ import {
   Play,
   ChevronDown,
   User,
+  CheckCircle,
   type LucideIcon
 } from 'lucide-react';
 
 // Loading Animation Component
 function LoadingAnimation() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="text-center space-y-6">
         <div className="relative">
           <div className="w-20 h-20 mx-auto">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 animate-spin opacity-75"></div>
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 animate-spin opacity-75"></div>
             <div className="absolute inset-2 rounded-full bg-white dark:bg-gray-800"></div>
             <Heart className="w-8 h-8 text-blue-600 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
@@ -50,27 +54,63 @@ function LoadingAnimation() {
   );
 }
 
-// Feature Card Component
+// Reusable Components
 function FeatureCard({ icon: Icon, title, description }: { icon: LucideIcon, title: string, description: string }) {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100 dark:border-gray-700">
-      <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6 text-white" />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-300">{description}</p>
-    </div>
+    <Card className="transition-all duration-300 hover:shadow-lg">
+      <CardHeader className="pb-4">
+        <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-2">
+          <Icon className="w-6 h-6 text-primary-foreground" />
+        </div>
+        <CardTitle className="text-lg">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <CardDescription className="text-base">{description}</CardDescription>
+      </CardContent>
+    </Card>
   );
 }
 
-// Statistic Component
-function StatCard({ number, label }: { number: string, label: string }) {
+function CategoryCard({ icon: Icon, title, description, example }: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  example?: { question: string; answer: string };
+}) {
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <Icon className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      {example && (
+        <CardContent>
+          <div className="bg-muted p-3 rounded-lg">
+            <p className="text-sm font-medium mb-1">Beispiel-Frage:</p>
+            <p className="text-sm text-muted-foreground mb-1">{example.question}</p>
+            <p className="text-xs text-primary">Antwort: {example.answer}</p>
+          </div>
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+
+function ProcessStep({ step, title, description }: { step: number; title: string; description: string }) {
   return (
     <div className="text-center">
-      <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-        {number}
+      <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 text-primary-foreground font-bold text-xl">
+        {step}
       </div>
-      <div className="text-gray-600 dark:text-gray-300 text-sm">{label}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -158,11 +198,16 @@ export function HomePage() {
   const { session, loading } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
-  
-  // Add translations
+
+  // Translations
   const tErrors = useTranslations('errors');
   const tComponents = useTranslations('components');
-  const tHome = useTranslations('components');
+  const tHomeHero = useTranslations('components.homeHero');
+  const tHomeFeatures = useTranslations('components.homeFeatures');
+  const tHomeCategories = useTranslations('components.homeCategories');
+  const tHomeProcess = useTranslations('components.homeProcess');
+  const tHomeCta = useTranslations('components.homeCta');
+  const tHomeFooter = useTranslations('components.homeFooter');
   
   // Cookie handlers for non-session view
   const handleCookieAccept = (preferences: Record<string, boolean>) => {
@@ -242,17 +287,53 @@ export function HomePage() {
   }
 
   if (!session) {
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PflegeBuddy Learn",
+      "description": "Interaktives Lernquiz für Pflegekräfte mit Multiple-Choice Fragen",
+      "url": "https://www.pflegebuddy.app",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "PflegeBuddy",
+        "url": "https://www.pflegebuddy.app"
+      },
+      "featureList": [
+        "Interaktive Multiple-Choice Fragen",
+        "Erfahrungspunkt-System",
+        "Intelligente Hinweise",
+        "Lernfortschritt-Tracking",
+        "Tägliche Lernserie"
+      ]
+    };
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <>
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(structuredData),
+            }}
+          />
+        </Head>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-50">
+        <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2">
-                <Heart className="w-8 h-8 text-blue-600" />
-                <span className="text-xl font-bold text-gray-900 dark:text-white">PflegeBuddy Learn</span>
+                <Heart className="w-8 h-8 text-primary" />
+                <span className="text-xl font-bold text-foreground">PflegeBuddy Learn</span>
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-muted-foreground">
                 🎓 Lernen für Pflegeprofis
               </div>
             </div>
@@ -260,309 +341,254 @@ export function HomePage() {
         </nav>
 
         {/* Hero Section */}
-        <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm font-medium mb-6">
+        <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8" aria-labelledby="hero-heading">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <Badge variant="secondary" className="mb-6">
                 <Shield className="w-4 h-4 mr-2" />
-                Medizinisch fundiert & DSGVO-konform
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-                Ihr digitaler Pflegeassistent
-                <span className="block bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-                  für Notfälle & Fachwissen
+                {tHomeHero('badge')}
+              </Badge>
+              <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+                {tHomeHero('title')}
+                <span className="block text-primary">
+                  {tHomeHero('subtitle')}
                 </span>
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-                Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz. Sammeln Sie XP-Punkte, nutzen Sie Hinweise und verbessern Sie Ihre Fachkenntnisse mit jeder Frage.
+              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                {tHomeHero('description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                <button
-                  onClick={() => {
-                    if (session) {
-                      window.location.href = '/de/learn';
-                    } else {
-                      document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="inline-flex items-center px-12 py-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-2xl shadow-blue-400/60 hover:shadow-blue-400/90 ring-2 ring-blue-400/40 ring-opacity-50"
+                <Button
+                  size="lg"
+                  onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-lg px-8"
                 >
-                  <Play className="w-6 h-6 mr-3" />
-                  Jetzt Spielen
-                  <ArrowRight className="w-6 h-6 ml-3" />
-                </button>
-                <button
+                  <Play className="w-5 h-5 mr-2" />
+                  {tHomeHero('primaryCta')}
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="inline-flex items-center px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Features entdecken
-                </button>
+                  {tHomeHero('secondaryCta')}
+                </Button>
               </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-              <StatCard number="5.000+" label={tHome('homeStats.nurses')} />
-              <StatCard number="500+" label={tHome('homeStats.questions')} />
-              <StatCard number="24/7" label={tHome('homeStats.available')} />
-              <StatCard number="100%" label={tHome('homeStats.free')} />
+              <p className="text-sm text-muted-foreground">
+                {tHomeHero('disclaimer')}
+              </p>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-800">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Warum PflegeBuddy Learn?
+        <section id="features" className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-labelledby="features-heading">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 id="features-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {tHomeFeatures('title')}
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Entwickelt von Pflegeprofis für Pflegeprofis - mit innovativen Lernfeatures für maximale Effektivität.
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                {tHomeFeatures('subtitle')}
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
                 icon={Award}
-                title="XP-System"
-                description="Sammle Erfahrungspunkte für jede richtige Antwort. Steige im Level auf und verfolge deine Lernkurve über die Zeit."
+                title={tHomeFeatures('xpSystem.title')}
+                description={tHomeFeatures('xpSystem.description')}
               />
               <FeatureCard
                 icon={Sparkles}
-                title="Hinweis-System"
-                description="Bei schwierigen Fragen kannst du Hinweise nutzen. Erhalte gezielte Tipps, ohne die Antwort komplett zu verraten."
+                title={tHomeFeatures('hints.title')}
+                description={tHomeFeatures('hints.description')}
               />
               <FeatureCard
                 icon={Target}
-                title="Lernfortschritt-Tracking"
-                description="Detaillierte Statistiken zeigen dir genau, welche Themen du beherrschst und wo noch Nachholbedarf besteht."
+                title={tHomeFeatures('progress.title')}
+                description={tHomeFeatures('progress.description')}
               />
               <FeatureCard
                 icon={Clock}
-                title="Streak-System"
-                description="Baue eine Lerngruppe auf und erhalte Bonuspunkte für tägliches Lernen. Verliere nicht deine Serie!"
+                title={tHomeFeatures('streak.title')}
+                description={tHomeFeatures('streak.description')}
               />
               <FeatureCard
                 icon={Shield}
-                title="Rangliste"
-                description="Wettkampf-Modus für ambitionierte Lerner. Messe dich mit anderen Pflegekräften und klettere in der Rangliste auf."
+                title={tHomeFeatures('leaderboard.title')}
+                description={tHomeFeatures('leaderboard.description')}
               />
               <FeatureCard
                 icon={Brain}
-                title="Schwierigkeitsanpassung"
-                description="Das System passt sich an dein Wissensniveau an. Von einfachen Grundlagen bis zu komplexen Fachfragen."
+                title={tHomeFeatures('adaptive.title')}
+                description={tHomeFeatures('adaptive.description')}
               />
             </div>
           </div>
         </section>
 
-        {/* Quiz Categories Preview */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Welche Fragen erwarten dich?
+        {/* Categories Section */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background" aria-labelledby="categories-heading">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {tHomeCategories('title')}
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Teste dein Fachwissen in verschiedenen pflegerischen Themenbereichen mit unseren authentischen Multiple-Choice Fragen.
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                {tHomeCategories('subtitle')}
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
-                    <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notfallmanagement</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Sofortmaßnahmen und Krisenversorgung</p>
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">"Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?"</p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Antwort: 36,6°C - 37,2°C</p>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3">
-                    <BookOpen className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Hygiene & Infektionsschutz</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Hygienemaßnahmen und Infektionsprävention</p>
-                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">"Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?"</p>
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">Antwort: Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen</p>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mr-3">
-                    <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Medikamentengabe</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Sichere Arzneimittelverabreichung</p>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">"Welche Regel gilt bei der Medikamentengabe als oberste Priorität?"</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Antwort: Richtiger Patient - Patientenidentifikation hat höchste Priorität</p>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mr-3">
-                    <Heart className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pflegegrundlagen</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Grundlagen der Pflege</p>
-                <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">"Die Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden."</p>
-                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Antwort: Ja, mindestens 20-30 Sekunden für effektive Keimreduktion</p>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mr-3">
-                    <Target className="w-5 h-5 text-red-600 dark:text-red-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Schmerzmanagement</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Schmerzerfassung und Schmerztherapie</p>
-                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">"Die numerische Ratingskala (NRS) zur Schmerzerfassung reicht von 0 bis 10."</p>
-                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">Antwort: Ja, 0 = kein Schmerz, 10 = stärkster vorstellbarer Schmerz</p>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mr-3">
-                    <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Weitere Themen</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Wundmanagement, Mobilität, Dokumentation & mehr</p>
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Und viele weitere Kategorien:</p>
-                  <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
-                    <li>• Geriatrische Pflege</li>
-                    <li>• Intensivpflege</li>
-                    <li>• Palliative Pflege</li>
-                    <li>• Psychiatrische Pflege</li>
-                  </ul>
-                </div>
-              </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <CategoryCard
+                icon={Shield}
+                title={tHomeCategories('emergency.title')}
+                description={tHomeCategories('emergency.description')}
+                example={{
+                  question: "Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?",
+                  answer: "36,6°C - 37,2°C"
+                }}
+              />
+              <CategoryCard
+                icon={BookOpen}
+                title={tHomeCategories('hygiene.title')}
+                description={tHomeCategories('hygiene.description')}
+                example={{
+                  question: "Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?",
+                  answer: "Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen"
+                }}
+              />
+              <CategoryCard
+                icon={Brain}
+                title={tHomeCategories('medication.title')}
+                description={tHomeCategories('medication.description')}
+                example={{
+                  question: "Welche Regel gilt bei der Medikamentengabe als oberste Priorität?",
+                  answer: "Richtiger Patient - Patientenidentifikation hat höchste Priorität"
+                }}
+              />
+              <CategoryCard
+                icon={Heart}
+                title={tHomeCategories('basics.title')}
+                description={tHomeCategories('basics.description')}
+                example={{
+                  question: "Die Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden.",
+                  answer: "Ja, mindestens 20-30 Sekunden für effektive Keimreduktion"
+                }}
+              />
+              <CategoryCard
+                icon={Target}
+                title={tHomeCategories('pain.title')}
+                description={tHomeCategories('pain.description')}
+                example={{
+                  question: "Die numerische Ratingskala (NRS) zur Schmerzerfassung reicht von 0 bis 10.",
+                  answer: "Ja, 0 = kein Schmerz, 10 = stärkster vorstellbarer Schmerz"
+                }}
+              />
+              <CategoryCard
+                icon={Award}
+                title={tHomeCategories('more.title')}
+                description={tHomeCategories('more.description')}
+              />
             </div>
           </div>
         </section>
 
         {/* How it works */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Professionelle Pflegeunterstützung
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-labelledby="process-heading">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 id="process-heading" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {tHomeProcess('title')}
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300">
-                Von der Anmeldung bis zum Expertenstatus - Ihr Weg zur pflegerischen Exzellenz
+              <p className="text-xl text-muted-foreground">
+                {tHomeProcess('subtitle')}
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                  1
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Registrieren</h3>
-                <p className="text-gray-600 dark:text-gray-300">Kostenlose Registrierung mit Google-Konto für professionelle Pflegekräfte</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                  2
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Quiz spielen</h3>
-                <p className="text-gray-600 dark:text-gray-300">Beantworten Sie Multiple-Choice Fragen, sammeln Sie XP-Punkte und nutzen Sie Hinweise bei schwierigen Fragen</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
-                  3
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Fortschritt feiern</h3>
-                <p className="text-gray-600 dark:text-gray-300">Verfolgen Sie Ihren Lernfortschritt, sammeln Sie XP-Punkte und erreichen Sie neue Meilensteine in Ihrer beruflichen Entwicklung</p>
-              </div>
+              <ProcessStep
+                step={1}
+                title={tHomeProcess('step1.title')}
+                description={tHomeProcess('step1.description')}
+              />
+              <ProcessStep
+                step={2}
+                title={tHomeProcess('step2.title')}
+                description={tHomeProcess('step2.description')}
+              />
+              <ProcessStep
+                step={3}
+                title={tHomeProcess('step3.title')}
+                description={tHomeProcess('step3.description')}
+              />
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section id="auth-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-800">
+        <section id="auth-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-primary" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Testen Sie Ihr Pflegewissen jetzt!
+            <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+              {tHomeCta('title')}
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Professionelle Pflegekräfte vertrauen bereits auf PflegeBuddy Learn für ihre Fortbildung. Starten Sie Ihr interaktives Quiz und sammeln Sie XP-Punkte!
+            <p className="text-xl text-primary-foreground/90 mb-8">
+              {tHomeCta('subtitle')}
             </p>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-2xl max-w-md mx-auto">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Kostenlos spielen
-              </h3>
-              <AuthCard />
-            </div>
+            <Card className="max-w-md mx-auto shadow-2xl">
+              <CardHeader>
+                <CardTitle className="text-2xl">
+                  {tHomeCta('primaryCta')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AuthCard />
+              </CardContent>
+            </Card>
 
-            <div className="mt-8 text-blue-100">
+            <div className="mt-8 text-primary-foreground/80">
               <p className="text-sm">
-                🔒 DSGVO-konform • 📚 Medizinisch fundiert • 🎯 25% Rabatt bei erfolgreichem Quiz
+                {tHomeCta('disclaimer')}
               </p>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+        <footer className="bg-muted text-muted-foreground py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-3 gap-8">
               <div>
                 <div className="flex items-center space-x-2 mb-4">
-                  <Heart className="w-6 h-6 text-blue-400" />
-                  <span className="text-lg font-bold">PflegeBuddy Learn</span>
+                  <Heart className="w-6 h-6 text-primary" />
+                  <span className="text-lg font-bold text-foreground">{tHomeFooter('brand')}</span>
                 </div>
-                <p className="text-gray-400">
-                  Dein täglicher Begleiter für Pflegewissen und Weiterbildung.
+                <p className="text-muted-foreground">
+                  {tHomeFooter('tagline')}
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold mb-4">Rechtliches</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="/de/datenschutz" className="hover:text-white transition-colors">Datenschutz</a></li>
-                  <li><a href="/de/agb" className="hover:text-white transition-colors">AGB</a></li>
-                  <li><a href="/de/impressum" className="hover:text-white transition-colors">Impressum</a></li>
+                <h4 className="font-semibold mb-4 text-foreground">{tHomeFooter('legal')}</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><a href="/de/datenschutz" className="hover:text-foreground transition-colors">Datenschutz</a></li>
+                  <li><a href="/de/agb" className="hover:text-foreground transition-colors">AGB</a></li>
+                  <li><a href="/de/impressum" className="hover:text-foreground transition-colors">Impressum</a></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-4">Support</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="mailto:deinpflegebuddy@gmail.com" className="hover:text-white transition-colors">deinpflegebuddy@gmail.com</a></li>
-                  <li><a href="tel:+491741632129" className="hover:text-white transition-colors">0174 1632129</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                  <li><span className="text-green-400">● 24/7 Support</span></li>
+                <h4 className="font-semibold mb-4 text-foreground">{tHomeFooter('support')}</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><a href="mailto:deinpflegebuddy@gmail.com" className="hover:text-foreground transition-colors">deinpflegebuddy@gmail.com</a></li>
+                  <li><a href="tel:+491741632129" className="hover:text-foreground transition-colors">0174 1632129</a></li>
+                  <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
                 </ul>
               </div>
             </div>
-            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
               <p>&copy; 2025 PflegeBuddy. Alle Rechte vorbehalten. Entwickelt mit ❤️ für Pflegeprofis.</p>
             </div>
           </div>
@@ -571,13 +597,14 @@ export function HomePage() {
         {/* Scroll Indicator */}
         {showScrollIndicator && (
           <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <ChevronDown className="w-6 h-6 text-gray-500" />
+            <ChevronDown className="w-6 h-6 text-muted-foreground" />
           </div>
         )}
-        
+
         {/* Cookie Banner for non-logged-in users */}
         <CookieBanner onAccept={handleCookieAccept} onReject={handleCookieReject} />
-      </div>
+        </div>
+      </>
     );
   }
 

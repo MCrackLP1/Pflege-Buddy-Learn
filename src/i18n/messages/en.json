@@ -221,23 +221,104 @@
     "placeholderName": "Your display name",
     "selectLanguage": "Select language",
     "homeStats": {
-      "nurses": "Nurses",
-      "questions": "Quiz questions",
+      "nurses": "Active Users",
+      "questions": "Questions",
       "available": "Available",
       "free": "Free"
     },
-    "homeFeatures": {
-      "smartLearning": "Intelligent Learning Algorithms",
-      "smartLearningDesc": "Adaptive quiz questions adjust to your knowledge level and focus on areas you want to strengthen.",
-      "fiveMinutes": "Just 5 minutes daily",
-      "fiveMinutesDesc": "Short, focused learning sessions fit perfectly into your work routine and help you learn continuously.",
-      "certificates": "Certificates & Badges",
-      "certificatesDesc": "Collect awards for your learning progress and share your achievements with colleagues.",
-      "gdprCompliant": "GDPR compliant",
-      "gdprCompliantDesc": "Your data is safe and is only used for your learning progress. No advertising or data selling."
+    "homeHero": {
+      "badge": "Medically sound & GDPR compliant",
+      "title": "Your digital nursing assistant",
+      "subtitle": "for emergencies & expertise",
+      "description": "Test your nursing knowledge with our interactive multiple-choice quiz. Earn experience points and improve your expertise with each question.",
+      "primaryCta": "Start free now",
+      "secondaryCta": "Learn more",
+      "disclaimer": "Does not replace medical advice"
     },
-    "homeTagline": "Developed by nursing professionals for nursing professionals - the perfect tool for your daily continuing education.",
-    "homeFooterTagline": "Your daily companion for nursing knowledge and continuing education."
+    "homeFeatures": {
+      "title": "Why PflegeBuddy Learn?",
+      "subtitle": "Developed by nursing professionals for nursing professionals - with proven learning features for maximum effectiveness.",
+      "xpSystem": {
+        "title": "Earn experience points",
+        "description": "Earn points for each correct answer. Track your learning curve over time and reach new milestones."
+      },
+      "hints": {
+        "title": "Smart hints",
+        "description": "Get targeted tips for difficult questions without revealing the complete answer."
+      },
+      "progress": {
+        "title": "Track learning progress",
+        "description": "Detailed statistics show you exactly which topics you master and where improvement is still needed."
+      },
+      "streak": {
+        "title": "Daily learning streak",
+        "description": "Build a learning habit and earn bonus points for daily learning."
+      },
+      "leaderboard": {
+        "title": "Competition mode",
+        "description": "Measure yourself against other nursing professionals and climb the leaderboard."
+      },
+      "adaptive": {
+        "title": "Adapted to your level",
+        "description": "The system adapts to your knowledge level - from basics to complex specialist questions."
+      }
+    },
+    "homeCategories": {
+      "title": "Topic areas",
+      "subtitle": "Test your expertise in various nursing topic areas with authentic multiple-choice questions.",
+      "emergency": {
+        "title": "Emergency management",
+        "description": "Immediate measures and crisis care"
+      },
+      "hygiene": {
+        "title": "Hygiene & infection control",
+        "description": "Hygiene measures and infection prevention"
+      },
+      "medication": {
+        "title": "Medication administration",
+        "description": "Safe drug administration"
+      },
+      "basics": {
+        "title": "Nursing basics",
+        "description": "Fundamentals of nursing"
+      },
+      "pain": {
+        "title": "Pain management",
+        "description": "Pain assessment and pain therapy"
+      },
+      "more": {
+        "title": "Additional topics",
+        "description": "Wound management, mobility, documentation & more"
+      }
+    },
+    "homeProcess": {
+      "title": "How it works",
+      "subtitle": "From registration to expert status - your path to nursing excellence",
+      "step1": {
+        "title": "Register for free",
+        "description": "With Google account for professional nursing staff"
+      },
+      "step2": {
+        "title": "Play quiz",
+        "description": "Answer questions, collect points and use hints when needed"
+      },
+      "step3": {
+        "title": "Celebrate progress",
+        "description": "Track your learning progress and reach new milestones"
+      }
+    },
+    "homeCta": {
+      "title": "Ready to start?",
+      "subtitle": "Start your interactive quiz and earn experience points!",
+      "primaryCta": "Play for free now",
+      "disclaimer": "GDPR compliant • Medically sound • No medical advice"
+    },
+    "homeFooter": {
+      "brand": "PflegeBuddy Learn",
+      "tagline": "Your companion for nursing knowledge and continuing education",
+      "legal": "Legal",
+      "support": "Support"
+    }
   },
   "validation": {
     "serverConfigIncomplete": "Server configuration incomplete. Please contact support.",
