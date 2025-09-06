@@ -24,6 +24,7 @@ import {
   ChevronDown,
   User,
   CheckCircle,
+  Instagram,
   type LucideIcon
 } from 'lucide-react';
 
@@ -620,6 +621,17 @@ export function HomePage() {
                   <li><a href="mailto:deinpflegebuddy@gmail.com" className="hover:text-foreground transition-colors">deinpflegebuddy@gmail.com</a></li>
                   <li><a href="tel:+491741632129" className="hover:text-foreground transition-colors">0174 1632129</a></li>
                   <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
+                  <li>
+                    <a
+                      href="https://www.instagram.com/pflege.buddy/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-foreground transition-colors inline-flex items-center gap-2"
+                    >
+                      <Instagram className="w-4 h-4" />
+                      @pflege.buddy
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
