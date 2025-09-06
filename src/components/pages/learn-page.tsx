@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { LoadingState } from '@/components/ui/loading-spinner';
 import { ErrorState } from '@/components/ui/error-state';
-import { Shuffle, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 interface TopicWithProgress {
   id: string;
@@ -100,10 +100,6 @@ export function LearnPage() {
     router.push(createLocalizedPath(locale, `/quiz/${slug}`));
   };
 
-  const handleRandomQuiz = () => {
-    router.push(createLocalizedPath(locale, '/quiz/random'));
-  };
-
   // Loading state
   if (loading) {
     return (
@@ -133,29 +129,6 @@ export function LearnPage() {
           <h1 className="text-2xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">{t('selectTopic')}</p>
         </div>
-
-        {/* Random Topic Option */}
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="p-4">
-            <Button
-              onClick={handleRandomQuiz}
-              className="w-full justify-between"
-              variant="outline"
-              size="lg"
-            >
-              <div className="flex items-center gap-3">
-                <Shuffle className="h-5 w-5" />
-                <div className="text-left">
-                  <div className="font-medium">{t('randomTopic')}</div>
-                  <div className="text-xs text-muted-foreground">
-                    Aus allen Themenbereichen
-                  </div>
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </CardContent>
-        </Card>
 
         {/* Topic List */}
         <div className="space-y-3">
@@ -206,17 +179,6 @@ export function LearnPage() {
             );
           })}
         </div>
-      </div>
-
-      {/* Floating CTA Button */}
-      <div className="fixed bottom-20 left-4 right-4 z-50">
-        <Button
-          onClick={() => handleTopicSelect('random')}
-          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg"
-          size="lg"
-        >
-          🎯 Schnell-Start Session
-        </Button>
       </div>
     </MainLayout>
   );
