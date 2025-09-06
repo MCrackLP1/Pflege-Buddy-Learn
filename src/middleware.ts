@@ -16,6 +16,56 @@ export async function middleware(req: NextRequest) {
   // Handle internationalization first
   const intlResponse = intlMiddleware(req);
 
+  // Set user locale cookie if authenticated and no cookie exists
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+        {
+          cookies: {
+            getAll() {
+              return req.cookies.getAll();
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                req.cookies.set({ name, value, ...options });
+                if (intlResponse) {
+                  intlResponse.cookies.set({ name, value, ...options });
+                }
+              });
+            },
+          },
+        }
+      );
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const existingLocaleCookie = req.cookies.get('NEXT_LOCALE');
+
+      if (session?.user?.id && !existingLocaleCookie) {
+        // Load user profile to get locale preference
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('locale')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (profile?.locale && intlResponse) {
+          intlResponse.cookies.set('NEXT_LOCALE', profile.locale, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+          });
+        }
+      }
+    } catch (error) {
+      // Silently fail - don't break the app
+      console.error('Error setting user locale cookie:', error);
+    }
+  }
+
   // Skip Supabase auth if environment variables are not configured
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const res = intlResponse || NextResponse.next();
