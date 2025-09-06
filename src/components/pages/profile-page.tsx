@@ -140,8 +140,11 @@ export function ProfilePage() {
 
       if (data.success) {
         setUserProfile(data.data);
-        // Reload the page to apply the new locale
-        window.location.reload();
+        // Set cookie for immediate locale change
+        document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 30}`;
+        // Redirect to the same page with new locale
+        const currentPath = window.location.pathname.replace(/^\/(de|en)/, '');
+        window.location.href = `/${locale}${currentPath}`;
       } else {
         throw new Error(data.error || 'Failed to update language');
       }
