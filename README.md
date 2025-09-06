@@ -6,7 +6,7 @@
 
 > **Enterprise-Ready Medical Learning Platform für Pflegekräfte**
 
-**🌐 Live Demo:** [https://pflege-buddy-learn.vercel.app](https://pflege-buddy-learn.vercel.app)
+**🌐 Live Demo:** [https://www.pflegebuddy.app](https://www.pflegebuddy.app)
 
 ---
 
@@ -156,7 +156,7 @@ Die App enthält eine vollständige Stripe LIVE Integration für den Verkauf von
    ```bash
    # 1. Gehe zu Developers → Webhooks im Stripe Dashboard
    # 2. Klicke "Add endpoint"
-   # 3. Endpoint URL: https://DEINE-DOMAIN.vercel.app/api/stripe/webhook
+   # 3. Endpoint URL: https://www.pflegebuddy.app/api/stripe/webhook
    # 4. Events to send: checkout.session.completed
    # 5. Kopiere den Webhook-Signing-Secret (whsec_...)
    ```
@@ -167,7 +167,7 @@ Die App enthält eine vollständige Stripe LIVE Integration für den Verkauf von
    STRIPE_SECRET_KEY=sk_live_YOUR_SECRET_KEY_HERE
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_YOUR_PUBLISHABLE_KEY_HERE
    STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
-   APP_URL=https://DEINE-DOMAIN.vercel.app
+   APP_URL=https://www.pflegebuddy.app
    
    # Price IDs (bereits konfiguriert):
    STRIPE_PRICE_HINTS_S=price_1S47GBHcAFSVUhHPdO1Bnyil
