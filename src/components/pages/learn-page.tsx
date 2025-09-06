@@ -178,8 +178,10 @@ export function LearnPage() {
                           <h3 className="font-semibold text-base leading-tight">
                             {topic.title}
                           </h3>
-                          <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                            {topic.description}
+                          <p className="text-sm text-muted-foreground mt-1 leading-relaxed overflow-hidden">
+                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap">
+                              {topic.description}
+                            </span>
                           </p>
                         </div>
                         <ChevronRight className="h-4 w-4 mt-1 shrink-0 ml-2" />
