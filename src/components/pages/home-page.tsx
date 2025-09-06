@@ -386,20 +386,22 @@ export function HomePage() {
               <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
                 {tHomeHero('description')}
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
                 <Button
                   size="lg"
                   onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-lg px-8"
+                  className="text-xl font-bold px-12 py-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 text-white shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20 hover:border-white/30 rounded-xl"
+                  style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
                 >
-                  <Play className="w-5 h-5 mr-2" />
+                  <Play className="w-6 h-6 mr-3 animate-pulse" />
                   {tHomeHero('primaryCta')}
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-6 h-6 ml-3 animate-bounce" />
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-lg px-8 py-4 border-2 hover:bg-primary/10"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   {tHomeHero('secondaryCta')}
