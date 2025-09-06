@@ -1,7 +1,0 @@
----
-alwaysApply: true
----
-# rule: plan-implement-verify
-- For non-trivial tasks: (1) plan, (2) implement, (3) run checks (typecheck, tests), (4) fix, (5) summarize.
-- Keep diffs small; avoid wide refactors in one step.
-- Prefer repository scripts (`scripts/*.ts`) for data generation over ad-hoc code in pages.

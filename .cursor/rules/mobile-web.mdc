@@ -1,9 +1,0 @@
----
-alwaysApply: true
----
-# rule: mobile-first-web-only
-- Always prefer responsive, mobile-first patterns. Primary width ~390px.
-- Do not generate native Android/iOS code or references.
-- Use semantic HTML and ARIA where appropriate; meet WCAG AA.
-- Add Playwright tests that run on a mobile viewport.
-- When uncertain, propose a short plan, then execute without waiting for human approval.

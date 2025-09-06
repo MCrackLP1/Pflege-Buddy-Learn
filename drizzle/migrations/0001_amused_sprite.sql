@@ -1,1 +1,0 @@
-ALTER TABLE "questions" ADD COLUMN "tf_correct_answer" boolean;
