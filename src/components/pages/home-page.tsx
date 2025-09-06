@@ -295,8 +295,8 @@ export function HomePage() {
                   onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                   className="inline-flex items-center px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300"
                 >
-                  <BookOpen className="w-5 h-5 mr-2" />
-                  Mehr erfahren
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Features entdecken
                 </button>
               </div>
             </div>
@@ -319,40 +319,40 @@ export function HomePage() {
                 Warum PflegeBuddy Learn?
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Entwickelt von Pflegeprofis für Pflegeprofis - das perfekte Tool für deine tägliche Weiterbildung.
+                Entwickelt von Pflegeprofis für Pflegeprofis - mit innovativen Lernfeatures für maximale Effektivität.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
-                icon={Shield}
-                title="Notfallmanagement"
-                description="Sofortmaßnahmen & Checklisten für verschiedene Notfälle. Schneller Zugriff auf alles, was im Ernstfall zählt."
+                icon={Award}
+                title="XP-System"
+                description="Sammle Erfahrungspunkte für jede richtige Antwort. Steige im Level auf und verfolge deine Lernkurve über die Zeit."
               />
               <FeatureCard
-                icon={BookOpen}
-                title="Pflegewissen"
-                description="Nachschlagewerk für Krankheitsbilder, Pflegestandards, Lexikon & Online-Medizinwissen. Inklusive Medikamentensuche."
-              />
-              <FeatureCard
-                icon={Brain}
-                title="Medikamentengabe"
-                description="Sichere Arzneimittelverabreichung nach 5-R-Regel."
+                icon={Sparkles}
+                title="Hinweis-System"
+                description="Bei schwierigen Fragen kannst du Hinweise nutzen. Erhalte gezielte Tipps, ohne die Antwort komplett zu verraten."
               />
               <FeatureCard
                 icon={Target}
-                title="App-weite Suche"
-                description="Zentrale Suchfunktion für Notfälle, Krankheiten, Standards, Lexikon & Wikipedia. Alles sofort auffindbar."
+                title="Lernfortschritt-Tracking"
+                description="Detaillierte Statistiken zeigen dir genau, welche Themen du beherrschst und wo noch Nachholbedarf besteht."
               />
               <FeatureCard
                 icon={Clock}
-                title="Offline-Fähigkeit"
-                description="Alle wichtigen Funktionen auch ohne Internetverbindung nutzbar. Ideal für den Einsatz im Krankenhaus oder unterwegs."
+                title="Streak-System"
+                description="Baue eine Lerngruppe auf und erhalte Bonuspunkte für tägliches Lernen. Verliere nicht deine Serie!"
               />
               <FeatureCard
-                icon={Award}
-                title="Interaktives Quiz-System"
-                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf."
+                icon={Shield}
+                title="Rangliste"
+                description="Wettkampf-Modus für ambitionierte Lerner. Messe dich mit anderen Pflegekräften und klettere in der Rangliste auf."
+              />
+              <FeatureCard
+                icon={Brain}
+                title="Schwierigkeitsanpassung"
+                description="Das System passt sich an dein Wissensniveau an. Von einfachen Grundlagen bis zu komplexen Fachfragen."
               />
             </div>
           </div>
