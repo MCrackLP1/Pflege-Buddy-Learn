@@ -274,7 +274,7 @@ export function HomePage() {
                 </span>
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-                Testen Sie Ihr Pflegewissen mit unserem interaktiven Quiz. Notfallmanagement, Pflegewissen und Tools für den klinischen Alltag - alles in einer professionellen Plattform.
+                Testen Sie Ihr Pflegewissen mit unserem interaktiven Multiple-Choice Quiz. Sammeln Sie XP-Punkte, nutzen Sie Hinweise und verbessern Sie Ihre Fachkenntnisse mit jeder Frage.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                 <button
@@ -351,8 +351,8 @@ export function HomePage() {
               />
               <FeatureCard
                 icon={Award}
-                title="Quiz-Challenge"
-                description="Testen Sie Ihr Pflegewissen und sichern Sie sich 25% Rabatt auf zukünftige Premium-Funktionen."
+                title="Interaktives Quiz-System"
+                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf."
               />
             </div>
           </div>
@@ -366,7 +366,7 @@ export function HomePage() {
                 Professionelle Pflegeunterstützung
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
-                Von der Anmeldung bis zur Zertifizierung - Ihr Weg zur pflegerischen Exzellenz
+                Von der Anmeldung bis zum Expertenstatus - Ihr Weg zur pflegerischen Exzellenz
               </p>
             </div>
 
@@ -382,15 +382,15 @@ export function HomePage() {
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                   2
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Testen & Lernen</h3>
-                <p className="text-gray-600 dark:text-gray-300">Interaktive Quizfragen zu Notfallmanagement, Pflegewissen und klinischen Standards</p>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Quiz spielen</h3>
+                <p className="text-gray-600 dark:text-gray-300">Beantworten Sie Multiple-Choice Fragen, sammeln Sie XP-Punkte und nutzen Sie Hinweise bei schwierigen Fragen</p>
               </div>
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                   3
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Zertifizieren</h3>
-                <p className="text-gray-600 dark:text-gray-300">Nachweisliche Fortbildungsnachweise und Zertifikate für Ihre berufliche Entwicklung</p>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Fortschritt feiern</h3>
+                <p className="text-gray-600 dark:text-gray-300">Verfolgen Sie Ihren Lernfortschritt, sammeln Sie XP-Punkte und erreichen Sie neue Meilensteine in Ihrer beruflichen Entwicklung</p>
               </div>
             </div>
           </div>
@@ -403,7 +403,7 @@ export function HomePage() {
               Testen Sie Ihr Pflegewissen jetzt!
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Professionelle Pflegekräfte vertrauen bereits auf PflegeBuddy Learn für ihre Fortbildung. Starten Sie Ihre Quiz-Challenge!
+              Professionelle Pflegekräfte vertrauen bereits auf PflegeBuddy Learn für ihre Fortbildung. Starten Sie Ihr interaktives Quiz und sammeln Sie XP-Punkte!
             </p>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-2xl max-w-md mx-auto">
@@ -424,7 +424,7 @@ export function HomePage() {
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-3 gap-8">
               <div>
                 <div className="flex items-center space-x-2 mb-4">
                   <Heart className="w-6 h-6 text-blue-400" />
@@ -433,14 +433,6 @@ export function HomePage() {
                 <p className="text-gray-400">
                   Dein täglicher Begleiter für Pflegewissen und Weiterbildung.
                 </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-4">Lernen</h4>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Quizfragen</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Lernfortschritt</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Zertifikate</a></li>
-                </ul>
               </div>
               <div>
                 <h4 className="font-semibold mb-4">Rechtliches</h4>
