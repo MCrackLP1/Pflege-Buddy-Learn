@@ -327,33 +327,143 @@ export function HomePage() {
               <FeatureCard
                 icon={Shield}
                 title="Notfallmanagement"
-                description="Sofortmaßnahmen & Checklisten für verschiedene Notfälle. Schneller Zugriff auf alles, was im Ernstfall zählt. Beispiel: 'Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?' (36,6°C - 37,2°C)"
+                description="Sofortmaßnahmen & Checklisten für verschiedene Notfälle. Schneller Zugriff auf alles, was im Ernstfall zählt."
               />
               <FeatureCard
                 icon={BookOpen}
                 title="Pflegewissen"
-                description="Nachschlagewerk für Krankheitsbilder, Pflegestandards, Lexikon & Online-Medizinwissen. Beispiel: 'Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?' (Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen)"
+                description="Nachschlagewerk für Krankheitsbilder, Pflegestandards, Lexikon & Online-Medizinwissen. Inklusive Medikamentensuche."
               />
               <FeatureCard
                 icon={Brain}
                 title="Medikamentengabe"
-                description="Sichere Arzneimittelverabreichung nach 5-R-Regel. Beispiel: 'Welche Regel gilt bei der Medikamentengabe als oberste Priorität?' (Richtiger Patient - Patientenidentifikation hat höchste Priorität)"
+                description="Sichere Arzneimittelverabreichung nach 5-R-Regel."
               />
               <FeatureCard
                 icon={Target}
                 title="App-weite Suche"
-                description="Zentrale Suchfunktion für Notfälle, Krankheiten, Standards, Lexikon & Wikipedia. Beispiel: 'Schmuck und Uhren sollten vor der Händedesinfektion abgelegt werden.' (Ja, da sich Keime darunter ansammeln können)"
+                description="Zentrale Suchfunktion für Notfälle, Krankheiten, Standards, Lexikon & Wikipedia. Alles sofort auffindbar."
               />
               <FeatureCard
                 icon={Clock}
                 title="Offline-Fähigkeit"
-                description="Alle wichtigen Funktionen auch ohne Internetverbindung nutzbar. Ideal für den Einsatz im Krankenhaus oder unterwegs. Beispiel: 'Wann muss eine Händedesinfektion zwingend durchgeführt werden?' (Vor jedem Patientenkontakt)"
+                description="Alle wichtigen Funktionen auch ohne Internetverbindung nutzbar. Ideal für den Einsatz im Krankenhaus oder unterwegs."
               />
               <FeatureCard
                 icon={Award}
                 title="Interaktives Quiz-System"
-                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf. Beispiel: 'Medikamente dürfen niemals ungekühlt gelagert werden.' (Falsch - beachte spezifische Lagerungsanweisungen)"
+                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf."
               />
+            </div>
+          </div>
+        </section>
+
+        {/* Quiz Categories Preview */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Welche Fragen erwarten dich?
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Teste dein Fachwissen in verschiedenen pflegerischen Themenbereichen mit unseren authentischen Multiple-Choice Fragen.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
+                    <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notfallmanagement</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Sofortmaßnahmen und Krisenversorgung</p>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">"Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?"</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Antwort: 36,6°C - 37,2°C</p>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3">
+                    <BookOpen className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Hygiene & Infektionsschutz</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Hygienemaßnahmen und Infektionsprävention</p>
+                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">"Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?"</p>
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">Antwort: Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen</p>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mr-3">
+                    <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Medikamentengabe</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Sichere Arzneimittelverabreichung</p>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">"Welche Regel gilt bei der Medikamentengabe als oberste Priorität?"</p>
+                  <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Antwort: Richtiger Patient - Patientenidentifikation hat höchste Priorität</p>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mr-3">
+                    <Heart className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Pflegegrundlagen</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Grundlagen der Pflege</p>
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">"Die Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden."</p>
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Antwort: Ja, mindestens 20-30 Sekunden für effektive Keimreduktion</p>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center mr-3">
+                    <Target className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Schmerzmanagement</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Schmerzerfassung und Schmerztherapie</p>
+                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Beispiel-Frage:</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">"Die numerische Ratingskala (NRS) zur Schmerzerfassung reicht von 0 bis 10."</p>
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">Antwort: Ja, 0 = kein Schmerz, 10 = stärkster vorstellbarer Schmerz</p>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mr-3">
+                    <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Weitere Themen</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">Wundmanagement, Mobilität, Dokumentation & mehr</p>
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Und viele weitere Kategorien:</p>
+                  <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
+                    <li>• Geriatrische Pflege</li>
+                    <li>• Intensivpflege</li>
+                    <li>• Palliative Pflege</li>
+                    <li>• Psychiatrische Pflege</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </section>
