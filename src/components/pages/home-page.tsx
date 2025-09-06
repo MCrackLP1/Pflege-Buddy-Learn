@@ -327,32 +327,32 @@ export function HomePage() {
               <FeatureCard
                 icon={Shield}
                 title="Notfallmanagement"
-                description="Sofortmaßnahmen & Checklisten für verschiedene Notfälle. Schneller Zugriff auf alles, was im Ernstfall zählt."
+                description="Sofortmaßnahmen & Checklisten für verschiedene Notfälle. Schneller Zugriff auf alles, was im Ernstfall zählt. Beispiel: 'Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?' (36,6°C - 37,2°C)"
               />
               <FeatureCard
                 icon={BookOpen}
                 title="Pflegewissen"
-                description="Nachschlagewerk für Krankheitsbilder, Pflegestandards, Lexikon & Online-Medizinwissen. Inklusive Medikamentensuche."
+                description="Nachschlagewerk für Krankheitsbilder, Pflegestandards, Lexikon & Online-Medizinwissen. Beispiel: 'Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?' (Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen)"
               />
               <FeatureCard
                 icon={Brain}
-                title="Tools für den Pflegealltag"
-                description="Frequenzzähler, Kontaktverwaltung, Ernährungs- & Infusionsrechner, Arbeitszeiterfassung & Dokumentationshilfen."
+                title="Medikamentengabe"
+                description="Sichere Arzneimittelverabreichung nach 5-R-Regel. Beispiel: 'Welche Regel gilt bei der Medikamentengabe als oberste Priorität?' (Richtiger Patient - Patientenidentifikation hat höchste Priorität)"
               />
               <FeatureCard
                 icon={Target}
                 title="App-weite Suche"
-                description="Zentrale Suchfunktion für Notfälle, Krankheiten, Standards, Lexikon & Wikipedia. Alles sofort auffindbar."
+                description="Zentrale Suchfunktion für Notfälle, Krankheiten, Standards, Lexikon & Wikipedia. Beispiel: 'Schmuck und Uhren sollten vor der Händedesinfektion abgelegt werden.' (Ja, da sich Keime darunter ansammeln können)"
               />
               <FeatureCard
                 icon={Clock}
                 title="Offline-Fähigkeit"
-                description="Alle wichtigen Funktionen auch ohne Internetverbindung nutzbar. Ideal für den Einsatz im Krankenhaus oder unterwegs."
+                description="Alle wichtigen Funktionen auch ohne Internetverbindung nutzbar. Ideal für den Einsatz im Krankenhaus oder unterwegs. Beispiel: 'Wann muss eine Händedesinfektion zwingend durchgeführt werden?' (Vor jedem Patientenkontakt)"
               />
               <FeatureCard
                 icon={Award}
                 title="Interaktives Quiz-System"
-                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf."
+                description="Multiple-Choice Fragen mit XP-System, Hinweisen und detaillierten Erklärungen. Verfolgen Sie Ihren Lernfortschritt und bauen Sie Ihr Fachwissen auf. Beispiel: 'Medikamente dürfen niemals ungekühlt gelagert werden.' (Falsch - beachte spezifische Lagerungsanweisungen)"
               />
             </div>
           </div>
