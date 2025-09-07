@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, boolean, timestamp, date, jsonb, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, integer, boolean, timestamp, date, jsonb, pgEnum, decimal } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
@@ -60,7 +60,7 @@ export const userProgress = pgTable('user_progress', {
   longestStreak: integer('longest_streak').notNull().default(0),
   currentStreakStart: date('current_streak_start'),
   lastMilestoneAchieved: integer('last_milestone_achieved').notNull().default(0),
-  xpBoostMultiplier: integer('xp_boost_multiplier').notNull().default(1),
+  xpBoostMultiplier: decimal('xp_boost_multiplier', { precision: 3, scale: 2 }).notNull().default('1.00'),
   xpBoostExpiry: timestamp('xp_boost_expiry'),
 });
 
@@ -68,7 +68,7 @@ export const userProgress = pgTable('user_progress', {
 export const streakMilestones = pgTable('streak_milestones', {
   id: uuid('id').primaryKey().defaultRandom(),
   daysRequired: integer('days_required').notNull().unique(),
-  xpBoostMultiplier: integer('xp_boost_multiplier').notNull().default(1),
+  xpBoostMultiplier: decimal('xp_boost_multiplier', { precision: 3, scale: 2 }).notNull().default('1.00'),
   boostDurationHours: integer('boost_duration_hours').notNull().default(24),
   rewardDescription: text('reward_description').notNull(),
   isActive: boolean('is_active').notNull().default(true),
@@ -92,7 +92,7 @@ export const userMilestoneAchievements = pgTable('user_milestone_achievements', 
   milestoneId: uuid('milestone_id').notNull(), // Can reference either streak or XP milestones
   milestoneType: text('milestone_type').notNull(), // 'streak' or 'xp'
   achievedAt: timestamp('achieved_at').defaultNow().notNull(),
-  xpBoostMultiplier: integer('xp_boost_multiplier'),
+  xpBoostMultiplier: decimal('xp_boost_multiplier', { precision: 3, scale: 2 }),
   boostExpiry: timestamp('boost_expiry'),
   freeHintsReward: integer('free_hints_reward'),
 });

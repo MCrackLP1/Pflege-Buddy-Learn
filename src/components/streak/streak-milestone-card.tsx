@@ -17,6 +17,23 @@ interface StreakMilestoneCardProps {
   nextMilestone?: StreakMilestone;
 }
 
+// Helper function to format XP boost display
+function getXPBoostDisplay(multiplier: number | string): string {
+  const value = typeof multiplier === 'string' ? parseFloat(multiplier) : multiplier;
+
+  if (value === 1.0) {
+    return 'XP Boost';
+  } else if (value === 1.3) {
+    return '30% mehr XP';
+  } else if (value === 1.5) {
+    return '50% mehr XP';
+  } else if (value > 2.0) {
+    return `${value}x XP`;
+  } else {
+    return `${value}x XP`;
+  }
+}
+
 export function StreakMilestoneCard({
   currentStreak,
   longestStreak,
@@ -69,7 +86,7 @@ export function StreakMilestoneCard({
           <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
             <Zap className="h-4 w-4" />
             <span className="text-sm font-medium">
-              {t('streak.xpBoostActive', { multiplier: xpBoostMultiplier })}
+              {getXPBoostDisplay(xpBoostMultiplier)} aktiv
             </span>
             {timeLeft && (
               <Badge variant="secondary" className="text-xs">
@@ -128,7 +145,7 @@ export function StreakMilestoneCard({
               </span>
               <div className="flex items-center gap-1">
                 <Gift className="h-3 w-3" />
-                <span>{nextMilestone.xpBoostMultiplier}x XP</span>
+                <span>{getXPBoostDisplay(nextMilestone.xpBoostMultiplier)}</span>
               </div>
             </div>
 

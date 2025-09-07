@@ -43,6 +43,13 @@
       "when": 1757092675823,
       "tag": "0005_dashing_starjammers",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1757269339156,
+      "tag": "0006_stale_anita_blake",
+      "breakpoints": true
     }
   ]
 }

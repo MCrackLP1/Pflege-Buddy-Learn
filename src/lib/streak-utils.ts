@@ -10,8 +10,8 @@ export interface StreakUpdateResult {
 }
 
 /**
- * Updates user streak based on activity
- * Call this when user logs in or completes questions
+ * Updates user streak based on login activity (not quiz attempts)
+ * Call this when user logs in or becomes active
  */
 export async function updateUserStreak(userId: string): Promise<StreakUpdateResult> {
   const supabase = createServerClient();
@@ -29,58 +29,30 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
 
   const today = new Date().toISOString().split('T')[0];
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const lastSeen = progress?.last_seen;
 
   let currentStreak = progress?.streak_days || 0;
   let longestStreak = progress?.longest_streak || 0;
   let currentStreakStart = progress?.current_streak_start;
   const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
 
-  const lastSeen = progress?.last_seen;
-
-  // Check if user played today
-  const { data: todayActivity } = await supabase
-    .from('attempts')
-    .select('created_at')
-    .eq('user_id', userId)
-    .gte('created_at', today + ' 00:00:00')
-    .lt('created_at', today + ' 23:59:59')
-    .limit(1);
-
-  const playedToday = todayActivity && todayActivity.length > 0;
-
-  // Check if user played yesterday
-  const { data: yesterdayActivity } = await supabase
-    .from('attempts')
-    .select('created_at')
-    .eq('user_id', userId)
-    .gte('created_at', yesterday + ' 00:00:00')
-    .lt('created_at', yesterday + ' 23:59:59')
-    .limit(1);
-
-  const playedYesterday = yesterdayActivity && yesterdayActivity.length > 0;
-
-  // Calculate new streak
-  if (playedToday) {
-    // User played today
-    if (lastSeen === yesterday && playedYesterday) {
-      // Played yesterday too - continue streak
-      currentStreak += 1;
-      longestStreak = Math.max(longestStreak, currentStreak);
-    } else if (lastSeen !== today) {
-      // Either didn't play yesterday or this is first time today - start new streak
-      currentStreak = 1;
-      currentStreakStart = today;
-      longestStreak = Math.max(longestStreak, currentStreak);
-    }
-    // If lastSeen is already today, don't increment (already counted today)
+  // Calculate new streak based on login activity
+  if (lastSeen === today) {
+    // User already logged in today - don't increment streak, just update last_seen
+  } else if (lastSeen === yesterday) {
+    // User logged in yesterday and is logging in today - continue streak
+    currentStreak += 1;
+    longestStreak = Math.max(longestStreak, currentStreak);
+  } else if (!lastSeen || lastSeen < yesterday) {
+    // Either first time user or gap in login days - start new streak
+    currentStreak = 1;
+    currentStreakStart = today;
+    longestStreak = Math.max(longestStreak, currentStreak);
   } else {
-    // User didn't play today
-    if (lastSeen && lastSeen < yesterday) {
-      // More than 1 day since last play - reset streak
-      currentStreak = 0;
-      currentStreakStart = null;
-    }
-    // If lastSeen is yesterday or today, keep current streak (they might play later today)
+    // lastSeen is in the future (shouldn't happen) or some other edge case
+    currentStreak = 1;
+    currentStreakStart = today;
+    longestStreak = Math.max(longestStreak, currentStreak);
   }
 
   // Get available milestones
@@ -146,7 +118,7 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
         milestonesAchieved.push(milestone);
 
         // Update user's XP boost if this milestone has higher multiplier
-        if (milestone.xp_boost_multiplier > (savedProgress.xp_boost_multiplier || 1)) {
+        if (parseFloat(milestone.xp_boost_multiplier) > parseFloat(savedProgress.xp_boost_multiplier || '1.00')) {
           const { error: boostUpdateError } = await supabase
             .from('user_progress')
             .update({
@@ -171,7 +143,7 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
     updatedProgress: savedProgress,
     milestonesAchieved,
     xpBoostActive: xpBoostActive || false,
-    xpBoostMultiplier: savedProgress.xp_boost_multiplier || 1,
+    xpBoostMultiplier: parseFloat(savedProgress.xp_boost_multiplier || '1.00'),
     xpBoostExpiry: savedProgress.xp_boost_expiry ? new Date(savedProgress.xp_boost_expiry) : undefined,
   };
 }
@@ -233,7 +205,7 @@ export async function getActiveXPBoost(userId: string): Promise<{
   const isActive = progress.xp_boost_expiry && new Date(progress.xp_boost_expiry) > now;
 
   return {
-    multiplier: progress.xp_boost_multiplier || 1,
+    multiplier: parseFloat(progress.xp_boost_multiplier || '1.00'),
     expiry: progress.xp_boost_expiry ? new Date(progress.xp_boost_expiry) : undefined,
     isActive: isActive || false,
   };
@@ -243,5 +215,7 @@ export async function getActiveXPBoost(userId: string): Promise<{
  * Calculate XP with boost applied
  */
 export function calculateXPWithBoost(baseXP: number, boostMultiplier: number): number {
-  return Math.floor(baseXP * boostMultiplier);
+  // Ensure boostMultiplier is a number (handles both integer and decimal values)
+  const multiplier = typeof boostMultiplier === 'string' ? parseFloat(boostMultiplier) : boostMultiplier;
+  return Math.floor(baseXP * multiplier);
 }
