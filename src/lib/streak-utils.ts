@@ -174,7 +174,7 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
   // Get user progress, default to 0 streak if no record exists
   const { data: progress, error: progressError } = await supabase
     .from('user_progress')
-    .select('streak_days')
+    .select('streak_days, last_seen')
     .eq('user_id', userId)
     .single();
 
