@@ -47,19 +47,8 @@ export function AuthProvider({
           setError(null);
         }
 
-        // Update streak when user signs in
-        if (event === 'SIGNED_IN' && session) {
-          try {
-            await fetch('/api/user/update-streak', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-          } catch (err) {
-            console.error('Failed to update streak on sign in:', err);
-          }
-        }
+        // Streak update now happens automatically in progress API
+        // No need for separate call here
       }
     );
 

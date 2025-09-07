@@ -48,7 +48,16 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
 
   // Calculate new streak based on login activity
   if (lastSeen === today) {
-    console.log('📅 Same day login - no streak increment');
+    // User already logged in today
+    if (currentStreak === 0) {
+      // First login of the day - this should be streak = 1
+      console.log('📅 First login today - setting streak to 1');
+      currentStreak = 1;
+      currentStreakStart = today;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    } else {
+      console.log('📅 Already logged in today - no streak change');
+    }
   } else if (lastSeen === yesterday) {
     console.log('📅 Consecutive day login - incrementing streak');
     currentStreak += 1;

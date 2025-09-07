@@ -47,12 +47,19 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
       a.created_at.startsWith(today)
     ).length || 0;
 
-    // Get next milestones
-    const nextStreakMilestoneRaw = await getNextMilestone(user.id);
+    // Update streak before returning progress
+    console.log('🔥 Updating streak in progress API...');
+    const streakResult = await updateUserStreak(user.id);
+    console.log('✅ Streak updated:', {
+      currentStreak: streakResult.updatedProgress.streakDays,
+      longestStreak: streakResult.updatedProgress.longestStreak
+    });
+
+    // Get next milestones (not used anymore, client-side logic)
     const nextXpMilestone = await getNextXpMilestone(user.id);
     const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
 
-    // Simplified: using client-side milestones, API just returns null
+    // Client-side milestones now
     const nextStreakMilestone = null;
 
     // Get active XP boost info
@@ -61,10 +68,10 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     return NextResponse.json({
       user_progress: {
         xp: streakResult.updatedProgress.xp,
-        streak_days: streakResult.updatedProgress.streakDays || 0,
-        longest_streak: streakResult.updatedProgress.longestStreak || 0,
+        streak_days: streakResult.updatedProgress.streakDays,
+        longest_streak: streakResult.updatedProgress.longestStreak,
         last_seen: streakResult.updatedProgress.lastSeen || today,
-        current_streak_start: streakResult.updatedProgress.currentStreakStart || undefined,
+        current_streak_start: streakResult.updatedProgress.currentStreakStart,
         total_questions: totalAttempts,
         correct_answers: correctAttempts,
         accuracy: accuracy,

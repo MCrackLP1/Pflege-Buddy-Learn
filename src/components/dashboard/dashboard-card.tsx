@@ -44,14 +44,7 @@ export function DashboardCard() {
       try {
         setLoading(true);
 
-        // First update streak (login activity)
-        console.log('🔥 Updating streak on page load...');
-        await fetch('/api/user/update-streak', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        // Then get progress data
+        // Load progress data (includes automatic streak update)
         console.log('📊 Loading user progress...');
         const response = await fetch('/api/user/progress');
         const data = await response.json();
