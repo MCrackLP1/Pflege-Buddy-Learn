@@ -26,9 +26,6 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Update user streak (this will create progress record if it doesn't exist)
-    const streakResult = await updateUserStreak(user.id);
-
     // Get user statistics from attempts
     const { data: attemptStats, error: attemptsError } = await supabase
       .from('attempts')
