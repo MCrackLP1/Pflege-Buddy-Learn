@@ -66,7 +66,7 @@ export const MEDICAL_REVIEW_CHECKLIST = {
     weight: 15,
     criteria: [
       'Schwierigkeitsgrad korrekt eingestuft (1-5)',
-      'Angemessen für Pflegeausbildung/-praxis',
+      'Angemessen für Pflegeweiterbildung/-praxis',
       'Nicht zu trivial oder übermäßig komplex',
       'Progression vom Grundlagen zu Expertenwissen'
     ]
@@ -170,7 +170,7 @@ export function generateReviewTemplate(questions: any[]): string {
 
 ### 📊 Angemessene Schwierigkeit (15 Punkte)
 - [ ] Korrekte Schwierigkeitseinstufung (1-5)
-- [ ] Passend für Pflegeausbildung/-praxis
+- [ ] Passend für Pflegeweiterbildung/-praxis
 - [ ] Weder zu trivial noch zu komplex
 
 ### 📝 Klare Sprache (10 Punkte)

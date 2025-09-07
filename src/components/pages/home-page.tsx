@@ -271,7 +271,7 @@ function ModernHeroSection() {
 
   const stats = [
     { value: "14", label: "Themenbereiche", icon: <BookOpen className="w-5 h-5" /> },
-    { value: "+588", label: "Fragen", icon: <BookOpen className="w-5 h-5" /> },
+    { value: "+1392", label: "Fragen", icon: <BookOpen className="w-5 h-5" /> },
     { value: "24/7", label: "Verfügbar", icon: <Users className="w-5 h-5" /> }
   ]
 
@@ -487,7 +487,7 @@ function ModernHeroSection() {
                     <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                   <div className="text-2xl font-bold text-foreground">
-                    <AnimatedCounter value="+588" />
+                    <AnimatedCounter value="+1392" />
                   </div>
                   <p className="text-sm text-muted-foreground">Fragen</p>
                 </div>
@@ -740,7 +740,7 @@ export function HomePage() {
           "Intelligente Hinweise",
           "Lernfortschritt-Tracking",
           "Tägliche Lernserie",
-          "14 Fachbereiche verfügbar"
+          "14 Fachbereiche mit +1392 Fragen verfügbar"
         ],
         "screenshot": "https://www.pflegebuddy.app/favicon/logo.webp",
         "datePublished": "2025-01-01",
@@ -756,7 +756,7 @@ export function HomePage() {
         "description": "Digitale Lernplattform für Pflegefachkräfte und medizinisches Personal",
         "foundingDate": "2025",
         "knowsAbout": [
-          "Pflegeausbildung",
+          "Pflegeweiterbildung",
           "Medizinische Weiterbildung",
           "Multiple-Choice Lernsysteme",
           "DSGVO-konforme Gesundheitsdaten",
@@ -777,7 +777,7 @@ export function HomePage() {
         "@context": "https://schema.org",
         "@type": "Course",
         "name": "Pflegefachwissen Weiterbildung",
-        "description": "Umfassende Lernplattform mit 14 Fachbereichen für Pflegekräfte",
+        "description": "Umfassende Lernplattform mit 14 Fachbereichen und +1392 Fragen für Pflegekräfte",
         "provider": {
           "@type": "Organization",
           "name": "PflegeBuddy"

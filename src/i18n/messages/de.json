@@ -31,7 +31,7 @@
     "totalXP": "Gesamt-XP",
     "todaysGoal": "Heutiges Ziel",
     "tapForDetails": "Tippe auf eine Antwort für Details",
-    "disclaimer": "PflegeBuddy Learn ist kein Ersatz für medizinische Beratung oder professionelle Ausbildung."
+    "disclaimer": "PflegeBuddy Learn ist kein Ersatz für medizinische Beratung oder professionelle Weiterbildung."
   },
   "streak": {
     "currentStreak": "Aktuelle Serie",
@@ -325,7 +325,7 @@
     "navbar": {
       "brand": "PflegeBuddy Learn",
       "subtitle": "Interaktives Lernquiz für Pflegekräfte",
-      "tagline": "Professionelle Pflegeausbildung"
+      "tagline": "Professionelle Weiterbildung"
     }
   },
   "validation": {

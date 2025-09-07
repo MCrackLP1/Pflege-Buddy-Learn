@@ -10,15 +10,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PflegeBuddy Learn - Interaktives Lernquiz für Pflegekräfte',
-  description: 'Interaktives Lernquiz für Pflegefachkräfte. Sammle XP-Punkte, teste dein medizinisches Fachwissen. Multiple-Choice Fragen zu Pflegeausbildung & Weiterbildung. Medizinisch fundiert & DSGVO-konform.',
-  keywords: 'Pflege, Lernquiz, Weiterbildung, Multiple-Choice, Fachwissen, Pflegekräfte, Medizin, Pflegeausbildung, Pflegefachwissen, medizinische Weiterbildung, Pflegequiz, Krankenpflege, Gesundheitswesen',
+  description: 'Interaktives Lernquiz für Pflegefachkräfte. Sammle XP-Punkte, teste dein medizinisches Fachwissen. Multiple-Choice Fragen zu Pflegeweiterbildung & Weiterbildung. Medizinisch fundiert & DSGVO-konform.',
+  keywords: 'Pflege, Lernquiz, Weiterbildung, Multiple-Choice, Fachwissen, Pflegekräfte, Medizin, Pflegeweiterbildung, Pflegefachwissen, medizinische Weiterbildung, Pflegequiz, Krankenpflege, Gesundheitswesen',
   authors: [{ name: 'PflegeBuddy Team' }],
   creator: 'PflegeBuddy',
   publisher: 'PflegeBuddy',
   robots: 'index, follow',
   openGraph: {
     title: 'PflegeBuddy Learn - Interaktives Lernquiz für Pflegekräfte',
-    description: 'Interaktives Lernquiz für Pflegefachkräfte. Sammle XP-Punkte, teste dein medizinisches Fachwissen. Multiple-Choice Fragen zu Pflegeausbildung & Weiterbildung. Medizinisch fundiert & DSGVO-konform.',
+    description: 'Interaktives Lernquiz für Pflegefachkräfte. Sammle XP-Punkte, teste dein medizinisches Fachwissen. Multiple-Choice Fragen zu Pflegeweiterbildung & Weiterbildung. Medizinisch fundiert & DSGVO-konform.',
     url: 'https://www.pflegebuddy.app',
     siteName: 'PflegeBuddy Learn',
     locale: 'de_DE',
