@@ -8,6 +8,37 @@ import { Badge } from '@/components/ui/badge';
 import { Flame, Trophy, Zap, Calendar, Gift } from 'lucide-react';
 import type { StreakMilestone } from '@/lib/db/schema';
 
+// Fallback milestones if API doesn't return data
+const FALLBACK_MILESTONES: StreakMilestone[] = [
+  {
+    id: 'fallback-3-days',
+    daysRequired: 3,
+    xpBoostMultiplier: '1.00',
+    boostDurationHours: 24,
+    rewardDescription: '3 Tage Serie erreicht! Du erhältst einen kleinen XP-Boost.',
+    isActive: true,
+    createdAt: new Date(),
+  },
+  {
+    id: 'fallback-5-days',
+    daysRequired: 5,
+    xpBoostMultiplier: '1.30',
+    boostDurationHours: 24,
+    rewardDescription: '5 Tage hintereinander! Du bekommst 30% mehr XP für einen Tag.',
+    isActive: true,
+    createdAt: new Date(),
+  },
+  {
+    id: 'fallback-7-days',
+    daysRequired: 7,
+    xpBoostMultiplier: '1.50',
+    boostDurationHours: 48,
+    rewardDescription: 'Eine Woche durchgehalten! Du bekommst 50% mehr XP für zwei Tage.',
+    isActive: true,
+    createdAt: new Date(),
+  },
+];
+
 interface StreakMilestoneCardProps {
   currentStreak: number;
   longestStreak: number;
@@ -34,6 +65,22 @@ function getXPBoostDisplay(multiplier: number | string): string {
   }
 }
 
+// Helper function to get next milestone or fallback
+function getNextMilestoneOrFallback(currentStreak: number, apiMilestone?: StreakMilestone): StreakMilestone | null {
+  // If we have a milestone from API, use it
+  if (apiMilestone) {
+    return apiMilestone;
+  }
+
+  // Otherwise, find the next milestone from fallbacks
+  const nextFallback = FALLBACK_MILESTONES.find(milestone =>
+    milestone.daysRequired > currentStreak
+  );
+
+  // If no next milestone found, return the first one as fallback
+  return nextFallback || FALLBACK_MILESTONES[0];
+}
+
 export function StreakMilestoneCard({
   currentStreak,
   longestStreak,
@@ -42,6 +89,8 @@ export function StreakMilestoneCard({
   xpBoostExpiry,
   nextMilestone,
 }: StreakMilestoneCardProps) {
+  // Get the effective next milestone (API data or fallback)
+  const effectiveNextMilestone = getNextMilestoneOrFallback(currentStreak, nextMilestone);
   const t = useTranslations();
   const [timeLeft, setTimeLeft] = useState<string>('');
 
@@ -74,8 +123,8 @@ export function StreakMilestoneCard({
     return () => clearInterval(interval);
   }, [xpBoostActive, xpBoostExpiry]);
 
-  const progressToNextMilestone = nextMilestone && nextMilestone.daysRequired > 0
-    ? Math.min((currentStreak / nextMilestone.daysRequired) * 100, 100)
+  const progressToNextMilestone = effectiveNextMilestone && effectiveNextMilestone.daysRequired > 0
+    ? Math.min((currentStreak / effectiveNextMilestone.daysRequired) * 100, 100)
     : 0;
 
   return (
@@ -121,7 +170,7 @@ export function StreakMilestoneCard({
         </div>
 
         {/* Next Milestone Progress */}
-        {nextMilestone ? (
+        {effectiveNextMilestone ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -130,7 +179,7 @@ export function StreakMilestoneCard({
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                <span className="font-medium">{nextMilestone?.daysRequired || 'N/A'} {t('streak.days')}</span>
+                <span className="font-medium">{effectiveNextMilestone.daysRequired} {t('streak.days')}</span>
               </div>
             </div>
 
@@ -141,11 +190,11 @@ export function StreakMilestoneCard({
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {nextMilestone ? Math.max(0, nextMilestone.daysRequired - currentStreak) : 0} {t('streak.daysToGo')}
+                {Math.max(0, effectiveNextMilestone.daysRequired - currentStreak)} {t('streak.daysToGo')}
               </span>
               <div className="flex items-center gap-1">
                 <Gift className="h-3 w-3" />
-                <span>{nextMilestone ? getXPBoostDisplay(nextMilestone.xpBoostMultiplier) : 'N/A'}</span>
+                <span>{getXPBoostDisplay(effectiveNextMilestone.xpBoostMultiplier)}</span>
               </div>
             </div>
 
@@ -155,7 +204,7 @@ export function StreakMilestoneCard({
                 {t('streak.rewardPreview')}:
               </div>
               <div className="text-muted-foreground">
-                {nextMilestone?.rewardDescription || t('streak.startStreak')}
+                {effectiveNextMilestone.rewardDescription}
               </div>
             </div>
           </div>
