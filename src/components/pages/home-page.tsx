@@ -80,12 +80,12 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link }: {
         >
           <Icon className="w-7 h-7 text-primary-foreground" />
         </motion.div>
-        <CardTitle className="text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+        <CardTitle className="text-lg xs:text-xl font-semibold group-hover:text-primary transition-colors duration-300">
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <CardDescription className="text-base leading-relaxed">
+        <CardDescription className="text-sm xs:text-base leading-relaxed">
           {description}
         </CardDescription>
         <motion.div
@@ -114,7 +114,7 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link }: {
       className="group"
     >
       {link ? (
-        <a href={link} className="block h-full">
+        <a href={link} className="block h-full min-h-[44px] touch-manipulation">
           {cardContent}
         </a>
       ) : (
@@ -157,7 +157,7 @@ function CategoryCard({ icon: Icon, title, description, example, link }: {
   );
 
   return link ? (
-    <a href={link} className="block h-full">
+    <a href={link} className="block h-full min-h-[44px] touch-manipulation">
       {categoryContent}
     </a>
   ) : categoryContent;
@@ -354,7 +354,7 @@ function ModernHeroSection() {
 
               <motion.h1
                 variants={itemVariants}
-                className="text-5xl lg:text-6xl font-bold leading-tight"
+                className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight"
               >
                 <motion.span
                   initial={{ opacity: 0, y: 20 }}
@@ -381,7 +381,7 @@ function ModernHeroSection() {
 
               <motion.p
                 variants={itemVariants}
-                className="text-xl text-muted-foreground leading-relaxed max-w-2xl"
+                className="text-base xs:text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl"
               >
                 {tHomeHero('description')}
               </motion.p>
@@ -398,17 +398,17 @@ function ModernHeroSection() {
                   className="flex items-center space-x-2"
                 >
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-sm font-medium text-foreground">{feature}</span>
+                  <span className="text-xs xs:text-sm font-medium text-foreground">{feature}</span>
                 </motion.div>
               ))}
             </motion.div>
 
             {/* CTA Buttons */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto sm:mx-0">
               <Button
                 size="lg"
                 onClick={() => document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg font-semibold group"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold group w-full min-h-[48px] touch-manipulation"
                 aria-label={`${tHomeHero('primaryCta')} - Jetzt mit dem Lernen beginnen`}
               >
                 {tHomeHero('primaryCta')}
@@ -418,7 +418,7 @@ function ModernHeroSection() {
                 variant="outline"
                 size="lg"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-6 text-lg font-semibold group"
+                className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-semibold group w-full min-h-[48px] touch-manipulation"
                 aria-label={`${tHomeHero('secondaryCta')} - Erfahre mehr über unsere Features`}
               >
                 <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
@@ -820,7 +820,7 @@ export function HomePage() {
         </Head>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-lg border-b border-border/50 shadow-sm z-50">
+        <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-lg border-b border-border/50 shadow-sm z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               {/* Logo & Brand */}
@@ -832,6 +832,7 @@ export function HomePage() {
                     className="h-10 w-auto"
                     width="40"
                     height="40"
+                    loading="lazy"
                   />
                 </div>
                 <div className="hidden sm:block">
@@ -852,10 +853,20 @@ export function HomePage() {
                 </div>
               </div>
 
-              {/* Mobile menu button (placeholder for future expansion) */}
+              {/* Mobile menu button */}
               <div className="sm:hidden">
-                <button className="text-muted-foreground hover:text-foreground p-2 rounded-md hover:bg-muted transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button
+                  className="text-muted-foreground hover:text-foreground p-3 rounded-md hover:bg-muted transition-colors min-h-[44px] min-w-[44px] touch-manipulation"
+                  aria-label="Menü öffnen"
+                  onClick={() => {
+                    // Simple mobile menu toggle - could be expanded
+                    const nav = document.querySelector('nav');
+                    if (nav) {
+                      nav.classList.toggle('mobile-menu-open');
+                    }
+                  }}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
@@ -1131,6 +1142,7 @@ export function HomePage() {
                     className="h-8 w-auto"
                     width="32"
                     height="32"
+                    loading="lazy"
                   />
                   <span className="text-lg font-bold text-foreground">{tNavbar('brand')}</span>
                 </div>
@@ -1139,25 +1151,25 @@ export function HomePage() {
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold mb-4 text-foreground">{tHomeFooter('legal')}</h4>
+                <h4 className="font-semibold mb-4 text-foreground text-sm xs:text-base">{tHomeFooter('legal')}</h4>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="/de/datenschutz" className="hover:text-foreground transition-colors">Datenschutz</a></li>
-                  <li><a href="/de/agb" className="hover:text-foreground transition-colors">AGB</a></li>
-                  <li><a href="/de/impressum" className="hover:text-foreground transition-colors">Impressum</a></li>
+                  <li><a href="/de/datenschutz" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
+                  <li><a href="/de/agb" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
+                  <li><a href="/de/impressum" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-4 text-foreground">{tHomeFooter('support')}</h4>
+                <h4 className="font-semibold mb-4 text-foreground text-sm xs:text-base">{tHomeFooter('support')}</h4>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="mailto:deinpflegebuddy@gmail.com" className="hover:text-foreground transition-colors">deinpflegebuddy@gmail.com</a></li>
-                  <li><a href="tel:+491741632129" className="hover:text-foreground transition-colors">0174 1632129</a></li>
-                  <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
+                  <li><a href="mailto:deinpflegebuddy@gmail.com" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">deinpflegebuddy@gmail.com</a></li>
+                  <li><a href="tel:+491741632129" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">0174 1632129</a></li>
+                  <li><a href="#" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">FAQ</a></li>
                   <li>
                     <a
                       href="https://www.instagram.com/pflege.buddy/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-foreground transition-colors inline-flex items-center gap-2"
+                      className="hover:text-foreground transition-colors inline-flex items-center gap-2 text-sm xs:text-base min-h-[44px] touch-manipulation"
                     >
                       <Instagram className="w-4 h-4" />
                       @pflege.buddy

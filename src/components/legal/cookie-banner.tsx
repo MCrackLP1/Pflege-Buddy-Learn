@@ -60,9 +60,9 @@ export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
   if (!isVisible) return null;
 
   return (
-    <div 
+    <div
       data-testid="cookie-banner"
-      className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-sm border-t"
+      className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-background/95 backdrop-blur-sm border-t"
     >
       <Card className="max-w-4xl mx-auto">
         <CardContent className="p-6">
