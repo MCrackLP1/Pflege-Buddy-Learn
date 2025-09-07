@@ -74,7 +74,7 @@ export function StreakMilestoneCard({
     return () => clearInterval(interval);
   }, [xpBoostActive, xpBoostExpiry]);
 
-  const progressToNextMilestone = nextMilestone
+  const progressToNextMilestone = nextMilestone && nextMilestone.daysRequired > 0
     ? Math.min((currentStreak / nextMilestone.daysRequired) * 100, 100)
     : 0;
 
@@ -130,7 +130,7 @@ export function StreakMilestoneCard({
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                <span className="font-medium">{nextMilestone.daysRequired} {t('streak.days')}</span>
+                <span className="font-medium">{nextMilestone?.daysRequired || 'N/A'} {t('streak.days')}</span>
               </div>
             </div>
 
@@ -141,11 +141,11 @@ export function StreakMilestoneCard({
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {Math.max(0, nextMilestone.daysRequired - currentStreak)} {t('streak.daysToGo')}
+                {nextMilestone ? Math.max(0, nextMilestone.daysRequired - currentStreak) : 0} {t('streak.daysToGo')}
               </span>
               <div className="flex items-center gap-1">
                 <Gift className="h-3 w-3" />
-                <span>{getXPBoostDisplay(nextMilestone.xpBoostMultiplier)}</span>
+                <span>{nextMilestone ? getXPBoostDisplay(nextMilestone.xpBoostMultiplier) : 'N/A'}</span>
               </div>
             </div>
 
@@ -155,7 +155,7 @@ export function StreakMilestoneCard({
                 {t('streak.rewardPreview')}:
               </div>
               <div className="text-muted-foreground">
-                {nextMilestone.rewardDescription}
+                {nextMilestone?.rewardDescription || t('streak.startStreak')}
               </div>
             </div>
           </div>
