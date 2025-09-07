@@ -69,10 +69,10 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     return NextResponse.json({
       user_progress: {
         xp: streakResult.updatedProgress.xp,
-        streak_days: (streakResult.updatedProgress as any).streak_days || 0,
-        longest_streak: (streakResult.updatedProgress as any).longest_streak || 0,
-        last_seen: (streakResult.updatedProgress as any).last_seen || today,
-        current_streak_start: (streakResult.updatedProgress as any).current_streak_start || undefined,
+        streak_days: streakResult.updatedProgress.streakDays || 0,
+        longest_streak: streakResult.updatedProgress.longestStreak || 0,
+        last_seen: streakResult.updatedProgress.lastSeen || today,
+        current_streak_start: streakResult.updatedProgress.currentStreakStart || undefined,
         total_questions: totalAttempts,
         correct_answers: correctAttempts,
         accuracy: accuracy,

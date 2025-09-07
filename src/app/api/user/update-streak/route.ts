@@ -18,8 +18,8 @@ export async function POST(): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       data: {
-        currentStreak: result.updatedProgress.streak_days,
-        longestStreak: result.updatedProgress.longest_streak,
+        currentStreak: result.updatedProgress.streakDays,
+        longestStreak: result.updatedProgress.longestStreak,
         xpBoostActive: result.xpBoostActive,
         xpBoostMultiplier: result.xpBoostMultiplier,
       }
