@@ -16,9 +16,17 @@ export const prefersReducedMotion = (): boolean => {
   }
 };
 
+// Cache for device capabilities to prevent multiple WebGL context creations
+let deviceCapabilitiesCache: ReturnType<typeof getDeviceCapabilities> | null = null;
+
 // Check device performance capabilities
 export const getDeviceCapabilities = () => {
   if (typeof window === 'undefined') return { isLowEnd: false, supportsWebGL: false };
+
+  // Return cached result if available
+  if (deviceCapabilitiesCache !== null) {
+    return deviceCapabilitiesCache;
+  }
 
   try {
     const connection = (navigator as any).connection;
@@ -41,21 +49,38 @@ export const getDeviceCapabilities = () => {
     let supportsWebGL = false;
     try {
       const canvas = document.createElement('canvas');
-      supportsWebGL = !!(window.WebGLRenderingContext && canvas.getContext('webgl'));
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      supportsWebGL = !!gl;
+
+      // Properly clean up the canvas and WebGL context
+      if (gl && typeof gl.getExtension === 'function') {
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      }
+      // Remove canvas from DOM if it was added
+      if (canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+      }
     } catch (e) {
       supportsWebGL = false;
     }
 
-    return {
+    const capabilities = {
       isLowEnd,
       supportsWebGL,
       connectionType: connection?.effectiveType || 'unknown',
       deviceMemory: deviceMemory || 'unknown',
       hardwareConcurrency: hardwareConcurrency || 'unknown'
     };
+
+    // Cache the result
+    deviceCapabilitiesCache = capabilities;
+
+    return capabilities;
   } catch (error) {
     // Fallback for any detection errors
-    return { isLowEnd: false, supportsWebGL: false };
+    const fallbackCapabilities = { isLowEnd: false, supportsWebGL: false };
+    deviceCapabilitiesCache = fallbackCapabilities;
+    return fallbackCapabilities;
   }
 };
 

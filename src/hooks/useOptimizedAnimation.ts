@@ -12,10 +12,15 @@ export interface AnimationConfig {
   ease?: string | number[];
 }
 
+// Global state to avoid duplicate device capability checks
+let globalDeviceCapabilities: ReturnType<typeof getDeviceCapabilities> | null = null;
+let globalShouldAnimate: boolean | null = null;
+let globalIsReady = false;
+
 export const useOptimizedAnimation = (config: AnimationConfig = {}) => {
-  const [isReady, setIsReady] = useState(false);
-  const [shouldAnimate, setShouldAnimate] = useState(false); // Start with false for SSR
-  const [deviceCapabilities, setDeviceCapabilities] = useState({
+  const [isReady, setIsReady] = useState(globalIsReady);
+  const [shouldAnimate, setShouldAnimate] = useState(globalShouldAnimate ?? false);
+  const [deviceCapabilities, setDeviceCapabilities] = useState(globalDeviceCapabilities ?? {
     isLowEnd: false,
     supportsWebGL: false
   });
@@ -27,19 +32,25 @@ export const useOptimizedAnimation = (config: AnimationConfig = {}) => {
       return;
     }
 
+    // Use cached values if available
+    if (globalDeviceCapabilities && globalShouldAnimate !== null) {
+      setDeviceCapabilities(globalDeviceCapabilities);
+      setShouldAnimate(globalShouldAnimate);
+      setIsReady(true);
+      return;
+    }
+
     // Check user preferences and device capabilities
     const userPrefersReducedMotion = prefersReducedMotion();
     const capabilities = getDeviceCapabilities();
 
+    // Update global state
+    globalDeviceCapabilities = capabilities;
+    globalShouldAnimate = !userPrefersReducedMotion && !capabilities.isLowEnd && !config.disabled;
+    globalIsReady = true;
+
     setDeviceCapabilities(capabilities);
-
-    // Determine if animations should run
-    const shouldDisable = userPrefersReducedMotion ||
-                         capabilities.isLowEnd ||
-                         config.disabled ||
-                         false;
-
-    setShouldAnimate(!shouldDisable);
+    setShouldAnimate(globalShouldAnimate);
     setIsReady(true);
   }, [config.disabled]);
 
