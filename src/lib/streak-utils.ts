@@ -36,24 +36,41 @@ export async function updateUserStreak(userId: string): Promise<StreakUpdateResu
   let currentStreakStart = progress?.current_streak_start;
   const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
 
+  console.log('🔥 Debug updateUserStreak:', {
+    userId,
+    today,
+    yesterday,
+    lastSeen,
+    currentStreakBefore: currentStreak,
+    hasProgress: !!progress,
+    progressError: progressError?.message
+  });
+
   // Calculate new streak based on login activity
   if (lastSeen === today) {
-    // User already logged in today - don't increment streak, just update last_seen
+    console.log('📅 Same day login - no streak increment');
   } else if (lastSeen === yesterday) {
-    // User logged in yesterday and is logging in today - continue streak
+    console.log('📅 Consecutive day login - incrementing streak');
     currentStreak += 1;
     longestStreak = Math.max(longestStreak, currentStreak);
   } else if (!lastSeen || lastSeen < yesterday) {
-    // Either first time user or gap in login days - start new streak
+    console.log('📅 New streak started - first login or gap detected');
     currentStreak = 1;
     currentStreakStart = today;
     longestStreak = Math.max(longestStreak, currentStreak);
   } else {
-    // lastSeen is in the future (shouldn't happen) or some other edge case
+    console.log('📅 Edge case - resetting streak');
     currentStreak = 1;
     currentStreakStart = today;
     longestStreak = Math.max(longestStreak, currentStreak);
   }
+
+  console.log('✅ Streak calculation result:', {
+    currentStreak,
+    longestStreak,
+    lastSeen: today
+  });
+
 
   // Get available milestones
   const { data: milestones } = await supabase
@@ -164,7 +181,13 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
   // If no progress record exists or error (user doesn't exist yet), treat as 0 streak days
   const streakDays = progress?.streak_days ?? 0;
 
-  console.log('🔍 Debug getNextMilestone:', { userId, streakDays, progress, progressError });
+  console.log('🔍 Debug getNextMilestone:', {
+    userId,
+    streakDays,
+    lastSeen: progress?.last_seen,
+    progress: !!progress,
+    progressError: progressError?.message
+  });
 
   // Get next milestone greater than current streak
   const { data: milestones, error: milestonesError } = await supabase

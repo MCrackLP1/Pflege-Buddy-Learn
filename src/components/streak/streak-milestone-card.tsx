@@ -66,19 +66,30 @@ function getXPBoostDisplay(multiplier: number | string): string {
 }
 
 // Helper function to get next milestone or fallback
-function getNextMilestoneOrFallback(currentStreak: number, apiMilestone?: StreakMilestone): StreakMilestone | null {
-  // If we have a milestone from API, use it
-  if (apiMilestone) {
+function getNextMilestoneOrFallback(currentStreak: number, apiMilestone?: StreakMilestone): StreakMilestone {
+  // If we have a valid milestone from API, use it
+  if (apiMilestone && apiMilestone.daysRequired && apiMilestone.xpBoostMultiplier) {
+    console.log('🔍 Using API milestone:', apiMilestone);
     return apiMilestone;
   }
 
-  // Otherwise, find the next milestone from fallbacks
+  // If API returned null/undefined, log it
+  if (apiMilestone === null || apiMilestone === undefined) {
+    console.log('🔍 API returned null/undefined, using fallback');
+  } else {
+    console.log('🔍 API milestone invalid, using fallback:', apiMilestone);
+  }
+
+  // Find the next milestone from fallbacks
   const nextFallback = FALLBACK_MILESTONES.find(milestone =>
     milestone.daysRequired > currentStreak
   );
 
-  // If no next milestone found, return the first one as fallback
-  return nextFallback || FALLBACK_MILESTONES[0];
+  // If no next milestone found, return the appropriate one
+  const result = nextFallback || FALLBACK_MILESTONES[0];
+  console.log('🔍 Using fallback milestone:', result);
+
+  return result;
 }
 
 export function StreakMilestoneCard({
@@ -170,8 +181,7 @@ export function StreakMilestoneCard({
         </div>
 
         {/* Next Milestone Progress */}
-        {effectiveNextMilestone ? (
-          <div className="space-y-2">
+        <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
                 <Trophy className="h-4 w-4 text-yellow-500" />
@@ -208,25 +218,6 @@ export function StreakMilestoneCard({
               </div>
             </div>
           </div>
-        ) : (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-yellow-500" />
-                <span>{t('streak.nextMilestone')}</span>
-              </div>
-            </div>
-            <div className="text-center p-4 bg-secondary/50 rounded-lg">
-              <Trophy className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
-              <div className="text-sm font-medium text-foreground">
-                Alle Meilensteine erreicht! 🎉
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                Du hast alle verfügbaren Streak-Meilensteine gemeistert!
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Achievement Celebration */}
         {currentStreak >= 30 && (

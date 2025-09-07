@@ -43,16 +43,27 @@ export function DashboardCard() {
     async function loadUserProgress() {
       try {
         setLoading(true);
+
+        // First update streak (login activity)
+        console.log('🔥 Updating streak on page load...');
+        await fetch('/api/user/update-streak', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        // Then get progress data
+        console.log('📊 Loading user progress...');
         const response = await fetch('/api/user/progress');
         const data = await response.json();
 
         if (data.success) {
+          console.log('✅ Progress loaded:', data.user_progress);
           setUserProgress(data.user_progress);
         } else {
           throw new Error(data.error || 'Failed to load progress');
         }
       } catch (err) {
-        console.error('Error loading user progress:', err);
+        console.error('❌ Error loading user progress:', err);
         // Fallback to mock data for demonstration
         setUserProgress({
           xp: 0,
