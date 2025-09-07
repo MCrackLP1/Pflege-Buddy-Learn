@@ -67,10 +67,20 @@ function getXPBoostDisplay(multiplier: number | string): string {
 
 // Helper function to get next milestone or fallback
 function getNextMilestoneOrFallback(currentStreak: number, apiMilestone?: StreakMilestone): StreakMilestone {
-  // If we have a valid milestone from API, use it
-  if (apiMilestone && apiMilestone.daysRequired && apiMilestone.xpBoostMultiplier) {
+  // If we have a milestone from API with at least daysRequired, try to use it
+  if (apiMilestone && apiMilestone.daysRequired) {
     console.log('🔍 Using API milestone:', apiMilestone);
-    return apiMilestone;
+
+    // Ensure all required properties exist, use fallbacks if missing
+    return {
+      id: apiMilestone.id || `api-${apiMilestone.daysRequired}`,
+      daysRequired: apiMilestone.daysRequired,
+      xpBoostMultiplier: apiMilestone.xpBoostMultiplier || '1.00',
+      boostDurationHours: apiMilestone.boostDurationHours || 24,
+      rewardDescription: apiMilestone.rewardDescription || `Erreiche ${apiMilestone.daysRequired} Tage Serie!`,
+      isActive: apiMilestone.isActive !== undefined ? apiMilestone.isActive : true,
+      createdAt: apiMilestone.createdAt || new Date(),
+    };
   }
 
   // If API returned null/undefined, log it
