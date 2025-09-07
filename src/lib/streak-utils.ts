@@ -164,6 +164,8 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
   // If no progress record exists or error (user doesn't exist yet), treat as 0 streak days
   const streakDays = progress?.streak_days ?? 0;
 
+  console.log('🔍 Debug getNextMilestone:', { userId, streakDays, progress, progressError });
+
   // Get next milestone greater than current streak
   const { data: milestones, error: milestonesError } = await supabase
     .from('streak_milestones')
@@ -173,12 +175,44 @@ export async function getNextMilestone(userId: string): Promise<StreakMilestone 
     .order('days_required')
     .limit(1);
 
+  console.log('🔍 Debug milestones query result:', { milestones, milestonesError });
+
   if (milestonesError) {
     console.error('Error fetching milestones:', milestonesError);
     return null;
   }
 
-  return milestones?.[0] || null;
+  // If no milestone found (user has reached all milestones), return the highest one
+  if (!milestones || milestones.length === 0) {
+    console.log('🔍 No next milestone found, checking for highest milestone');
+    const { data: highestMilestone } = await supabase
+      .from('streak_milestones')
+      .select('*')
+      .eq('is_active', true)
+      .order('days_required', { ascending: false })
+      .limit(1);
+
+    console.log('🔍 Highest milestone:', highestMilestone);
+
+    // If still no milestones found, return a fallback milestone
+    if (!highestMilestone || highestMilestone.length === 0) {
+      console.log('🔍 No milestones in database, returning fallback');
+      return {
+        id: 'fallback-5-days',
+        daysRequired: 5,
+        xpBoostMultiplier: '1.30',
+        boostDurationHours: 24,
+        rewardDescription: '5 Tage hintereinander! Du bekommst 30% mehr XP für einen Tag.',
+        isActive: true,
+        createdAt: new Date(),
+      } as StreakMilestone;
+    }
+
+    return highestMilestone[0];
+  }
+
+  console.log('🔍 Returning milestone:', milestones[0]);
+  return milestones[0];
 }
 
 /**
