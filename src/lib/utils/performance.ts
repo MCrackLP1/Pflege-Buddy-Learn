@@ -17,11 +17,25 @@ export const prefersReducedMotion = (): boolean => {
 };
 
 // Cache for device capabilities to prevent multiple WebGL context creations
-let deviceCapabilitiesCache: ReturnType<typeof getDeviceCapabilities> | null = null;
+interface DeviceCapabilities {
+  isLowEnd: boolean;
+  supportsWebGL: boolean;
+  connectionType: string;
+  deviceMemory: string | number;
+  hardwareConcurrency: string | number;
+}
+
+let deviceCapabilitiesCache: DeviceCapabilities | null = null;
 
 // Check device performance capabilities
-export const getDeviceCapabilities = () => {
-  if (typeof window === 'undefined') return { isLowEnd: false, supportsWebGL: false };
+export const getDeviceCapabilities = (): DeviceCapabilities => {
+  if (typeof window === 'undefined') return {
+    isLowEnd: false,
+    supportsWebGL: false,
+    connectionType: 'unknown',
+    deviceMemory: 'unknown',
+    hardwareConcurrency: 'unknown'
+  };
 
   // Return cached result if available
   if (deviceCapabilitiesCache !== null) {
@@ -78,7 +92,13 @@ export const getDeviceCapabilities = () => {
     return capabilities;
   } catch (error) {
     // Fallback for any detection errors
-    const fallbackCapabilities = { isLowEnd: false, supportsWebGL: false };
+    const fallbackCapabilities: DeviceCapabilities = {
+      isLowEnd: false,
+      supportsWebGL: false,
+      connectionType: 'unknown',
+      deviceMemory: 'unknown',
+      hardwareConcurrency: 'unknown'
+    };
     deviceCapabilitiesCache = fallbackCapabilities;
     return fallbackCapabilities;
   }
