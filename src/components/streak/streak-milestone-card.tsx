@@ -207,7 +207,10 @@ export function StreakMilestoneCard({
                 {t('streak.rewardPreview')}:
               </div>
               <div className="text-muted-foreground">
-                {effectiveNextMilestone.rewardDescription}
+                {currentStreak === 0
+                  ? 'Melde dich täglich an und sammle XP-Boosts für deine Lernserie!'
+                  : effectiveNextMilestone.rewardDescription
+                }
               </div>
             </div>
           </div>
@@ -226,7 +229,7 @@ export function StreakMilestoneCard({
 
         {/* Motivational Message */}
         <div className="text-center text-sm text-muted-foreground">
-          {currentStreak === 0 && t('streak.startStreak')}
+          {currentStreak === 0 && 'Bereit für deine erste Serie? Starte jetzt!'}
           {currentStreak > 0 && currentStreak < 3 && t('streak.keepGoing')}
           {currentStreak >= 3 && currentStreak < 7 && t('streak.greatStart')}
           {currentStreak >= 7 && t('streak.amazingStreak')}
