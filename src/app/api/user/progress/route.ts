@@ -52,7 +52,10 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     const nextXpMilestone = await getNextXpMilestone(user.id);
     const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
 
+    console.log('🔍 API: getNextMilestone result:', nextStreakMilestoneRaw);
+
     // Convert snake_case to camelCase for frontend
+    // getNextMilestone should never return null after our fixes, but handle it just in case
     const nextStreakMilestone = nextStreakMilestoneRaw ? {
       id: nextStreakMilestoneRaw.id,
       daysRequired: nextStreakMilestoneRaw.daysRequired,
@@ -61,7 +64,17 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
       rewardDescription: nextStreakMilestoneRaw.rewardDescription,
       isActive: nextStreakMilestoneRaw.isActive,
       createdAt: nextStreakMilestoneRaw.createdAt,
-    } : null;
+    } : {
+      id: 'api-fallback',
+      daysRequired: 3,
+      xpBoostMultiplier: '1.00',
+      boostDurationHours: 24,
+      rewardDescription: 'API-Fehler: Verwende Standard-Milestone.',
+      isActive: true,
+      createdAt: new Date(),
+    };
+
+    console.log('🔍 API: converted milestone:', nextStreakMilestone);
 
     // Get active XP boost info
     const xpBoostInfo = await getActiveXPBoost(user.id);
@@ -80,7 +93,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
         xp_boost_active: xpBoostInfo.isActive,
         xp_boost_multiplier: xpBoostInfo.multiplier,
         xp_boost_expiry: xpBoostInfo.expiry?.toISOString(),
-        next_streak_milestone: nextStreakMilestone || undefined,
+        next_streak_milestone: nextStreakMilestone,
         next_xp_milestone: nextXpMilestone || undefined,
         last_xp_milestone: lastXpMilestone || undefined,
       },

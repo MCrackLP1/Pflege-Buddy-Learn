@@ -142,7 +142,7 @@ export function DashboardCard() {
         <StreakMilestoneCard 
           currentStreak={userProgress?.streak_days || 0}
           longestStreak={userProgress?.longest_streak || 0}
-          nextMilestone={userProgress?.next_streak_milestone}
+          nextMilestone={userProgress?.next_streak_milestone || undefined}
           xpBoostActive={userProgress?.xp_boost_active || false}
           xpBoostMultiplier={userProgress?.xp_boost_multiplier || 1}
           xpBoostExpiry={userProgress?.xp_boost_expiry ? new Date(userProgress.xp_boost_expiry) : undefined}
