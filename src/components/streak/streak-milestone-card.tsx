@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Flame, Trophy, Zap, Calendar, Gift } from 'lucide-react';
 import type { StreakMilestone } from '@/lib/db/schema';
 
-// Fallback milestones if API doesn't return data
-const FALLBACK_MILESTONES: StreakMilestone[] = [
+// Simplified hardcoded milestones - no API dependency
+const MILESTONES: StreakMilestone[] = [
   {
-    id: 'fallback-3-days',
+    id: 'milestone-3-days',
     daysRequired: 3,
     xpBoostMultiplier: '1.00',
     boostDurationHours: 24,
@@ -20,7 +20,7 @@ const FALLBACK_MILESTONES: StreakMilestone[] = [
     createdAt: new Date(),
   },
   {
-    id: 'fallback-5-days',
+    id: 'milestone-5-days',
     daysRequired: 5,
     xpBoostMultiplier: '1.30',
     boostDurationHours: 24,
@@ -29,11 +29,20 @@ const FALLBACK_MILESTONES: StreakMilestone[] = [
     createdAt: new Date(),
   },
   {
-    id: 'fallback-7-days',
+    id: 'milestone-7-days',
     daysRequired: 7,
     xpBoostMultiplier: '1.50',
     boostDurationHours: 48,
     rewardDescription: 'Eine Woche durchgehalten! Du bekommst 50% mehr XP für zwei Tage.',
+    isActive: true,
+    createdAt: new Date(),
+  },
+  {
+    id: 'milestone-14-days',
+    daysRequired: 14,
+    xpBoostMultiplier: '2.00',
+    boostDurationHours: 72,
+    rewardDescription: 'Zwei Wochen am Stück! Dein Lernengagement zahlt sich aus mit 2x XP.',
     isActive: true,
     createdAt: new Date(),
   },
@@ -65,41 +74,15 @@ function getXPBoostDisplay(multiplier: number | string): string {
   }
 }
 
-// Helper function to get next milestone or fallback
-function getNextMilestoneOrFallback(currentStreak: number, apiMilestone?: StreakMilestone): StreakMilestone {
-  // If we have a milestone from API with at least daysRequired, try to use it
-  if (apiMilestone && apiMilestone.daysRequired) {
-    console.log('🔍 Using API milestone:', apiMilestone);
-
-    // Ensure all required properties exist, use fallbacks if missing
-    return {
-      id: apiMilestone.id || `api-${apiMilestone.daysRequired}`,
-      daysRequired: apiMilestone.daysRequired,
-      xpBoostMultiplier: apiMilestone.xpBoostMultiplier || '1.00',
-      boostDurationHours: apiMilestone.boostDurationHours || 24,
-      rewardDescription: apiMilestone.rewardDescription || `Erreiche ${apiMilestone.daysRequired} Tage Serie!`,
-      isActive: apiMilestone.isActive !== undefined ? apiMilestone.isActive : true,
-      createdAt: apiMilestone.createdAt || new Date(),
-    };
-  }
-
-  // If API returned null/undefined, log it
-  if (apiMilestone === null || apiMilestone === undefined) {
-    console.log('🔍 API returned null/undefined, using fallback');
-  } else {
-    console.log('🔍 API milestone invalid, using fallback:', apiMilestone);
-  }
-
-  // Find the next milestone from fallbacks
-  const nextFallback = FALLBACK_MILESTONES.find(milestone =>
+// Simple function to get next milestone from hardcoded data
+function getNextMilestone(currentStreak: number): StreakMilestone {
+  // Find the next milestone that the user hasn't reached yet
+  const nextMilestone = MILESTONES.find(milestone =>
     milestone.daysRequired > currentStreak
   );
 
-  // If no next milestone found, return the appropriate one
-  const result = nextFallback || FALLBACK_MILESTONES[0];
-  console.log('🔍 Using fallback milestone:', result);
-
-  return result;
+  // If no next milestone found, return the last one (user has reached all)
+  return nextMilestone || MILESTONES[MILESTONES.length - 1];
 }
 
 export function StreakMilestoneCard({
@@ -110,8 +93,8 @@ export function StreakMilestoneCard({
   xpBoostExpiry,
   nextMilestone,
 }: StreakMilestoneCardProps) {
-  // Get the effective next milestone (API data or fallback)
-  const effectiveNextMilestone = getNextMilestoneOrFallback(currentStreak, nextMilestone);
+  // Use hardcoded milestones - ignore API data completely
+  const effectiveNextMilestone = getNextMilestone(currentStreak);
   const t = useTranslations();
   const [timeLeft, setTimeLeft] = useState<string>('');
 
