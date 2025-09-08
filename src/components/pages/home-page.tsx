@@ -63,25 +63,26 @@ function LoadingAnimation() {
 }
 
 // Enhanced Feature Card Component
-function FeatureCard({ icon: Icon, title, description, delay = 0, link }: {
+function FeatureCard({ icon: Icon, title, description, delay = 0, link, onClick }: {
   icon: LucideIcon,
   title: string,
   description: string,
   delay?: number,
-  link?: string
+  link?: string,
+  onClick?: () => void
 }) {
   const { shouldAnimate, getTransition } = useOptimizedAnimation({ delay });
 
   const cardContent = (
-    <Card className="h-full transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 bg-gradient-to-br from-card to-card/95 border-border/50 group-hover:border-primary/30">
+    <Card className="h-full transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 bg-gradient-to-br from-card to-card/95 border-border/50">
       <CardHeader className="pb-4">
         <motion.div
-          className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300"
+          className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center mb-4 shadow-lg transition-all duration-300"
           whileHover={shouldAnimate ? { rotate: 5, scale: 1.1 } : {}}
         >
           <Icon className="w-7 h-7 text-primary-foreground" />
         </motion.div>
-        <CardTitle className="text-lg xs:text-xl font-semibold group-hover:text-primary transition-colors duration-300">
+        <CardTitle className="text-lg xs:text-xl font-semibold transition-colors duration-300">
           {title}
         </CardTitle>
       </CardHeader>
@@ -112,15 +113,10 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link }: {
       animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
       transition={getTransition()}
       whileHover={shouldAnimate ? { y: -8, scale: 1.02 } : {}}
-      className="group"
+      className="group cursor-pointer"
+      onClick={onClick}
     >
-      {link ? (
-        <a href={link} className="block h-full min-h-[44px] touch-manipulation">
-          {cardContent}
-        </a>
-      ) : (
-        cardContent
-      )}
+      {cardContent}
     </motion.div>
   );
 }
@@ -621,7 +617,7 @@ function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; on
 }
 
 export function HomePage() {
-  const { session, loading } = useAuth();
+  const { session, loading, signIn } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
 
@@ -645,6 +641,12 @@ export function HomePage() {
   const handleCookieReject = () => {
     console.log('Only essential cookies accepted');
     // Here you would log the minimal consent event
+  };
+
+  // Handler for Google sign in from feature cards
+  const handleFeatureSignIn = () => {
+    // Scroll to auth section
+    document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -931,42 +933,42 @@ export function HomePage() {
                 title={tHomeFeatures('xpSystem.title')}
                 description={`${tHomeFeatures('xpSystem.description')} Erfahre mehr über das Punktesystem.`}
                 delay={0}
-                link="/de/learn"
+                onClick={handleFeatureSignIn}
               />
               <FeatureCard
                 icon={Sparkles}
                 title={tHomeFeatures('hints.title')}
                 description={`${tHomeFeatures('hints.description')} Spare Zeit mit intelligenten Hinweisen.`}
                 delay={0.1}
-                link="/de/learn"
+                onClick={handleFeatureSignIn}
               />
               <FeatureCard
                 icon={Target}
                 title={tHomeFeatures('progress.title')}
                 description={`${tHomeFeatures('progress.description')} Verfolge deinen Lernfortschritt.`}
                 delay={0.2}
-                link="/de/profile"
+                onClick={handleFeatureSignIn}
               />
               <FeatureCard
                 icon={Clock}
                 title={tHomeFeatures('streak.title')}
                 description={`${tHomeFeatures('streak.description')} Halte deine Lernserie aufrecht.`}
                 delay={0.3}
-                link="/de/learn"
+                onClick={handleFeatureSignIn}
               />
               <FeatureCard
                 icon={Shield}
                 title={tHomeFeatures('leaderboard.title')}
                 description={`${tHomeFeatures('leaderboard.description')} Vergleiche dich mit anderen.`}
                 delay={0.4}
-                link="/de/ranked"
+                onClick={handleFeatureSignIn}
               />
               <FeatureCard
                 icon={Brain}
                 title={tHomeFeatures('adaptive.title')}
                 description={`${tHomeFeatures('adaptive.description')} Passe dich an dein Lerntempo an.`}
                 delay={0.5}
-                link="/de/learn"
+                onClick={handleFeatureSignIn}
               />
             </motion.div>
 
