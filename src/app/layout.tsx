@@ -63,6 +63,11 @@ export default function RootLayout({
         <link rel="alternate" hrefLang="en" href="https://www.pflegebuddy.app/en" />
         <link rel="alternate" hrefLang="x-default" href="https://www.pflegebuddy.app/de" />
 
+        {/* Search Engine Optimization */}
+        <meta name="msvalidate.01" content="634EC7319507185DEBBCB16C4AD2D99F" />
+        <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
+        <meta name="yandex-verification" content="f34d8314aa876df9" />
+
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />

@@ -434,6 +434,26 @@ export function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
+              <Link href={createLocalizedPath(locale, 'kontakt')} className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <Shield className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">Kontakt</div>
+                    <div className="text-xs text-muted-foreground">Support & Fragen</div>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href={createLocalizedPath(locale, 'ueber-uns')} className="block">
+                <Button variant="outline" className="w-full justify-start h-auto p-3">
+                  <Shield className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="text-sm font-medium">Über uns</div>
+                    <div className="text-xs text-muted-foreground">Mission & Team</div>
+                  </div>
+                </Button>
+              </Link>
+
               <Link href={createLocalizedPath(locale, 'datenschutz')} className="block">
                 <Button variant="outline" className="w-full justify-start h-auto p-3">
                   <FileText className="h-4 w-4 mr-2 flex-shrink-0" />

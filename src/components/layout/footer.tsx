@@ -20,7 +20,35 @@ export function Footer({ showFullFooter = true }: FooterProps) {
       <div className="max-w-md mx-auto px-4 py-4">
         {showFullFooter && (
           <>
-            {/* Essential Legal Links - only show what's not in profile */}
+            {/* Navigation Links */}
+            <div className="flex justify-center flex-wrap gap-x-4 gap-y-2 mb-4">
+              <Link
+                href={createLocalizedPath(locale, 'kontakt')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Kontakt
+              </Link>
+              <Link
+                href={createLocalizedPath(locale, 'ueber-uns')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Über uns
+              </Link>
+              <Link
+                href={createLocalizedPath(locale, 'datenschutz')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Datenschutz
+              </Link>
+              <Link
+                href={createLocalizedPath(locale, 'impressum')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Impressum
+              </Link>
+            </div>
+
+            {/* Additional Legal Links */}
             <div className="flex justify-center space-x-4 mb-4">
               <Link
                 href={createLocalizedPath(locale, 'widerruf')}
