@@ -100,7 +100,7 @@ export function QuizQuestion({
               </div>
             </div>
 
-            <CardTitle className="text-xl leading-relaxed font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-200 bg-clip-text text-transparent">
+            <CardTitle className="text-xl leading-relaxed font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
               {question.stem}
             </CardTitle>
           </CardHeader>
@@ -125,9 +125,9 @@ export function QuizQuestion({
                       }`}
                     >
                       <div className={`flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200 ${
-                        isSelected 
-                          ? 'border-blue-400 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 shadow-lg' 
-                          : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                        isSelected
+                          ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/40 dark:to-green-900/40 shadow-lg shadow-blue-500/20'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
                       }`}>
                         <RadioGroupItem value={choice.id} id={choice.id} className="border-2" />
                         <Label 
@@ -159,9 +159,9 @@ export function QuizQuestion({
                       variant={answer === value ? "default" : "outline"}
                       onClick={() => onAnswer(question.id, value)}
                       className={`h-auto py-6 px-6 text-lg font-bold border-2 relative overflow-hidden group ${
-                        answer === value 
-                          ? `bg-gradient-to-r ${color} text-white shadow-lg hover:shadow-xl` 
-                          : 'hover:border-blue-300 dark:hover:border-blue-600'
+                        answer === value
+                          ? `bg-gradient-to-r ${color} text-white shadow-lg hover:shadow-xl shadow-${color.split('-')[0]}-500/30`
+                          : 'hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
                       }`}
                     >
                       {answer === value && (

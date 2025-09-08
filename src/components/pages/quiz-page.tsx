@@ -9,6 +9,10 @@ import { QuizQuestion } from '@/components/quiz/quiz-question';
 import { QuizResults } from '@/components/quiz/quiz-results';
 import { QuizProgress } from '@/components/quiz/quiz-progress';
 import { calculateXP } from '@/lib/utils/quiz';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Brain, Sparkles } from 'lucide-react';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 
 interface QuizPageProps {
@@ -339,22 +343,107 @@ export function QuizPage({ topic }: QuizPageProps) {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <QuizProgress 
-          current={currentQuestionIndex + 1}
-          total={questions.length}
-        />
-        
-        <QuizQuestion
-          question={currentQuestion}
-          answer={answers[currentQuestion.id]}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-          onHintUsed={() => handleHintUsed(currentQuestion.id)}
-          usedHints={usedHints[currentQuestion.id] || 0}
-          isLastQuestion={isLastQuestion}
-          hintsBalance={hintsBalance}
-          hintsLoading={hintsLoading}
-        />
+        {/* Header Card - Quiz Session Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Card className="relative overflow-hidden shadow-lg">
+            <CardHeader className="relative z-10">
+              <div className="flex items-center justify-between">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
+                    className="group"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                    Zurück
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center shadow-lg">
+                    <Brain className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                      🧠 Pflege-Quiz
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                      {topic === 'random' ? 'Zufällige Fragen' : topic.charAt(0).toUpperCase() + topic.slice(1)}
+                    </p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-green-600 dark:text-green-400">
+                      💡 {hintsBalance}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Hints</div>
+                  </div>
+                </motion.div>
+              </div>
+            </CardHeader>
+          </Card>
+        </motion.div>
+
+        {/* Progress Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Card>
+            <CardContent className="p-6">
+              <QuizProgress
+                current={currentQuestionIndex + 1}
+                total={questions.length}
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Question Section */}
+        <motion.div
+          key={currentQuestionIndex}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <Card className="shadow-lg">
+            <CardContent className="p-6">
+              <QuizQuestion
+                question={currentQuestion}
+                answer={answers[currentQuestion.id]}
+                onAnswer={handleAnswer}
+                onNext={handleNext}
+                onHintUsed={() => handleHintUsed(currentQuestion.id)}
+                usedHints={usedHints[currentQuestion.id] || 0}
+                isLastQuestion={isLastQuestion}
+                hintsBalance={hintsBalance}
+                hintsLoading={hintsLoading}
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </MainLayout>
   );
