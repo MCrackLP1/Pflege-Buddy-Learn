@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { usePathname } from 'next/navigation'
 import './globals.css'
 import './accessibility.css'
 
@@ -86,11 +85,8 @@ export default function RootLayout({
           rel="preload"
           href="/fonts.css"
           as="style"
-          onLoad="this.onload=null;this.rel='stylesheet'"
         />
-        <noscript>
-          <link href="/fonts.css" rel="stylesheet" />
-        </noscript>
+        <link href="/fonts.css" rel="stylesheet" />
       </head>
       <body className={inter.className}>
         {children}
@@ -100,17 +96,11 @@ export default function RootLayout({
   )
 }
 
-// Client component for hreflang tags
+// Hreflang tags for SEO - handled server-side
 function HreflangTagsComponent() {
-  // This will be rendered on the client side
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-
-  // Remove locale prefix to get the base path
-  const basePath = pathname.replace(/^\/(de|en)/, '') || '/';
-
   const hreflangs = [
-    { lang: 'de', url: `https://www.pflegebuddy.app/de${basePath}` },
-    { lang: 'en', url: `https://www.pflegebuddy.app/en${basePath}` },
+    { lang: 'de', url: 'https://www.pflegebuddy.app/de' },
+    { lang: 'en', url: 'https://www.pflegebuddy.app/en' },
   ];
 
   return (
@@ -126,7 +116,7 @@ function HreflangTagsComponent() {
       <link
         rel="alternate"
         hrefLang="x-default"
-        href={`https://www.pflegebuddy.app/de${basePath}`}
+        href="https://www.pflegebuddy.app/de"
       />
     </>
   );

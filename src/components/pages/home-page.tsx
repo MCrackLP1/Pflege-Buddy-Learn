@@ -301,12 +301,7 @@ function ModernHeroSection() {
     }
   ]
 
-  // Main render logic
-  if (session) {
-    return (
-      <DashboardCard />
-    );
-  }
+  // Main render logic - ModernHeroSection is only called when no session exists
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
@@ -1191,5 +1186,6 @@ export function HomePage() {
         <CookieBanner onAccept={handleCookieAccept} onReject={handleCookieReject} />
       </div>
     );
-};
+  }
+}
 
