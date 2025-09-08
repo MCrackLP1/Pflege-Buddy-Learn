@@ -719,6 +719,17 @@ export function HomePage() {
     return <LoadingAnimation />;
   }
 
+  if (session) {
+    return (
+      <div>
+        <DashboardCard />
+        {showNameModal && (
+          <NameInputModal onSave={handleSaveName} onSkip={handleSkipName} />
+        )}
+      </div>
+    );
+  }
+
   if (!session) {
     const structuredData = [
       // WebApplication Schema
