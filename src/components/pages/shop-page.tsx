@@ -7,9 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, ArrowLeft, ShoppingCart, Zap, Shield, Star, Users, CheckCircle, Gift, Clock, Lock, Award, Heart, Target, Crown, Flame } from 'lucide-react';
+import { Sparkles, ArrowLeft, ShoppingCart, Zap, Shield, CheckCircle, Gift, Lock, Clock, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { createLocalizedPath } from '@/lib/navigation';
 
 // Format currency helper
 function formatCurrency(amountInCents: number, currency = 'EUR', locale = 'de-DE'): string {
@@ -192,84 +191,6 @@ export function ShopPage() {
           </Card>
         </motion.div>
 
-        {/* Social Proof Section */}
-        <motion.div variants={itemVariants}>
-          <div className="grid grid-cols-3 gap-4">
-            <Card className="text-center hover:shadow-lg transition-shadow duration-300">
-              <CardContent className="p-6 space-y-3">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center shadow-lg"
-                >
-                  <Users className="h-6 w-6 text-white" />
-                </motion.div>
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  1.200+
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  🧑‍⚕️ Zufriedene Nutzer
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow duration-300">
-              <CardContent className="p-6 space-y-3">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.5
-                  }}
-                  className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg"
-                >
-                  <Star className="h-6 w-6 text-white" />
-                </motion.div>
-                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                  4.8/5
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  ⭐ Durchschnittliche Bewertung
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow duration-300">
-              <CardContent className="p-6 space-y-3">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1
-                  }}
-                  className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center shadow-lg"
-                >
-                  <Flame className="h-6 w-6 text-white" />
-                </motion.div>
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                  85%
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  📈 Mehr Erfolg mit Hints
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </motion.div>
 
         {/* Pricing Section */}
         <motion.div variants={itemVariants}>
@@ -416,59 +337,6 @@ export function ShopPage() {
           </div>
         </motion.div>
 
-        {/* Features Section */}
-        <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                ✨ Warum Hints kaufen?
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="text-center space-y-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center shadow-lg mx-auto">
-                    <Target className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold">Meistere schwierige Fragen</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Hints helfen dir, auch bei komplexen medizinischen Fragen weiterzukommen.
-                  </p>
-                </div>
-
-                <div className="text-center space-y-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg mx-auto">
-                    <Flame className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold">Halte deine Serie</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Mit Hints bleibst du im Flow und baust deine tägliche Lernserie auf.
-                  </p>
-                </div>
-
-                <div className="text-center space-y-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg mx-auto">
-                    <Award className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold">Sammle mehr XP</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Hints helfen dir, schneller zu antworten und mehr Erfahrungspunkte zu sammeln.
-                  </p>
-                </div>
-
-                <div className="text-center space-y-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg mx-auto">
-                    <Heart className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold">Weniger Frust</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Keine Blockaden mehr - Hints halten dich motiviert beim Lernen.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
 
         {/* Trust Section */}
         <motion.div variants={itemVariants}>
@@ -558,45 +426,6 @@ export function ShopPage() {
           </Card>
         </motion.div>
 
-        {/* Final CTA Section */}
-        <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-r from-blue-600 to-green-600 text-white border-0 shadow-xl">
-            <CardContent className="p-8 text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring" }}
-                className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg mx-auto mb-6"
-              >
-                <Sparkles className="w-8 h-8 text-white" />
-              </motion.div>
-
-              <h2 className="text-3xl font-bold mb-4">
-                🚀 Starte jetzt durch!
-              </h2>
-
-              <p className="text-xl mb-6 opacity-90 max-w-2xl mx-auto">
-                Hol dir mehr Hints und werde zum Pflegeprofi. Dein Erfolg wartet schon auf dich!
-              </p>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-block"
-              >
-                <Button
-                  onClick={() => router.push(createLocalizedPath('de', '/quiz/random'))}
-                  className="bg-white text-blue-600 hover:bg-gray-100 font-bold px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                  size="lg"
-                >
-                  <Target className="w-6 h-6 mr-3" />
-                  🎯 Quiz starten & Level up!
-                  <Sparkles className="w-6 h-6 ml-3" />
-                </Button>
-              </motion.div>
-            </CardContent>
-          </Card>
-        </motion.div>
 
         {/* Footer Legal */}
         <motion.div
