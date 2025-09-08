@@ -32,7 +32,8 @@
     "content:marketing": "tsx scripts/content-marketing-strategy.ts",
     "core:vitals": "tsx scripts/core-web-vitals-optimization.ts",
     "gmb:setup": "tsx scripts/google-my-business-setup.ts",
-    "seo:summary": "tsx scripts/seo-implementation-summary.ts"
+    "seo:summary": "tsx scripts/seo-implementation-summary.ts",
+    "vitals:monitor": "tsx scripts/monitor-core-web-vitals.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
