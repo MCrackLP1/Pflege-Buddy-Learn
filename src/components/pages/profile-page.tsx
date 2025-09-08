@@ -391,9 +391,7 @@ export function ProfilePage() {
         </Card>
 
         {/* Gaming Statistics Hub */}
-        <Card className="relative overflow-hidden border-2 border-blue-200/50 dark:border-blue-700/50 bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-800 dark:via-blue-900/10 dark:to-green-900/10">
-          {/* Background Gaming Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-green-500/5 opacity-50" />
+        <Card className="relative overflow-hidden">
           
           <CardHeader className="relative z-10">
             <CardTitle className="text-xl flex items-center gap-3">
@@ -459,20 +457,20 @@ export function ProfilePage() {
               </div>
 
               {/* Total Questions Quest Counter */}
-              <div className="col-span-2 text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200/50 dark:border-blue-700/50">
+              <div className="col-span-2 text-center p-4 bg-muted/50 rounded-xl border">
                 <div className="flex items-center justify-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg">
                     <Target className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    <div className="text-2xl font-bold text-foreground">
                       {userStats?.totalQuestions || 0}
                     </div>
-                    <div className="text-sm font-semibold text-blue-700 dark:text-blue-300">{t('totalQuestions')}</div>
+                    <div className="text-sm font-semibold text-muted-foreground">{t('totalQuestions')}</div>
                   </div>
                   <div className="flex items-center gap-1">
                     {[...Array(Math.min(Math.floor((userStats?.totalQuestions || 0) / 50), 10))].map((_, i) => (
-                      <div key={i} className="w-2 h-6 bg-blue-400 rounded-full" />
+                      <div key={i} className="w-2 h-6 bg-primary rounded-full" />
                     ))}
                   </div>
                 </div>

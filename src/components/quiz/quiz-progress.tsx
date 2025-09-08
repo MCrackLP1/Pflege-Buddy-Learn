@@ -23,9 +23,7 @@ export function QuizProgress({ current, total }: QuizProgressProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="relative overflow-hidden border-2 border-blue-200/50 dark:border-blue-700/50 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 shadow-lg">
-        {/* Quest Progress Glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 opacity-50" />
+      <Card className="relative overflow-hidden shadow-lg">
         
         <CardContent className="p-4 space-y-4 relative z-10">
           {/* Header with Quest Icon */}
@@ -50,7 +48,7 @@ export function QuizProgress({ current, total }: QuizProgressProps) {
               className={`${
                 isNearEnd 
                   ? 'bg-yellow-100 border-yellow-300 text-yellow-700 dark:bg-yellow-900/30 dark:border-yellow-600 dark:text-yellow-300'
-                  : 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300'
+                  : ''
               } font-bold px-3 py-1`}
             >
               {isNearEnd ? (
@@ -77,7 +75,7 @@ export function QuizProgress({ current, total }: QuizProgressProps) {
                 className={`h-full rounded-full transition-all duration-300 relative ${
                   isNearEnd 
                     ? 'bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500' 
-                    : 'bg-gradient-to-r from-blue-400 via-blue-500 to-green-500'
+                    : 'bg-primary'
                 } shadow-lg`}
               >
                 {/* Energy Bar Glow Effect */}

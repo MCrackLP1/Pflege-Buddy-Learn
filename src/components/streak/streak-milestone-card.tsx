@@ -311,7 +311,7 @@ export function StreakMilestoneCard({
         )}
 
         {/* Motivational Quest Message */}
-        <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+        <div className="text-center p-4 bg-muted/50 rounded-xl border">
           <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
             {currentStreak === 0 && '🎮 Bereit für deine erste Serie? Quest startet jetzt!'}
             {currentStreak > 0 && currentStreak < 3 && '🚀 Toller Start! Bleib dran und sammle mehr Power-Ups!'}

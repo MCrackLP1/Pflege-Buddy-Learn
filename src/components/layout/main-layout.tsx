@@ -25,7 +25,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <ScriptManager>
           <main className="flex-1 p-4 max-w-md mx-auto w-full">
             {children}
@@ -38,7 +38,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <ScriptManager>
         <main className="flex-1 p-4 pb-20 max-w-md mx-auto w-full">
           {children}

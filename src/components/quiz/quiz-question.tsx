@@ -70,22 +70,17 @@ export function QuizQuestion({
 
   return (
     <div className="space-y-6">
-      {/* Gaming Background Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-green-50/30 pointer-events-none" />
-      
       {/* Question Card - Arcade Style */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="relative overflow-hidden border-2 border-blue-200/50 dark:border-blue-700/50 bg-gradient-to-br from-white via-blue-50/20 to-green-50/20 dark:from-gray-800 dark:via-blue-900/10 dark:to-green-900/10 shadow-xl shadow-blue-500/10">
-          {/* Animated Glow Border */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <Card className="relative overflow-hidden shadow-lg">
           
           <CardHeader className="relative z-10">
             <div className="flex items-center justify-between mb-4">
-              <Badge variant="outline" className="bg-blue-100/80 border-blue-300 text-blue-700 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-300">
+              <Badge variant="outline">
                 <Zap className="w-3 h-3 mr-1" />
                 {question.type === 'mc' ? 'Multiple Choice' : 'True/False'}
               </Badge>
