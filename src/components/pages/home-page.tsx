@@ -121,22 +121,23 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link, onClick 
   );
 }
 
-function CategoryCard({ icon: Icon, title, description, example, link }: {
+function CategoryCard({ icon: Icon, title, description, example, link, onClick }: {
   icon: LucideIcon;
   title: string;
   description: string;
   example?: { question: string; answer: string };
   link?: string;
+  onClick?: () => void;
 }) {
   const categoryContent = (
-    <Card className="h-full transition-all duration-300 hover:shadow-lg group">
+    <Card className="h-full transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center transition-colors duration-300">
             <Icon className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{title}</CardTitle>
+            <CardTitle className="text-lg transition-colors duration-300">{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </div>
         </div>
@@ -153,11 +154,14 @@ function CategoryCard({ icon: Icon, title, description, example, link }: {
     </Card>
   );
 
-  return link ? (
-    <a href={link} className="block h-full min-h-[44px] touch-manipulation">
+  return (
+    <div
+      className="cursor-pointer"
+      onClick={onClick}
+    >
       {categoryContent}
-    </a>
-  ) : categoryContent;
+    </div>
+  );
 }
 
 function ProcessStep({ step, title, description }: { step: number; title: string; description: string }) {
@@ -1016,6 +1020,7 @@ export function HomePage() {
                   question: "Was ist die normale Körpertemperatur eines gesunden Erwachsenen bei rektaler Messung?",
                   answer: "36,6°C - 37,2°C"
                 }}
+                onClick={handleFeatureSignIn}
               />
               <CategoryCard
                 icon={BookOpen}
@@ -1025,6 +1030,7 @@ export function HomePage() {
                   question: "Welche Reihenfolge ist bei der hygienischen Händedesinfektion korrekt?",
                   answer: "Hände anfeuchten → Desinfektionsmittel auftragen → 20-30 Sek. einwirken → Trocknen lassen"
                 }}
+                onClick={handleFeatureSignIn}
               />
               <CategoryCard
                 icon={Brain}
@@ -1034,6 +1040,7 @@ export function HomePage() {
                   question: "Welche Regel gilt bei der Medikamentengabe als oberste Priorität?",
                   answer: "Richtiger Patient - Patientenidentifikation hat höchste Priorität"
                 }}
+                onClick={handleFeatureSignIn}
               />
               <CategoryCard
                 icon={Heart}
@@ -1043,6 +1050,7 @@ export function HomePage() {
                   question: "Die Händedesinfektion sollte mindestens 30 Sekunden durchgeführt werden.",
                   answer: "Ja, mindestens 20-30 Sekunden für effektive Keimreduktion"
                 }}
+                onClick={handleFeatureSignIn}
               />
               <CategoryCard
                 icon={Target}
@@ -1052,11 +1060,13 @@ export function HomePage() {
                   question: "Die numerische Ratingskala (NRS) zur Schmerzerfassung reicht von 0 bis 10.",
                   answer: "Ja, 0 = kein Schmerz, 10 = stärkster vorstellbarer Schmerz"
                 }}
+                onClick={handleFeatureSignIn}
               />
               <CategoryCard
                 icon={Award}
                 title={tHomeCategories('more.title')}
                 description={tHomeCategories('more.description')}
+                onClick={handleFeatureSignIn}
               />
             </div>
           </div>
