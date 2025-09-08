@@ -9,7 +9,11 @@ interface HintsData {
   hintsBalance: number;
 }
 
-export function HintsDisplay() {
+interface HintsDisplayProps {
+  compact?: boolean;
+}
+
+export function HintsDisplay({ compact = false }: HintsDisplayProps) {
   const [hintsData, setHintsData] = useState<HintsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +46,14 @@ export function HintsDisplay() {
   }, []);
 
   if (loading) {
+    if (compact) {
+      return (
+        <span className="text-2xl font-bold text-gray-400 animate-pulse">
+          ...
+        </span>
+      );
+    }
+    
     return (
       <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
         <CardContent className="flex items-center gap-3 p-4">
@@ -59,6 +71,14 @@ export function HintsDisplay() {
   }
 
   if (error) {
+    if (compact) {
+      return (
+        <span className="text-2xl font-bold text-red-500">
+          !
+        </span>
+      );
+    }
+    
     return (
       <Card className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20">
         <CardContent className="flex items-center justify-between p-4">
@@ -88,6 +108,16 @@ export function HintsDisplay() {
 
   const totalHints = hintsData?.hintsBalance || 0;
 
+  // Compact mode - only show number
+  if (compact) {
+    return (
+      <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+        {totalHints}
+      </span>
+    );
+  }
+
+  // Full card mode
   return (
     <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
       <CardContent className="flex items-center justify-between p-4">

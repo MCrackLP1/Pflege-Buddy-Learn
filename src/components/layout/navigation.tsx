@@ -26,7 +26,7 @@ export function Navigation() {
   const currentPath = pathname.split('/').slice(2).join('/') || '';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-t border-border/50 shadow-lg">
       <div className="flex justify-around items-center py-2 px-4 max-w-md mx-auto">
         {navigationItems.map(({ key, icon: Icon, path }) => {
           const href = createLocalizedPath(locale, path);

@@ -84,7 +84,7 @@ export function DashboardCard() {
   return (
     <MainLayout>
       {/* Gaming Background Overlay */}
-      <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -mx-4 -my-6 px-4 py-6">
+      <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -mx-4 -my-6 px-4 py-6 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden opacity-30">
           <motion.div
@@ -244,9 +244,9 @@ export function DashboardCard() {
                     >
                       <Lightbulb className="w-6 h-6 text-white" />
                     </motion.div>
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      <HintsDisplay />
-                    </div>
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    <HintsDisplay compact />
+                  </div>
                     <Badge variant="secondary" className="text-xs">
                       💡 Hints
                     </Badge>
