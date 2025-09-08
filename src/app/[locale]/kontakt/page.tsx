@@ -33,6 +33,68 @@ export default function KontaktPage() {
         'addressLocality': LEGAL_CONFIG.provider.address.city,
         'addressRegion': LEGAL_CONFIG.provider.address.state,
         'addressCountry': 'DE'
+      },
+      'event': [
+        {
+          '@type': 'Event',
+          'name': 'PflegeBuddy Learn Q&A Session',
+          'description': 'Live Q&A Session mit dem PflegeBuddy Team. Stellen Sie Ihre Fragen zu Pflegeweiterbildung und lernen Sie von Experten.',
+          'startDate': '2024-02-15T18:00:00+01:00',
+          'endDate': '2024-02-15T19:00:00+01:00',
+          'eventStatus': 'https://schema.org/EventScheduled',
+          'eventAttendanceMode': 'https://schema.org/OnlineEventAttendanceMode',
+          'location': {
+            '@type': 'VirtualLocation',
+            'url': 'https://www.pflegebuddy.app/live-qa'
+          },
+          'organizer': {
+            '@id': 'https://www.pflegebuddy.app/#organization'
+          },
+          'performer': {
+            '@type': 'Organization',
+            'name': 'PflegeBuddy Team'
+          },
+          'offers': {
+            '@type': 'Offer',
+            'price': '0',
+            'priceCurrency': 'EUR',
+            'availability': 'https://schema.org/InStock',
+            'validFrom': '2024-01-01'
+          }
+        },
+        {
+          '@type': 'Event',
+          'name': 'Pflege Weiterbildung Webinar',
+          'description': 'Kostenloses Webinar: "Digitale Weiterbildung in der Pflege - Trends und Möglichkeiten 2024"',
+          'startDate': '2024-03-01T14:00:00+01:00',
+          'endDate': '2024-03-01T15:30:00+01:00',
+          'eventStatus': 'https://schema.org/EventScheduled',
+          'eventAttendanceMode': 'https://schema.org/OnlineEventAttendanceMode',
+          'location': {
+            '@type': 'VirtualLocation',
+            'url': 'https://www.pflegebuddy.app/webinar-2024'
+          },
+          'organizer': {
+            '@id': 'https://www.pflegebuddy.app/#organization'
+          },
+          'about': {
+            '@type': 'Thing',
+            'name': 'Pflegeweiterbildung',
+            'description': 'Digitale Lernmethoden und Weiterbildungsmöglichkeiten in der Pflege'
+          }
+        }
+      ],
+      'potentialAction': {
+        '@type': 'CommunicateAction',
+        'target': {
+          '@type': 'EntryPoint',
+          'urlTemplate': 'mailto:deinpflegebuddy@gmail.com',
+          'inLanguage': 'de-DE',
+          'actionPlatform': [
+            'http://schema.org/DesktopWebPlatform',
+            'http://schema.org/MobileWebPlatform'
+          ]
+        }
       }
     }
   };

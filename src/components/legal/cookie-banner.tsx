@@ -80,25 +80,39 @@ export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
               size="sm"
               onClick={() => setIsVisible(false)}
               className="ml-4"
+              aria-label="Cookie-Banner schließen"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button onClick={handleAcceptAll} className="flex-1">
-              <Check className="w-4 h-4 mr-2" />
+            <Button
+              onClick={handleAcceptAll}
+              className="flex-1"
+              aria-label="Alle Cookies akzeptieren"
+            >
+              <Check className="w-4 h-4 mr-2" aria-hidden="true" />
               {t('acceptAll')}
             </Button>
 
             <Link href="/cookie-einstellungen" className="flex-1">
-              <Button variant="outline" className="w-full">
-                <Settings className="w-4 h-4 mr-2" />
+              <Button
+                variant="outline"
+                className="w-full"
+                aria-label="Zu den Cookie-Einstellungen navigieren"
+              >
+                <Settings className="w-4 h-4 mr-2" aria-hidden="true" />
                 {t('settings')}
               </Button>
             </Link>
 
-            <Button onClick={handleRejectAll} variant="outline" className="flex-1">
+            <Button
+              onClick={handleRejectAll}
+              variant="outline"
+              className="flex-1"
+              aria-label="Nur essentielle Cookies akzeptieren"
+            >
               {t('essentialOnly')}
             </Button>
           </div>

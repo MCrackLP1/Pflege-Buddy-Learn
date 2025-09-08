@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
@@ -458,7 +459,7 @@ function ModernHeroSection() {
                     <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Komplette Lernplattform</h3>
+                    <h2 className="text-lg font-semibold text-foreground">Komplette Lernplattform</h2>
                     <p className="text-sm text-muted-foreground">
                       <a href="/de/learn" className="text-blue-600 hover:text-blue-700 underline">
                         14 Fachbereiche sofort verfügbar
@@ -1193,17 +1194,216 @@ export function HomePage() {
 
         {/* Cookie Banner for non-logged-in users */}
         <CookieBanner onAccept={handleCookieAccept} onReject={handleCookieReject} />
-        </div>
-      </>
-    );
-  }
+
+        {/* Structured Data for SEO */}
+        <StructuredData locale={locale} />
+      </div>
+    </>
+  );
+}
+
+// Structured Data Component
+function StructuredData({ locale }: { locale: string }) {
+  const isGerman = locale === 'de';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      // Organization Schema
+      {
+        '@type': 'Organization',
+        '@id': 'https://www.pflegebuddy.app/#organization',
+        'name': 'PflegeBuddy Learn',
+        'url': 'https://www.pflegebuddy.app',
+        'logo': {
+          '@type': 'ImageObject',
+          'url': 'https://www.pflegebuddy.app/favicon/logo.webp',
+          'width': 512,
+          'height': 512
+        },
+        'description': isGerman
+          ? 'Interaktive Lernplattform für Pflegekräfte in Deutschland, Österreich und der Schweiz mit Multiple-Choice Fragen, XP-System und Gamification.'
+          : 'Interactive learning platform for nursing professionals in Germany, Austria and Switzerland with multiple-choice questions, XP system and gamification.',
+        'foundingDate': '2024',
+        'email': 'deinpflegebuddy@gmail.com',
+        'telephone': '+49-174-1632129',
+        'address': {
+          '@type': 'PostalAddress',
+          'addressCountry': 'DE',
+          'addressRegion': 'Deutschland'
+        },
+        'areaServed': [
+          {
+            '@type': 'Country',
+            'name': 'Deutschland'
+          },
+          {
+            '@type': 'Country',
+            'name': 'Österreich'
+          },
+          {
+            '@type': 'Country',
+            'name': 'Schweiz'
+          }
+        ],
+        'serviceArea': {
+          '@type': 'GeoShape',
+          'addressCountry': ['DE', 'AT', 'CH']
+        },
+        'hasOfferCatalog': {
+          '@type': 'OfferCatalog',
+          'name': isGerman ? 'Pflege Weiterbildung Deutschland' : 'Nursing Continuing Education Germany',
+          'itemListElement': [
+            {
+              '@type': 'Offer',
+              'itemOffered': {
+                '@type': 'Course',
+                'name': isGerman ? 'Pflegegrundlagen Deutschland' : 'Nursing Basics Germany',
+                'description': isGerman
+                  ? 'Basiswissen für Pflegekräfte in Deutschland nach aktuellen Standards'
+                  : 'Basic knowledge for nursing professionals in Germany according to current standards',
+                'areaServed': {
+                  '@type': 'Country',
+                  'name': 'Deutschland'
+                }
+              }
+            },
+            {
+              '@type': 'Offer',
+              'itemOffered': {
+                '@type': 'Course',
+                'name': isGerman ? 'Hygiene & Infektionsschutz Deutschland' : 'Hygiene & Infection Control Germany',
+                'description': isGerman
+                  ? 'Hygienemaßnahmen nach deutschen RKI-Standards'
+                  : 'Hygiene measures according to German RKI standards',
+                'areaServed': {
+                  '@type': 'Country',
+                  'name': 'Deutschland'
+                }
+              }
+            }
+          ]
+        },
+        'sameAs': [
+          'https://www.instagram.com/pflege.buddy/'
+        ]
+      },
+      // WebSite Schema
+      {
+        '@type': 'WebSite',
+        '@id': 'https://www.pflegebuddy.app/#website',
+        'url': 'https://www.pflegebuddy.app',
+        'name': 'PflegeBuddy Learn',
+        'description': isGerman
+          ? 'Interaktives Lernquiz für Pflegefachkräfte. Sammle XP-Punkte, teste dein medizinisches Fachwissen.'
+          : 'Interactive learning quiz for nursing professionals. Collect XP points, test your medical knowledge.',
+        'publisher': {
+          '@id': 'https://www.pflegebuddy.app/#organization'
+        },
+        'inLanguage': locale
+      },
+      // WebApplication Schema
+      {
+        '@type': 'WebApplication',
+        'name': 'PflegeBuddy Learn',
+        'applicationCategory': 'EducationalApplication',
+        'url': 'https://www.pflegebuddy.app',
+        'description': isGerman
+          ? 'Web-Applikation für interaktives Lernen in der Pflege mit Quiz-Fragen, Fortschrittsverfolgung und Gamification-Elementen.'
+          : 'Web application for interactive learning in nursing with quiz questions, progress tracking and gamification elements.',
+        'operatingSystem': 'Web Browser',
+        'offers': {
+          '@type': 'Offer',
+          'price': '0',
+          'priceCurrency': 'EUR'
+        },
+        'featureList': [
+          isGerman ? 'Tägliche Quiz-Fragen' : 'Daily Quiz Questions',
+          isGerman ? 'XP-System und Meilensteine' : 'XP System and Milestones',
+          isGerman ? 'Fortschrittsverfolgung' : 'Progress Tracking',
+          isGerman ? 'Gamification-Elemente' : 'Gamification Elements',
+          isGerman ? 'DSGVO-konform' : 'GDPR Compliant'
+        ]
+      },
+      // Course Schema
+      {
+        '@type': 'Course',
+        'name': isGerman ? 'Pflege Weiterbildung' : 'Nursing Continuing Education',
+        'description': isGerman
+          ? 'Umfassende Weiterbildung für Pflegekräfte mit Fokus auf medizinische Grundlagen, Hygiene, Medikamente und Dokumentation.'
+          : 'Comprehensive continuing education for nursing staff focusing on medical basics, hygiene, medication and documentation.',
+        'provider': {
+          '@id': 'https://www.pflegebuddy.app/#organization'
+        },
+        'courseMode': 'online',
+        'hasCourseInstance': {
+          '@type': 'CourseInstance',
+          'courseMode': 'online',
+          'instructor': {
+            '@type': 'Organization',
+            'name': 'PflegeBuddy Team'
+          }
+        },
+        'teaches': [
+          isGerman ? 'Pflegegrundlagen' : 'Nursing Basics',
+          isGerman ? 'Hygiene und Infektionsschutz' : 'Hygiene and Infection Control',
+          isGerman ? 'Medikamentengabe' : 'Medication Administration',
+          isGerman ? 'Pflegedokumentation' : 'Nursing Documentation'
+        ]
+      },
+      // FAQ Schema
+      {
+        '@type': 'FAQPage',
+        'mainEntity': [
+          {
+            '@type': 'Question',
+            'name': isGerman ? 'Wie funktioniert PflegeBuddy Learn?' : 'How does PflegeBuddy Learn work?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': isGerman
+                ? 'PflegeBuddy Learn ist eine interaktive Lernplattform, auf der Sie täglich neue Multiple-Choice Fragen beantworten können. Sammeln Sie XP-Punkte, erreichen Sie Meilensteine und verbessern Sie Ihr Fachwissen in der Pflege.'
+                : 'PflegeBuddy Learn is an interactive learning platform where you can answer new multiple-choice questions daily. Collect XP points, reach milestones and improve your expertise in nursing.'
+            }
+          },
+          {
+            '@type': 'Question',
+            'name': isGerman ? 'Ist die Plattform kostenlos?' : 'Is the platform free?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': isGerman
+                ? 'Ja, PflegeBuddy Learn ist vollständig kostenlos. Sie können alle Funktionen ohne Registrierung nutzen und haben unbegrenzten Zugang zu allen Lerninhalten.'
+                : 'Yes, PflegeBuddy Learn is completely free. You can use all functions without registration and have unlimited access to all learning content.'
+            }
+          },
+          {
+            '@type': 'Question',
+            'name': isGerman ? 'Für wen ist PflegeBuddy Learn geeignet?' : 'Who is PflegeBuddy Learn suitable for?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': isGerman
+                ? 'Die Plattform ist geeignet für Pflegefachkräfte, Pflegehelfer, Auszubildende in der Pflege und pflegende Angehörige, die ihr Fachwissen erweitern möchten.'
+                : 'The platform is suitable for nursing professionals, nursing assistants, trainees in nursing and caring relatives who want to expand their expertise.'
+            }
+          },
+          {
+            '@type': 'Question',
+            'name': isGerman ? 'Wie werden die Fragen erstellt?' : 'How are the questions created?',
+            'acceptedAnswer': {
+              '@type': 'Answer',
+              'text': isGerman
+                ? 'Alle Fragen werden von medizinischen Experten entwickelt und basieren auf aktuellen Leitlinien von Organisationen wie RKI, WHO und AWMF. Die Inhalte werden regelmäßig aktualisiert.'
+                : 'All questions are developed by medical experts and are based on current guidelines from organizations such as RKI, WHO and AWMF. The content is updated regularly.'
+            }
+          }
+        ]
+      }
+    ]
+  };
 
   return (
-    <>
-      <DashboardCard />
-      {showNameModal && (
-        <NameInputModal onSave={handleSaveName} onSkip={handleSkipName} />
-      )}
-    </>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
   );
 }

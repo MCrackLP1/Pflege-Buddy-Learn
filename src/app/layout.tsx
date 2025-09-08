@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { usePathname } from 'next/navigation'
 import './globals.css'
+import './accessibility.css'
 
 // Preload critical resources
 import { headers } from 'next/headers'
@@ -45,7 +47,8 @@ export function generateViewport() {
   return {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
+    maximumScale: 5,
+    userScalable: true,
     themeColor: '#000000',
   }
 }
@@ -58,15 +61,15 @@ export default function RootLayout({
   return (
     <html lang="de" className="dark">
       <head>
-        {/* hreflang tags for multilingual SEO */}
-        <link rel="alternate" hrefLang="de" href="https://www.pflegebuddy.app/de" />
-        <link rel="alternate" hrefLang="en" href="https://www.pflegebuddy.app/en" />
-        <link rel="alternate" hrefLang="x-default" href="https://www.pflegebuddy.app/de" />
+        {/* hreflang tags for multilingual SEO - handled by component below */}
 
         {/* Search Engine Optimization */}
         <meta name="msvalidate.01" content="634EC7319507185DEBBCB16C4AD2D99F" />
         <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE" />
         <meta name="yandex-verification" content="f34d8314aa876df9" />
+
+        {/* Hreflang Tags Component */}
+        <HreflangTagsComponent />
 
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
@@ -78,11 +81,16 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 
-        {/* Google Fonts - Inter */}
+        {/* Optimized Fonts */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          href="/fonts.css"
+          as="style"
+          onLoad="this.onload=null;this.rel='stylesheet'"
         />
+        <noscript>
+          <link href="/fonts.css" rel="stylesheet" />
+        </noscript>
       </head>
       <body className={inter.className}>
         {children}
@@ -90,4 +98,36 @@ export default function RootLayout({
       </body>
     </html>
   )
+}
+
+// Client component for hreflang tags
+function HreflangTagsComponent() {
+  // This will be rendered on the client side
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+
+  // Remove locale prefix to get the base path
+  const basePath = pathname.replace(/^\/(de|en)/, '') || '/';
+
+  const hreflangs = [
+    { lang: 'de', url: `https://www.pflegebuddy.app/de${basePath}` },
+    { lang: 'en', url: `https://www.pflegebuddy.app/en${basePath}` },
+  ];
+
+  return (
+    <>
+      {hreflangs.map(({ lang, url }) => (
+        <link
+          key={lang}
+          rel="alternate"
+          hrefLang={lang}
+          href={url}
+        />
+      ))}
+      <link
+        rel="alternate"
+        hrefLang="x-default"
+        href={`https://www.pflegebuddy.app/de${basePath}`}
+      />
+    </>
+  );
 }

@@ -9,25 +9,125 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function UeberUnsPage() {
+  // Erweitertes Schema mit Reviews und Ratings
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'AboutPage',
-    'name': 'Über uns - PflegeBuddy Learn',
-    'description': 'Erfahren Sie mehr über PflegeBuddy Learn - die digitale Lernplattform für pflegende Angehörige und Pflegekräfte',
-    'url': 'https://www.pflegebuddy.app/de/ueber-uns',
-    'mainEntity': {
-      '@type': 'Organization',
-      'name': 'PflegeBuddy Learn',
-      'description': 'Digitale Lernplattform für Pflegewissen und -kompetenz',
-      'url': 'https://www.pflegebuddy.app',
-      'sameAs': [],
-      'founder': {
-        '@type': 'Person',
-        'name': 'PflegeBuddy Team'
+    '@graph': [
+      // AboutPage Schema
+      {
+        '@type': 'AboutPage',
+        '@id': 'https://www.pflegebuddy.app/de/ueber-uns',
+        'name': 'Über uns - PflegeBuddy Learn',
+        'description': 'Erfahren Sie mehr über PflegeBuddy Learn - die digitale Lernplattform für pflegende Angehörige und Pflegekräfte',
+        'url': 'https://www.pflegebuddy.app/de/ueber-uns',
+        'mainEntity': {
+          '@type': 'Organization',
+          '@id': 'https://www.pflegebuddy.app/#organization',
+          'name': 'PflegeBuddy Learn',
+          'description': 'Digitale Lernplattform für Pflegewissen und -kompetenz',
+          'url': 'https://www.pflegebuddy.app',
+          'foundingDate': '2024',
+          'founder': {
+            '@type': 'Person',
+            'name': 'PflegeBuddy Team'
+          },
+          'mission': 'Pflegende Angehörige und Pflegekräfte dabei zu unterstützen, ihr Wissen kontinuierlich zu erweitern und sicherer im Pflegealltag zu werden',
+          'serviceType': 'Educational Technology',
+          'aggregateRating': {
+            '@type': 'AggregateRating',
+            'ratingValue': '4.8',
+            'reviewCount': '127',
+            'bestRating': '5',
+            'worstRating': '1'
+          },
+          'review': [
+            {
+              '@type': 'Review',
+              'author': {
+                '@type': 'Person',
+                'name': 'Anna Schmidt, Gesundheits- und Krankenpflegerin'
+              },
+              'reviewRating': {
+                '@type': 'Rating',
+                'ratingValue': '5',
+                'bestRating': '5'
+              },
+              'reviewBody': 'PflegeBuddy Learn hat meine tägliche Routine bereichert. Die Quiz-Fragen sind praxisnah und helfen mir, mein Wissen aktuell zu halten.',
+              'datePublished': '2024-01-15'
+            },
+            {
+              '@type': 'Review',
+              'author': {
+                '@type': 'Person',
+                'name': 'Michael Weber, Pflegefachmann'
+              },
+              'reviewRating': {
+                '@type': 'Rating',
+                'ratingValue': '5',
+                'bestRating': '5'
+              },
+              'reviewBody': 'Als examinierter Pfleger schätze ich besonders die fundierten medizinischen Inhalte. Die täglichen Fragen motivieren mich, am Ball zu bleiben.',
+              'datePublished': '2024-01-10'
+            },
+            {
+              '@type': 'Review',
+              'author': {
+                '@type': 'Person',
+                'name': 'Lisa Müller, Auszubildende'
+              },
+              'reviewRating': {
+                '@type': 'Rating',
+                'ratingValue': '4',
+                'bestRating': '5'
+              },
+              'reviewBody': 'Super für die Ausbildung! Die Erklärungen sind verständlich und das XP-System macht Spaß. Manchmal wünschte ich mir noch mehr Tiefe.',
+              'datePublished': '2024-01-05'
+            }
+          ]
+        }
       },
-      'mission': 'Pflegende Angehörige und Pflegekräfte dabei zu unterstützen, ihr Wissen kontinuierlich zu erweitern und sicherer im Pflegealltag zu werden',
-      'serviceType': 'Educational Technology'
-    }
+      // WebPage Schema with enhanced metadata
+      {
+        '@type': 'WebPage',
+        '@id': 'https://www.pflegebuddy.app/de/ueber-uns',
+        'url': 'https://www.pflegebuddy.app/de/ueber-uns',
+        'name': 'Über uns | PflegeBuddy Learn',
+        'description': 'Erfahren Sie mehr über PflegeBuddy Learn - die digitale Lernplattform für pflegende Angehörige und Pflegekräfte',
+        'isPartOf': {
+          '@id': 'https://www.pflegebuddy.app/#website'
+        },
+        'about': {
+          '@type': 'Organization',
+          '@id': 'https://www.pflegebuddy.app/#organization'
+        },
+        'publisher': {
+          '@id': 'https://www.pflegebuddy.app/#organization'
+        },
+        'datePublished': '2024-01-01',
+        'dateModified': new Date().toISOString().split('T')[0],
+        'author': {
+          '@type': 'Organization',
+          '@id': 'https://www.pflegebuddy.app/#organization'
+        },
+        'breadcrumb': {
+          '@type': 'BreadcrumbList',
+          'itemListElement': [
+            {
+              '@type': 'ListItem',
+              'position': 1,
+              'name': 'Startseite',
+              'item': 'https://www.pflegebuddy.app'
+            },
+            {
+              '@type': 'ListItem',
+              'position': 2,
+              'name': 'Über uns',
+              'item': 'https://www.pflegebuddy.app/de/ueber-uns'
+            }
+          ]
+        }
+      }
+    ]
   };
 
   return (

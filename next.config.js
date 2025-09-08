@@ -15,6 +15,15 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false
   },
+  // Optimize JavaScript for modern browsers
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Modern browser targets to reduce polyfills
+  transpilePackages: [],
+  // Optimize CSS loading
+  optimizeCss: true,
   // Performance optimizations
   images: {
     formats: ['image/webp', 'image/avif'],

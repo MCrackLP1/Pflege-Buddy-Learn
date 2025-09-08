@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { LoadingState } from '@/components/ui/loading-spinner';
 import { ErrorState } from '@/components/ui/error-state';
 import { ChevronRight } from 'lucide-react';
+import { BreadcrumbNav, getBreadcrumbItems } from '@/components/ui/breadcrumb-nav';
 
 interface TopicWithProgress {
   id: string;
@@ -125,6 +126,9 @@ export function LearnPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
+        {/* Breadcrumb Navigation */}
+        <BreadcrumbNav items={getBreadcrumbItems('learn', locale)} className="mb-6" />
+
         <div className="text-center">
           <h1 className="text-2xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">{t('selectTopic')}</p>

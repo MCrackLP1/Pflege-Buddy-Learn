@@ -28,7 +28,11 @@
     "seo:bing": "tsx scripts/bing-indexing.ts",
     "seo:yandex": "tsx scripts/yandex-indexing.ts",
     "seo:boost": "tsx scripts/seo-boost.ts",
-    "seo:monitor": "tsx scripts/seo-monitor.ts"
+    "seo:monitor": "tsx scripts/seo-monitor.ts",
+    "content:marketing": "tsx scripts/content-marketing-strategy.ts",
+    "core:vitals": "tsx scripts/core-web-vitals-optimization.ts",
+    "gmb:setup": "tsx scripts/google-my-business-setup.ts",
+    "seo:summary": "tsx scripts/seo-implementation-summary.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
