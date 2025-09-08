@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Flame, Trophy, Zap, Calendar, Gift } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { StreakMilestone } from '@/lib/db/schema';
 
 // Simplified hardcoded milestones - no API dependency
@@ -132,107 +133,191 @@ export function StreakMilestoneCard({
     : 0;
 
   return (
-    <Card className="relative overflow-hidden">
-      {/* XP Boost Banner */}
+    <Card className="relative overflow-hidden border-2 border-orange-200/50 dark:border-orange-700/50 bg-gradient-to-br from-orange-50 via-white to-red-50 dark:from-gray-800 dark:via-orange-900/10 dark:to-red-900/10 shadow-lg">
+      {/* Quest Card Glow */}
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-red-500/10 to-pink-500/10 opacity-50" />
+
+      {/* XP Boost Banner - Power-Up Style */}
       {xpBoostActive && (
-        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-b border-yellow-500/30 p-3">
-          <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
-            <Zap className="h-4 w-4" />
-            <span className="text-sm font-medium">
-              {getXPBoostDisplay(xpBoostMultiplier)} aktiv
-            </span>
-            {timeLeft && (
-              <Badge variant="secondary" className="text-xs">
-                {timeLeft} {t('streak.remaining')}
-              </Badge>
-            )}
+        <div className="relative z-10 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 p-4">
+          <div className="flex items-center gap-3 text-white">
+            <motion.div
+              animate={{
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <Zap className="h-5 w-5" />
+            </motion.div>
+            <div>
+              <div className="text-lg font-bold">
+                ⚡ {getXPBoostDisplay(xpBoostMultiplier)} AKTIV!
+              </div>
+              {timeLeft && (
+                <div className="text-sm opacity-90">
+                  ⏱️ {timeLeft} verbleibend
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Flame className="h-5 w-5 text-orange-500" />
-          {t('streak.currentStreak')}
+      <CardHeader className="pb-3 relative z-10">
+        <CardTitle className="flex items-center gap-3 text-xl">
+          <motion.div
+            animate={currentStreak > 0 ? {
+              scale: [1, 1.1, 1],
+            } : {}}
+            transition={{
+              duration: 2,
+              repeat: currentStreak > 0 ? Infinity : 0,
+              ease: "easeInOut"
+            }}
+            className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg"
+          >
+            <Flame className="h-5 w-5 text-white" />
+          </motion.div>
+          🔥 Streak-Quest
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Current Streak Display */}
-        <div className="text-center">
-          <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+      <CardContent className="space-y-6 relative z-10">
+        {/* Current Streak Display - Gaming Style */}
+        <div className="text-center p-6 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border-2 border-orange-300/50 dark:border-orange-700/50">
+          <div className="text-5xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
             {currentStreak}
           </div>
-          <div className="text-sm text-muted-foreground">
-            {t('streak.days')}
+          <div className="text-lg font-semibold text-orange-700 dark:text-orange-300 mb-2">
+            🔥 Tage Serie
           </div>
+          
+          {/* Streak Visualization */}
+          <div className="flex justify-center gap-1 mb-3">
+            {[...Array(Math.min(currentStreak, 14))].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: i * 0.1, type: "spring", stiffness: 200 }}
+                className="w-2 h-4 bg-gradient-to-t from-orange-400 to-red-500 rounded-full shadow-sm"
+              />
+            ))}
+            {currentStreak > 14 && (
+              <div className="text-xs text-orange-600 dark:text-orange-400 self-end mb-1">
+                +{currentStreak - 14}
+              </div>
+            )}
+          </div>
+
           {longestStreak > currentStreak && (
-            <div className="text-xs text-muted-foreground mt-1">
-              {t('streak.longestStreak')}: {longestStreak} {t('streak.days')}
+            <div className="text-sm text-orange-600 dark:text-orange-400 flex items-center justify-center gap-1">
+              <Trophy className="w-3 h-3" />
+              Rekord: {longestStreak} Tage
             </div>
           )}
         </div>
 
-        {/* Next Milestone Progress */}
-        <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-yellow-500" />
-                <span>{t('streak.nextMilestone')}</span>
+        {/* Next Milestone Quest */}
+        <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl border-2 border-yellow-200/50 dark:border-yellow-700/50">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+              <Trophy className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <div className="font-bold text-yellow-700 dark:text-yellow-300">
+                🏆 Nächste Belohnung
               </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                <span className="font-medium">{effectiveNextMilestone.daysRequired} {t('streak.days')}</span>
+              <div className="text-sm text-yellow-600 dark:text-yellow-400">
+                {effectiveNextMilestone.daysRequired} Tage Ziel
               </div>
             </div>
-
-            <Progress
-              value={Math.min(progressToNextMilestone, 100)}
-              className="h-2"
-            />
-
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                {Math.max(0, effectiveNextMilestone.daysRequired - currentStreak)} {t('streak.daysToGo')}
-              </span>
-              <div className="flex items-center gap-1">
-                <Gift className="h-3 w-3" />
-                <span>{getXPBoostDisplay(effectiveNextMilestone.xpBoostMultiplier)}</span>
-              </div>
-            </div>
-
-            {/* Milestone Reward Preview */}
-            <div className="bg-secondary/50 rounded-lg p-3 text-xs">
-              <div className="font-medium text-foreground mb-1">
-                {t('streak.rewardPreview')}:
-              </div>
-              <div className="text-muted-foreground">
-                {currentStreak === 0
-                  ? 'Melde dich täglich an und sammle XP-Boosts für deine Lernserie!'
-                  : effectiveNextMilestone.rewardDescription
-                }
-              </div>
+            <div className="ml-auto">
+              <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1">
+                {getXPBoostDisplay(effectiveNextMilestone.xpBoostMultiplier)}
+              </Badge>
             </div>
           </div>
 
-        {/* Achievement Celebration */}
+          {/* Quest Progress Bar - Energy Style */}
+          <div className="relative mb-3">
+            <div className="w-full h-4 bg-yellow-200 dark:bg-yellow-800 rounded-full overflow-hidden border border-yellow-300 dark:border-yellow-700 shadow-inner">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progressToNextMilestone, 100)}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 rounded-full relative"
+              >
+                {/* Progress Glow */}
+                <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/30 rounded-full" />
+                
+                {/* Energy Pulse */}
+                {progressToNextMilestone > 0 && (
+                  <motion.div
+                    animate={{
+                      x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"
+                  />
+                )}
+              </motion.div>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-xs font-bold text-white drop-shadow-lg">
+                {Math.max(0, effectiveNextMilestone.daysRequired - currentStreak)} Tage
+              </span>
+            </div>
+          </div>
+
+          {/* Reward Description */}
+          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3">
+            <div className="text-sm text-gray-700 dark:text-gray-200">
+              {currentStreak === 0
+                ? '🎯 Starte deine erste Serie! Tägliches Lernen bringt XP-Boosts.'
+                : effectiveNextMilestone.rewardDescription
+              }
+            </div>
+          </div>
+        </div>
+
+        {/* Champion Status - Legendary Achievement */}
         {currentStreak >= 30 && (
-          <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
-              <Trophy className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                {t('streak.championStatus')}
-              </span>
+          <motion.div
+            initial={{ scale: 0, rotate: -10 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border-2 border-purple-300/50 dark:border-purple-700/50 rounded-xl"
+          >
+            <div className="flex items-center gap-3 text-purple-700 dark:text-purple-300">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <Trophy className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <div className="font-bold text-lg">👑 LEGEND STATUS</div>
+                <div className="text-sm">Du bist ein wahrer Streak-Champion!</div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        {/* Motivational Message */}
-        <div className="text-center text-sm text-muted-foreground">
-          {currentStreak === 0 && 'Bereit für deine erste Serie? Starte jetzt!'}
-          {currentStreak > 0 && currentStreak < 3 && t('streak.keepGoing')}
-          {currentStreak >= 3 && currentStreak < 7 && t('streak.greatStart')}
-          {currentStreak >= 7 && t('streak.amazingStreak')}
+        {/* Motivational Quest Message */}
+        <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl border border-blue-200 dark:border-blue-700">
+          <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+            {currentStreak === 0 && '🎮 Bereit für deine erste Serie? Quest startet jetzt!'}
+            {currentStreak > 0 && currentStreak < 3 && '🚀 Toller Start! Bleib dran und sammle mehr Power-Ups!'}
+            {currentStreak >= 3 && currentStreak < 7 && '🔥 Fantastisch! Du bist auf dem Weg zur Meisterschaft!'}
+            {currentStreak >= 7 && '⚡ Unglaubliche Serie! Du beherrschst das Spiel!'}
+          </div>
         </div>
       </CardContent>
     </Card>
