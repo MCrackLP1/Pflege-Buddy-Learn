@@ -83,46 +83,14 @@ export function DashboardCard() {
 
   return (
     <MainLayout>
-      {/* Gaming Background Overlay */}
-      <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -mx-4 -my-6 px-4 py-6 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden opacity-30">
-          <motion.div
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [0, 90, 180],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute top-1/4 right-1/4 w-48 h-48 bg-blue-200/20 dark:bg-blue-800/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1.1, 1, 1.1],
-              rotate: [180, 90, 0],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-green-200/20 dark:bg-green-800/20 rounded-full blur-3xl"
-          />
-        </div>
-
-        <div className="relative z-10 space-y-6">
+      <div className="space-y-6">
           {/* Hero Quest Card - Tägliche Session starten */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Card className="relative overflow-hidden border-2 border-blue-200/50 dark:border-blue-700/50 bg-gradient-to-r from-blue-50 via-white to-green-50 dark:from-blue-900/20 dark:via-gray-800 dark:to-green-900/20 shadow-2xl shadow-blue-500/10">
-              {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-green-500/10 opacity-50" />
+            <Card className="relative overflow-hidden shadow-lg">
               
               <CardHeader className="text-center relative z-10">
                 <motion.div
@@ -152,11 +120,9 @@ export function DashboardCard() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Button 
-                    className="w-full h-14 text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-300 group relative overflow-hidden"
+                    className="w-full h-14 text-xl font-bold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 group"
                     onClick={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
                   >
-                    {/* Button Glow Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-green-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <Play className="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" />
                     ⚡ Sofort starten
                     <Sparkles className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
@@ -165,7 +131,7 @@ export function DashboardCard() {
                 
                 <Button 
                   variant="outline" 
-                  className="w-full h-12 border-2 border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-lg font-semibold group"
+                  className="w-full h-12 text-lg font-semibold group"
                   onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
                 >
                   <Trophy className="w-5 h-5 mr-2 group-hover:text-yellow-500 transition-colors" />
@@ -181,7 +147,7 @@ export function DashboardCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border-2 border-gray-200/50 dark:border-gray-600/50">
+            <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Zap className="h-5 w-5 text-yellow-500" />
@@ -262,10 +228,10 @@ export function DashboardCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Card className={`border-2 transition-all duration-300 ${
+            <Card className={`transition-all duration-300 ${
               todayProgress >= 100 
-                ? 'border-green-300 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20' 
-                : 'border-blue-200 dark:border-blue-700'
+                ? 'border-green-300 bg-green-50 dark:bg-green-900/20' 
+                : ''
             }`}>
               <CardHeader className="flex flex-row items-center space-y-0 pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -300,8 +266,8 @@ export function DashboardCard() {
                       transition={{ duration: 1, delay: 0.2 }}
                       className={`h-full rounded-full transition-all duration-300 ${
                         todayProgress >= 100
-                          ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-lg'
-                          : 'bg-gradient-to-r from-blue-400 to-blue-600'
+                          ? 'bg-green-500 shadow-lg'
+                          : 'bg-primary'
                       }`}
                     />
                   </div>
@@ -349,7 +315,7 @@ export function DashboardCard() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1 }}
           >
-            <Card className="border-yellow-500/20 bg-gradient-to-r from-yellow-50/80 to-orange-50/80 dark:from-yellow-900/10 dark:to-orange-900/10">
+            <Card>
               <CardContent className="p-4">
                 <p className="text-xs text-center leading-relaxed text-muted-foreground">
                   {t('home.disclaimer')}
@@ -358,7 +324,6 @@ export function DashboardCard() {
             </Card>
           </motion.div>
         </div>
-      </div>
     </MainLayout>
   );
 }
