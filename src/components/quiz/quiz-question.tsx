@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,6 +37,32 @@ export function QuizQuestion({
   const [showHint, setShowHint] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const t = useTranslations();
+
+  // Ref to track current question ID for randomization stability
+  const currentQuestionIdRef = useRef<string | null>(null);
+
+  // Shuffle function for consistent randomization
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Memoized shuffled choices - only reshuffle when question changes
+  const shuffledChoices = useMemo(() => {
+    if (question.type !== 'mc' || !question.choices) return [];
+
+    // Check if this is a new question
+    if (currentQuestionIdRef.current !== question.id) {
+      currentQuestionIdRef.current = question.id;
+    }
+
+    // Always shuffle for new questions or if no previous shuffle exists
+    return shuffleArray(question.choices);
+  }, [question.id, question.type, question.choices]);
 
   // Calculate if the current answer is correct
   const isCurrentAnswerCorrect = () => {
@@ -108,12 +134,12 @@ export function QuizQuestion({
           <CardContent className="space-y-6 relative z-10">
             {/* Answer Options - Gaming Style */}
             {question.type === 'mc' ? (
-              <RadioGroup 
-                value={answer as string || ""} 
+              <RadioGroup
+                value={answer as string || ""}
                 onValueChange={(value) => onAnswer(question.id, value)}
                 className="space-y-4"
               >
-                {question.choices.map((choice, index) => {
+                {shuffledChoices.map((choice, index) => {
                   const isSelected = answer === choice.id;
                   return (
                     <motion.div
@@ -130,8 +156,8 @@ export function QuizQuestion({
                           : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
                       }`}>
                         <RadioGroupItem value={choice.id} id={choice.id} className="border-2" />
-                        <Label 
-                          htmlFor={choice.id} 
+                        <Label
+                          htmlFor={choice.id}
                           className="flex-1 text-base leading-relaxed cursor-pointer font-medium"
                         >
                           <span className="text-gray-400 dark:text-gray-500 text-sm mr-2">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,6 +58,32 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
   // Hint balance state
   const [hintsBalance, setHintsBalance] = useState(0);
+
+  // Ref to track current question ID for randomization stability
+  const currentQuestionIdRef = useRef<string | null>(null);
+
+  // Shuffle function for consistent randomization
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Memoized shuffled choices - only reshuffle when question changes
+  const shuffledChoices = useMemo(() => {
+    if (!quizState.currentQuestion || quizState.currentQuestion.type !== 'mc' || !quizState.currentQuestion.choices) return [];
+
+    // Check if this is a new question
+    if (currentQuestionIdRef.current !== quizState.currentQuestion.id) {
+      currentQuestionIdRef.current = quizState.currentQuestion.id;
+    }
+
+    // Always shuffle for new questions or if no previous shuffle exists
+    return shuffleArray(quizState.currentQuestion.choices);
+  }, [quizState.currentQuestion?.id, quizState.currentQuestion?.type, quizState.currentQuestion?.choices]);
   // Removed freeHintsLeft - using unified hints system
 
   // Initialize session
@@ -317,7 +343,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
               onValueChange={(value) => handleAnswer(value)}
               className="space-y-3"
             >
-              {currentQuestion.choices.map((choice) => (
+              {shuffledChoices.map((choice) => (
                 <div key={choice.id} className="flex items-center space-x-2">
                   <RadioGroupItem value={choice.id} id={choice.id} />
                   <Label
