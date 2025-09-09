@@ -7,7 +7,6 @@
 const PAGES_TO_INDEX = [
   'https://www.pflegebuddy.app/de',
   'https://www.pflegebuddy.app/de/learn',
-  'https://www.pflegebuddy.app/de/quiz',
   'https://www.pflegebuddy.app/de/ranked',
   'https://www.pflegebuddy.app/de/review',
   'https://www.pflegebuddy.app/de/profile',
