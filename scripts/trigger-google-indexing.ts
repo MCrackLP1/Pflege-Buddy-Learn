@@ -5,8 +5,16 @@
  */
 
 const PAGES_TO_INDEX = [
+  'https://www.pflegebuddy.app/de',
+  'https://www.pflegebuddy.app/de/learn',
+  'https://www.pflegebuddy.app/de/quiz',
+  'https://www.pflegebuddy.app/de/ranked',
+  'https://www.pflegebuddy.app/de/review',
+  'https://www.pflegebuddy.app/de/profile',
+  'https://www.pflegebuddy.app/de/shop',
   'https://www.pflegebuddy.app/de/kontakt',
   'https://www.pflegebuddy.app/de/ueber-uns',
+  'https://www.pflegebuddy.app/de/faq',
   'https://www.pflegebuddy.app/sitemap.xml'
 ];
 
