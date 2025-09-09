@@ -136,7 +136,8 @@ export function QuizQuestion({
             {question.type === 'mc' ? (
               <RadioGroup
                 value={answer as string || ""}
-                onValueChange={(value) => onAnswer(question.id, value)}
+                onValueChange={(value) => !showFeedback && onAnswer(question.id, value)}
+                disabled={showFeedback}
                 className="space-y-4"
               >
                 {shuffledChoices.map((choice, index) => {
@@ -144,21 +145,23 @@ export function QuizQuestion({
                   return (
                     <motion.div
                       key={choice.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`relative group cursor-pointer transition-all duration-200 ${
+                      whileHover={!showFeedback ? { scale: 1.02 } : {}}
+                      whileTap={!showFeedback ? { scale: 0.98 } : {}}
+                      className={`relative group transition-all duration-200 ${
                         isSelected ? 'transform scale-[1.02]' : ''
-                      }`}
+                      } ${showFeedback ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}`}
                     >
                       <div className={`flex items-center space-x-4 p-4 rounded-xl border-2 transition-all duration-200 ${
                         isSelected
                           ? 'border-blue-500 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/40 dark:to-green-900/40 shadow-lg shadow-blue-500/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                          : `border-gray-200 dark:border-gray-700 ${!showFeedback ? 'hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20' : ''}`
                       }`}>
                         <RadioGroupItem value={choice.id} id={choice.id} className="border-2" />
                         <Label
                           htmlFor={choice.id}
-                          className="flex-1 text-base leading-relaxed cursor-pointer font-medium"
+                          className={`flex-1 text-base leading-relaxed font-medium ${
+                            showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'
+                          }`}
                         >
                           <span className="text-gray-400 dark:text-gray-500 text-sm mr-2">
                             {String.fromCharCode(65 + index)}.
@@ -178,16 +181,17 @@ export function QuizQuestion({
                 ].map(({ value, label, color, icon: Icon }) => (
                   <motion.div
                     key={String(value)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={!showFeedback ? { scale: 1.05 } : {}}
+                    whileTap={!showFeedback ? { scale: 0.95 } : {}}
                   >
                     <Button
                       variant={answer === value ? "default" : "outline"}
-                      onClick={() => onAnswer(question.id, value)}
+                      onClick={() => !showFeedback && onAnswer(question.id, value)}
+                      disabled={showFeedback}
                       className={`h-auto py-6 px-6 text-lg font-bold border-2 relative overflow-hidden group ${
                         answer === value
                           ? `bg-gradient-to-r ${color} text-white shadow-lg hover:shadow-xl shadow-${color.split('-')[0]}-500/30`
-                          : 'hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20'
+                          : `hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 ${showFeedback ? 'cursor-not-allowed opacity-75' : ''}`
                       }`}
                     >
                       {answer === value && (

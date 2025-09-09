@@ -340,15 +340,23 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
           {currentQuestion.type === 'mc' ? (
             <RadioGroup
               value={quizState.answer as string || ""}
-              onValueChange={(value) => handleAnswer(value)}
+              onValueChange={(value) => !quizState.showFeedback && handleAnswer(value)}
+              disabled={quizState.showFeedback}
               className="space-y-3"
             >
               {shuffledChoices.map((choice) => (
-                <div key={choice.id} className="flex items-center space-x-2">
+                <div
+                  key={choice.id}
+                  className={`flex items-center space-x-2 p-2 rounded transition-all duration-200 ${
+                    quizState.showFeedback ? 'cursor-not-allowed opacity-75' : ''
+                  }`}
+                >
                   <RadioGroupItem value={choice.id} id={choice.id} />
                   <Label
                     htmlFor={choice.id}
-                    className="flex-1 text-sm leading-relaxed cursor-pointer p-2"
+                    className={`flex-1 text-sm leading-relaxed p-2 ${
+                      quizState.showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'
+                    }`}
                   >
                     {choice.label}
                   </Label>
@@ -359,15 +367,17 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant={quizState.answer === true ? "default" : "outline"}
-                onClick={() => handleAnswer(true)}
-                className="h-auto py-4"
+                onClick={() => !quizState.showFeedback && handleAnswer(true)}
+                disabled={quizState.showFeedback}
+                className={`h-auto py-4 ${quizState.showFeedback ? 'cursor-not-allowed opacity-75' : ''}`}
               >
                 {t('quiz.true')}
               </Button>
               <Button
                 variant={quizState.answer === false ? "default" : "outline"}
-                onClick={() => handleAnswer(false)}
-                className="h-auto py-4"
+                onClick={() => !quizState.showFeedback && handleAnswer(false)}
+                disabled={quizState.showFeedback}
+                className={`h-auto py-4 ${quizState.showFeedback ? 'cursor-not-allowed opacity-75' : ''}`}
               >
                 {t('quiz.false')}
               </Button>
