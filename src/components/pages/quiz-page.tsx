@@ -87,14 +87,12 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Quiz State - simple state management
+  // Quiz State - simplified state management
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
   const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
-  const [startTime] = useState(Date.now());
-  const [completedQuestions, setCompletedQuestions] = useState(0);
-  const [quizEnded, setQuizEnded] = useState(false);
+  const [questionStartTimes, setQuestionStartTimes] = useState<Record<string, number>>({});
 
   // Hint balance state - simplified
   const [hintsBalance, setHintsBalance] = useState(0);
@@ -161,14 +159,15 @@ export function QuizPage({ topic }: QuizPageProps) {
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // Check if daily quest is completed (5 questions answered correctly)
+  // Track question start time when question changes
   useEffect(() => {
-    if (completedQuestions >= 5 && !quizEnded) {
-      console.log('🎯 Daily Quest completed! Ending quiz...');
-      setQuizEnded(true);
-      setShowResults(true);
+    if (currentQuestion && !questionStartTimes[currentQuestion.id]) {
+      setQuestionStartTimes(prev => ({
+        ...prev,
+        [currentQuestion.id]: Date.now()
+      }));
     }
-  }, [completedQuestions, quizEnded]);
+  }, [currentQuestion?.id, questionStartTimes]);
 
   // Loading state
   if (loading) {
@@ -205,40 +204,26 @@ export function QuizPage({ topic }: QuizPageProps) {
     );
   }
 
-  const handleAnswer = async (questionId: string, answer: string | boolean) => {
+  const handleAnswer = (questionId: string, answer: string | boolean) => {
+    // Simple state update - no immediate DB save to prevent race conditions
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
-
-    // Calculate if answer is correct and save immediately
-    const question = questions.find(q => q.id === questionId);
-    if (!question) return;
-
-    let isCorrect = false;
-    if (question.type === 'tf') {
-      isCorrect = answer === question.tfCorrectAnswer;
-    } else {
-      const correctChoice = question.choices.find(c => c.isCorrect);
-      isCorrect = answer === correctChoice?.id;
-    }
-
-    // Save attempt immediately when answer is given
-    const timeMs = Date.now() - startTime;
-    const hintsUsed = usedHints[questionId] || 0;
-
-    try {
-      await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
-
-      // Increment completed questions counter
-      if (isCorrect) {
-        setCompletedQuestions(prev => prev + 1);
-      }
-    } catch (error) {
-      console.error('Failed to save attempt:', error);
-      // Don't break the quiz flow if saving fails
-    }
+    
+    // Track question start time if not already set
+    setQuestionStartTimes(prev => ({
+      ...prev,
+      [questionId]: prev[questionId] || Date.now()
+    }));
   };
 
-  const handleNext = () => {
-    if (isLastQuestion || quizEnded) {
+  const handleNext = async () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    if (!currentQuestion) return;
+
+    // Save current question attempt before proceeding
+    await saveCurrentQuestionAttempt(currentQuestion);
+
+    // Navigate to next question or show results
+    if (currentQuestionIndex === questions.length - 1) {
       setShowResults(true);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
@@ -277,21 +262,44 @@ export function QuizPage({ topic }: QuizPageProps) {
     }
   };
 
-  // Save attempt to database
-  const saveAttemptToDb = async (questionId: string, isCorrect: boolean, timeMs: number, hintsUsed: number) => {
+  // Save current question attempt to database
+  const saveCurrentQuestionAttempt = async (question: QuestionWithChoices) => {
+    const userAnswer = answers[question.id];
+    if (userAnswer === undefined) return; // No answer given
+
+    // Calculate if answer is correct
+    let isCorrect = false;
+    if (question.type === 'tf') {
+      isCorrect = userAnswer === question.tfCorrectAnswer;
+    } else {
+      const correctChoice = question.choices.find(c => c.isCorrect);
+      isCorrect = userAnswer === correctChoice?.id;
+    }
+
+    // Calculate time spent on this question
+    const questionStartTime = questionStartTimes[question.id] || Date.now();
+    const timeMs = Date.now() - questionStartTime;
+    const hintsUsed = usedHints[question.id] || 0;
+
     try {
-      await fetch('/api/attempts', {
+      const response = await fetch('/api/attempts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          questionId,
+          questionId: question.id,
           isCorrect,
           timeMs,
           usedHints: hintsUsed,
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save attempt: ${response.status}`);
+      }
+
+      console.log(`✅ Saved attempt for question ${question.id}: ${isCorrect ? 'correct' : 'incorrect'}`);
     } catch (error) {
       console.error('Failed to save attempt:', error);
       // Don't break the quiz flow if saving fails
@@ -341,8 +349,8 @@ export function QuizPage({ topic }: QuizPageProps) {
           {...results}
           onRestart={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
           onReview={() => router.push(createLocalizedPath(locale, '/review'))}
-          // Pass the actual number of questions answered (not the total available questions)
-          total={Math.min(completedQuestions, 5)}
+          // Pass the actual number of questions answered
+          total={Object.keys(answers).length}
         />
       </MainLayout>
     );

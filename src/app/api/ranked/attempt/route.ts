@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { questions } from '@/lib/db/schema';
+import { updateUserStreakFromDailyQuest, checkAndResetExpiredStreak } from '@/lib/streak-utils';
 import type { ApiResponse } from '@/types/api.types';
 
 interface RankedAttemptRequest {
@@ -22,6 +23,18 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         { error: 'Unauthorized', success: false },
         { status: 401 }
       );
+    }
+
+    // Check and reset expired streaks before processing attempt (same as regular quiz)
+    try {
+      console.log('🔥 Ranked Quiz: Checking for expired streaks...');
+      const wasReset = await checkAndResetExpiredStreak(user.id);
+      if (wasReset) {
+        console.log('🚫 Streak was reset due to inactivity before ranked attempt');
+      }
+    } catch (streakCheckError) {
+      console.error('Failed to check expired streak in ranked mode:', streakCheckError);
+      // Don't fail the request if streak check fails
     }
 
     const body: RankedAttemptRequest = await req.json();
@@ -132,6 +145,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       })
       .eq('id', sessionId);
 
+    // Update daily quest progress if answer is correct (same as regular quiz)
+    if (isCorrect) {
+      try {
+        console.log('🎯 Ranked Quiz: Updating Daily Quest progress...');
+        await updateRankedDailyQuest(supabase, user.id);
+      } catch (questError) {
+        console.error('Failed to update daily quest in ranked mode:', questError);
+        // Don't fail the request if quest update fails
+      }
+    }
+
     return NextResponse.json({
       attempt,
       isCorrect,
@@ -148,5 +172,75 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Update daily quest progress for ranked mode (same logic as regular quiz)
+ */
+async function updateRankedDailyQuest(supabase: any, userId: string) {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Get current daily quest progress
+  const { data: currentProgress, error: progressError } = await supabase
+    .from('user_progress')
+    .select('daily_quest_progress, daily_quest_completed, daily_quest_date')
+    .eq('user_id', userId)
+    .single();
+
+  if (progressError && progressError.code !== 'PGRST116') {
+    console.error('Failed to fetch daily quest progress:', progressError);
+    return;
+  }
+
+  const currentQuestProgress = currentProgress?.daily_quest_progress || 0;
+  const isQuestCompleted = currentProgress?.daily_quest_completed || false;
+  const questDate = currentProgress?.daily_quest_date;
+
+  // Reset progress if it's a new day
+  let newQuestProgress = currentQuestProgress;
+  let newQuestCompleted = isQuestCompleted;
+  let newQuestDate = questDate;
+
+  if (questDate !== today) {
+    // New day - reset progress
+    newQuestProgress = 1; // This is the first question of the day
+    newQuestCompleted = false;
+    newQuestDate = today;
+  } else if (!isQuestCompleted && currentQuestProgress < 5) {
+    // Same day, quest not completed, increment progress
+    newQuestProgress = currentQuestProgress + 1;
+
+    // Mark as completed if we reach 5 questions
+    if (newQuestProgress >= 5) {
+      newQuestCompleted = true;
+      newQuestDate = today;
+    }
+  }
+
+  // Update daily quest progress
+  const { error: questUpdateError } = await supabase
+    .from('user_progress')
+    .upsert({
+      user_id: userId,
+      daily_quest_progress: newQuestProgress,
+      daily_quest_completed: newQuestCompleted,
+      daily_quest_date: newQuestDate,
+    });
+
+  if (questUpdateError) {
+    console.error('Failed to update daily quest progress:', questUpdateError);
+  } else {
+    console.log(`📊 Ranked Daily Quest Progress: ${newQuestProgress}/5, Completed: ${newQuestCompleted}`);
+  }
+
+  // If daily quest was just completed, update streak (only if not already done today)
+  if (newQuestCompleted && !isQuestCompleted) {
+    try {
+      console.log('🎯 Ranked Daily Quest completed! Updating streak...');
+      await updateUserStreakFromDailyQuest(userId);
+    } catch (streakError) {
+      console.error('Failed to update user streak after ranked daily quest completion:', streakError);
+    }
   }
 }
