@@ -57,6 +57,27 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
       console.log('✅ Streak is still valid');
     }
 
+    // Get updated user progress after streak check/reset
+    const { data: userProgress, error: progressError } = await supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    // Use defaults if no progress record exists yet
+    const currentProgress = userProgress || {
+      xp: 0,
+      streak_days: 0,
+      longest_streak: 0,
+      last_seen: today,
+      current_streak_start: null,
+      daily_quest_completed: false,
+      daily_quest_date: null,
+      daily_quest_progress: 0,
+      xp_boost_multiplier: '1.00',
+      xp_boost_expiry: null,
+    };
+
     // Get next milestones (not used anymore, client-side logic)
     const nextXpMilestone = await getNextXpMilestone(user.id);
     const lastXpMilestone = await getLastAchievedXpMilestone(user.id);
@@ -69,11 +90,11 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
 
     return NextResponse.json({
       user_progress: {
-        xp: streakResult.updatedProgress.xp,
-        streak_days: streakResult.updatedProgress.streakDays,
-        longest_streak: streakResult.updatedProgress.longestStreak,
-        last_seen: streakResult.updatedProgress.lastSeen || today,
-        current_streak_start: streakResult.updatedProgress.currentStreakStart,
+        xp: currentProgress.xp,
+        streak_days: currentProgress.streak_days,
+        longest_streak: currentProgress.longest_streak,
+        last_seen: currentProgress.last_seen || today,
+        current_streak_start: currentProgress.current_streak_start,
         total_questions: totalAttempts,
         correct_answers: correctAttempts,
         accuracy: accuracy,
@@ -85,9 +106,9 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
         next_xp_milestone: nextXpMilestone || undefined,
         last_xp_milestone: lastXpMilestone || undefined,
         // Daily Quest fields from database
-        daily_quest_completed: streakResult.updatedProgress.daily_quest_completed || false,
-        daily_quest_date: streakResult.updatedProgress.daily_quest_date || null,
-        daily_quest_progress: streakResult.updatedProgress.daily_quest_progress || 0,
+        daily_quest_completed: currentProgress.daily_quest_completed || false,
+        daily_quest_date: currentProgress.daily_quest_date || null,
+        daily_quest_progress: currentProgress.daily_quest_progress || 0,
       },
       topic_progress: [],
       success: true

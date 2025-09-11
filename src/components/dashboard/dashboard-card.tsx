@@ -73,6 +73,9 @@ export function DashboardCard() {
           today_attempts: 0,
           xp_boost_active: false,
           xp_boost_multiplier: 1,
+          daily_quest_completed: false,
+          daily_quest_date: new Date().toISOString().split('T')[0],
+          daily_quest_progress: 0,
         });
       } finally {
         setLoading(false);
