@@ -50,24 +50,36 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       );
     }
 
-    // Get question details for scoring
-    const { data: question, error: questionError } = await supabase
+    // Get question details for scoring (ensure camelCase mapping matches frontend)
+    const { data: questionData, error: questionError } = await supabase
       .from('questions')
       .select('*')
       .eq('id', questionId)
       .single();
 
-    if (questionError || !question) {
+    if (questionError || !questionData) {
       return NextResponse.json(
         { error: 'Question not found', success: false },
         { status: 400 }
       );
     }
 
+    // Map database fields to camelCase to match frontend expectations
+    const question = {
+      ...questionData,
+      tfCorrectAnswer: questionData.tf_correct_answer,
+      explanationMd: questionData.explanation_md,
+      sourceUrl: questionData.source_url,
+      sourceTitle: questionData.source_title,
+      sourceDate: questionData.source_date,
+      createdAt: questionData.created_at,
+    };
+
     // Calculate if answer is correct
     let isCorrect = false;
     if (question.type === 'tf') {
-      isCorrect = answer === question.tf_correct_answer;
+      // Use camelCase field to match frontend data structure
+      isCorrect = answer === question.tfCorrectAnswer;
     } else {
       // For MC questions, we need to check the choices
       const { data: choices, error: choicesError } = await supabase
