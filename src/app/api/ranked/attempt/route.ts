@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { questions } from '@/lib/db/schema';
 import { updateDailyQuestAndStreak } from '@/lib/streak-utils';
+import { updateXpMilestones } from '@/lib/xp-utils';
+import { calculateXP } from '@/lib/utils/quiz';
 import type { ApiResponse } from '@/types/api.types';
 
 interface RankedAttemptRequest {
@@ -135,14 +137,61 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       })
       .eq('id', sessionId);
 
-    // Simple Daily Quest and Streak Management - only for correct answers
+    // Award XP and check milestones for correct answers (same as regular quiz)
     if (isCorrect) {
       try {
+        // Calculate XP using the same system as regular quiz
+        const baseXPGained = calculateXP(question.difficulty, usedHints, timeMs);
+        console.log(`🎯 Ranked Quiz: User earned ${baseXPGained} XP`);
+
+        // Get current XP first, then add the new XP
+        const { data: currentProgress, error: fetchError } = await supabase
+          .from('user_progress')
+          .select('xp')
+          .eq('user_id', user.id)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('Failed to fetch current XP:', fetchError);
+        }
+
+        const currentXP = currentProgress?.xp || 0;
+        const newTotalXP = currentXP + baseXPGained;
+
+        // Update with the new total XP
+        const { error: xpError } = await supabase
+          .from('user_progress')
+          .upsert({
+            user_id: user.id,
+            xp: newTotalXP,
+            last_seen: new Date().toISOString().split('T')[0]
+          });
+
+        if (xpError) {
+          console.error('Failed to update XP in ranked mode:', xpError);
+        } else {
+          console.log(`XP updated in ranked mode: ${currentXP} + ${baseXPGained} = ${newTotalXP}`);
+
+          // Check for XP milestones and award free hints (same as regular quiz)
+          try {
+            const xpMilestoneResult = await updateXpMilestones(user.id, newTotalXP);
+            if (xpMilestoneResult.milestonesAchieved.length > 0) {
+              console.log(`🎉 Ranked XP milestones achieved: ${xpMilestoneResult.milestonesAchieved.length}`);
+              xpMilestoneResult.milestonesAchieved.forEach(milestone => {
+                console.log(`  - ${milestone.xpRequired} XP: +${milestone.freeHintsReward} hints`);
+              });
+            }
+          } catch (milestoneError) {
+            console.error('Failed to update XP milestones in ranked mode:', milestoneError);
+          }
+        }
+
+        // Process Daily Quest and Streak
         console.log('🎯 Ranked Quiz: Processing Daily Quest and Streak...');
         await updateDailyQuestAndStreak(user.id);
       } catch (questError) {
-        console.error('Failed to update daily quest and streak in ranked mode:', questError);
-        // Don't fail the request if quest update fails
+        console.error('Failed to update XP and daily quest in ranked mode:', questError);
+        // Don't fail the request if update fails
       }
     }
 
