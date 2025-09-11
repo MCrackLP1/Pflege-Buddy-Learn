@@ -4,7 +4,7 @@ import { AttemptRequestSchema } from '@/lib/validation';
 import { rateLimiter, RATE_LIMITS } from '@/middleware/rate-limiter';
 import { invalidateUserCache } from '@/lib/api/performance';
 import { calculateXP } from '@/lib/utils/quiz';
-import { updateUserStreak, updateUserStreakFromDailyQuest, getActiveXPBoost, calculateXPWithBoost } from '@/lib/streak-utils';
+import { updateUserStreakFromDailyQuest, getActiveXPBoost, calculateXPWithBoost, checkAndResetExpiredStreak } from '@/lib/streak-utils';
 import { updateXpMilestones } from '@/lib/xp-utils';
 import type { ApiResponse } from '@/types/api.types';
 
@@ -41,6 +41,18 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
           'X-RateLimit-Reset': new Date(rateLimit.resetTime).toISOString()
         }
       });
+    }
+
+    // Check and reset expired streaks before processing attempt
+    try {
+      console.log('🔥 Checking for expired streaks before attempt...');
+      const wasReset = await checkAndResetExpiredStreak(user.id);
+      if (wasReset) {
+        console.log('🚫 Streak was reset due to inactivity before attempt');
+      }
+    } catch (streakCheckError) {
+      console.error('Failed to check expired streak:', streakCheckError);
+      // Don't fail the request if streak check fails
     }
 
     // Parse and validate request body
@@ -207,14 +219,6 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
         console.error('Failed to update daily quest:', questError);
         // Don't fail the request if quest update fails
       }
-    }
-
-    // Update user streak after attempt (this handles daily streak tracking)
-    try {
-      await updateUserStreak(user.id);
-    } catch (streakError) {
-      console.error('Failed to update user streak:', streakError);
-      // Don't fail the request if streak update fails
     }
 
     // Invalidate user cache for fresh data

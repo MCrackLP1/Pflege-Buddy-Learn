@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { updateUserStreak, getNextMilestone, getActiveXPBoost } from '@/lib/streak-utils';
+import { updateUserStreak, getNextMilestone, getActiveXPBoost, checkAndResetExpiredStreak } from '@/lib/streak-utils';
 import { getNextXpMilestone, getLastAchievedXpMilestone } from '@/lib/xp-utils';
 import type { ApiResponse, UserProgressData } from '@/types/api.types';
 import type { StreakMilestone } from '@/lib/db/schema';
@@ -48,13 +48,14 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
       a.created_at.startsWith(today)
     ).length || 0;
 
-    // Update streak before returning progress
-    console.log('🔥 Updating streak in progress API...');
-    const streakResult = await updateUserStreak(user.id);
-    console.log('✅ Streak updated:', {
-      currentStreak: streakResult.updatedProgress.streakDays,
-      longestStreak: streakResult.updatedProgress.longestStreak
-    });
+    // Check and reset expired streaks before returning progress
+    console.log('🔥 Checking for expired streaks in progress API...');
+    const wasReset = await checkAndResetExpiredStreak(user.id);
+    if (wasReset) {
+      console.log('🚫 Streak was reset due to inactivity');
+    } else {
+      console.log('✅ Streak is still valid');
+    }
 
     // Get next milestones (not used anymore, client-side logic)
     const nextXpMilestone = await getNextXpMilestone(user.id);

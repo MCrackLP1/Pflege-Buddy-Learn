@@ -14,9 +14,9 @@ const MILESTONES: StreakMilestone[] = [
   {
     id: 'milestone-3-days',
     daysRequired: 3,
-    xpBoostMultiplier: '1.00',
+    xpBoostMultiplier: '1.20',
     boostDurationHours: 24,
-    rewardDescription: '3 Tage Serie erreicht! Du erhältst einen kleinen XP-Boost.',
+    rewardDescription: '3 Tage Serie erreicht! Du erhältst 20% mehr XP für einen Tag.',
     isActive: true,
     createdAt: new Date(),
   },

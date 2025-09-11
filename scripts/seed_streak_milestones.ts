@@ -6,9 +6,9 @@ type StreakMilestoneInsert = Database['public']['Tables']['streak_milestones']['
 const DEFAULT_MILESTONES: Omit<StreakMilestoneInsert, 'id' | 'created_at'>[] = [
   {
     days_required: 3,
-    xp_boost_multiplier: '1.00',
+    xp_boost_multiplier: '1.20',
     boost_duration_hours: 24,
-    reward_description: '3 Tage Serie erreicht! Du erhältst einen kleinen XP-Boost.',
+    reward_description: '3 Tage Serie erreicht! Du erhältst 20% mehr XP für einen Tag.',
     is_active: true,
   },
   {
