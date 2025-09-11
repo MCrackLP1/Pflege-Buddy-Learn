@@ -411,7 +411,7 @@ export function ShopPage() {
                   <h3 className="font-semibold mb-2">Kann ich Hints zurückgeben?</h3>
                   <p className="text-sm text-muted-foreground">
                     Digitale Inhalte können nach Lieferung nicht zurückgegeben werden. Mehr dazu in unserem{' '}
-                    <a href="/widerruf" className="text-primary hover:underline">Widerrufsrecht</a>.
+                    <a href={`/${Intl.DateTimeFormat().resolvedOptions().locale?.startsWith('de') ? 'de' : 'en'}/widerruf`} className="text-primary hover:underline">Widerrufsrecht</a>.
                   </p>
                 </div>
 
@@ -434,14 +434,14 @@ export function ShopPage() {
         >
           <p>
             Durch den Kauf stimmst du unseren{' '}
-            <a href="/agb" className="underline hover:text-primary transition-colors">AGB</a>
+            <a href={`/${Intl.DateTimeFormat().resolvedOptions().locale?.startsWith('de') ? 'de' : 'en'}/agb`} className="underline hover:text-primary transition-colors">AGB</a>
             {' '}und der{' '}
-            <a href="/datenschutz" className="underline hover:text-primary transition-colors">Datenschutzerklärung</a>
+            <a href={`/${Intl.DateTimeFormat().resolvedOptions().locale?.startsWith('de') ? 'de' : 'en'}/datenschutz`} className="underline hover:text-primary transition-colors">Datenschutzerklärung</a>
             {' '}zu.
           </p>
           <p className="text-xs">
             💡 <strong>Tipp:</strong> Digitale Inhalte können nach Lieferung nicht zurückgegeben werden.{' '}
-            <a href="/widerruf" className="underline hover:text-primary transition-colors">Mehr dazu</a>
+            <a href={`/${Intl.DateTimeFormat().resolvedOptions().locale?.startsWith('de') ? 'de' : 'en'}/widerruf`} className="underline hover:text-primary transition-colors">Mehr dazu</a>
           </p>
         </motion.div>
       </motion.div>

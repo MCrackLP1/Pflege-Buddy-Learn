@@ -1,0 +1,3 @@
+[33m3323ca7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m ✨ Randomisierung der MC-Fragen-Antwortoptionen implementiert
+[33mcefa814[m Fix sitemap to remove non-existent /quiz route and update SEO scripts
+[33m443e090[m Fix sitemap URLs to include correct locale prefixes (/de) for all pages

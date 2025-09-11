@@ -103,13 +103,21 @@ export async function middleware(req: NextRequest) {
 
   // Protected routes that require authentication
   const protectedPaths = ['/learn', '/quiz', '/review', '/profile', '/store'];
-  const isProtectedPath = protectedPaths.some(path =>
-    req.nextUrl.pathname.startsWith(path)
+
+  // Strip locale prefix (e.g. /de/learn -> /learn) before matching
+  const pathname = req.nextUrl.pathname;
+  const localeMatch = pathname.match(/^\/(de|en)(?=\/|$)/);
+  const pathWithoutLocale = localeMatch
+    ? pathname.slice(localeMatch[0].length) || '/'
+    : pathname;
+
+  const isProtectedPath = protectedPaths.some((path) =>
+    pathWithoutLocale.startsWith(path)
   );
 
   // Redirect to home if accessing protected route without session
   if (isProtectedPath && !session) {
-    const locale = req.nextUrl.pathname.split('/')[1];
+    const locale = localeMatch?.[1] || 'de';
     const homeUrl = new URL(`/${locale}`, req.url);
     const redirectRes = NextResponse.redirect(homeUrl);
     addSecurityHeaders(redirectRes, nonce);

@@ -45,3 +45,4 @@ console.log("   • Erhöht die Lernqualität");
 console.log("   • Macht das Quiz fairer");
 console.log("   • Stabil während der Beantwortung einer Frage");
 console.log("   • Neu randomisiert bei jeder neuen Frage");
+

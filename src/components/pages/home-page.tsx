@@ -463,7 +463,7 @@ function ModernHeroSection() {
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">Komplette Lernplattform</h2>
                     <p className="text-sm text-muted-foreground">
-                      <a href="/de/learn" className="text-blue-600 hover:text-blue-700 underline">
+                      <a href={`/${useLocale()}/learn`} className="text-blue-600 hover:text-blue-700 underline">
                         14 Fachbereiche sofort verfügbar
                       </a>
                     </p>
@@ -1167,9 +1167,9 @@ export function HomePage() {
               <div>
                 <h4 className="font-semibold mb-4 text-foreground text-sm xs:text-base">{tHomeFooter('legal')}</h4>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="/de/datenschutz" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
-                  <li><a href="/de/agb" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
-                  <li><a href="/de/impressum" className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
+                  <li><a href={`/${useLocale()}/datenschutz`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
+                  <li><a href={`/${useLocale()}/agb`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
+                  <li><a href={`/${useLocale()}/impressum`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
                 </ul>
               </div>
               <div>

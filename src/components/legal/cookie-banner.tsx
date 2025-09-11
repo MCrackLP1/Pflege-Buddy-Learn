@@ -96,7 +96,7 @@ export function CookieBanner({ onAccept, onReject }: CookieBannerProps) {
               {t('acceptAll')}
             </Button>
 
-            <Link href="/cookie-einstellungen" className="flex-1">
+            <Link href={createLocalizedPath(locale, 'cookie-einstellungen')} className="flex-1">
               <Button
                 variant="outline"
                 className="w-full"

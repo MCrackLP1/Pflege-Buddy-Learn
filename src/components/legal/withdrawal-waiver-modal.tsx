@@ -33,6 +33,7 @@ export function WithdrawalWaiverModal({
   const [consent2, setConsent2] = useState(false);
   const t = useTranslations('legal.withdrawal');
   const tc = useTranslations('common');
+  const resolvedLocale = typeof window !== 'undefined' && window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] : 'de';
 
   const canProceed = consent1 && consent2;
 
@@ -134,7 +135,7 @@ export function WithdrawalWaiverModal({
           <p className="text-xs text-muted-foreground text-center">
             {t('moreInfo')}{' '}
             <a
-              href="/widerruf"
+              href={`/${resolvedLocale}/widerruf`}
               className="underline hover:no-underline"
               target="_blank"
               rel="noopener"

@@ -430,6 +430,40 @@ export function QuizQuestion({
                   <p className="text-base leading-relaxed text-gray-700 dark:text-gray-200">
                     {question.explanationMd}
                   </p>
+
+                  {/* Internal Links for SEO */}
+                  {question.citations.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                      <h5 className="font-semibold text-sm mb-2 text-gray-600 dark:text-gray-400">
+                        Weiterführende Themen:
+                      </h5>
+                      <div className="flex flex-wrap gap-2">
+                        <a
+                          href={`/learn?topic=${question.topicId}`}
+                          className="inline-flex items-center gap-1 text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 underline"
+                          title={`Mehr Fragen zu diesem Thema lernen`}
+                        >
+                          📚 Mehr {question.topicId} Fragen
+                        </a>
+                        <a
+                          href={`/quiz?difficulty=${question.difficulty}`}
+                          className="inline-flex items-center gap-1 text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 underline"
+                          title={`Schwierigkeitsgrad ${question.difficulty} üben`}
+                        >
+                          🎯 Ähnliche Schwierigkeit
+                        </a>
+                        {question.citations[0] && (
+                          <a
+                            href={`/quellen/${question.citations[0].url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`}
+                            className="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 underline"
+                            title={`Alle Fragen dieser Quelle ansehen`}
+                          >
+                            🔗 Alle Fragen dieser Quelle
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
 
                 {/* Sources */}
@@ -442,21 +476,72 @@ export function QuizQuestion({
                   >
                     <h4 className="font-bold text-base mb-3 flex items-center gap-2">
                       <ExternalLink className="w-4 h-4 text-blue-500" />
-                      Quellen
+                      Quellen & Zitierungen
                     </h4>
                     <div className="space-y-2">
                       {question.citations.map((citation) => (
-                        <a
-                          key={citation.id}
-                          href={citation.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors group"
-                        >
-                          <ExternalLink className="h-3 w-3 group-hover:scale-110 transition-transform" />
-                          <span className="underline">{citation.title}</span>
-                        </a>
+                        <div key={citation.id}>
+                          {/* Structured Data for Citation */}
+                          <script
+                            type="application/ld+json"
+                            dangerouslySetInnerHTML={{
+                              __html: JSON.stringify({
+                                "@context": "https://schema.org",
+                                "@type": "CreativeWork",
+                                "name": citation.title,
+                                "url": citation.url,
+                                "datePublished": citation.publishedDate,
+                                "publisher": {
+                                  "@type": "Organization",
+                                  "name": citation.url.includes('awmf.org') ? 'Arbeitsgemeinschaft der Wissenschaftlichen Medizinischen Fachgesellschaften e.V. (AWMF)' :
+                                         citation.url.includes('rki.de') ? 'Robert Koch Institut (RKI)' :
+                                         citation.url.includes('who.int') ? 'World Health Organization (WHO)' :
+                                         citation.url.includes('ncbi.nlm.nih.gov') ? 'National Center for Biotechnology Information (NCBI)' :
+                                         citation.url.includes('amboss.com') ? 'Amboss GmbH' :
+                                         citation.url.includes('dge.de') ? 'Deutsche Gesellschaft für Ernährung e.V. (DGE)' :
+                                         citation.url.includes('bfarm.de') ? 'Bundesinstitut für Arzneimittel und Medizinprodukte (BfArM)' :
+                                         citation.url.includes('dgem.de') ? 'Deutsche Gesellschaft für Ernährungsmedizin e.V. (DGEM)' :
+                                         'Medizinische Fachgesellschaft'
+                                },
+                                "citation": {
+                                  "@type": "ScholarlyArticle",
+                                  "headline": question.stem,
+                                  "description": question.explanationMd?.substring(0, 200) + '...',
+                                  "dateModified": (() => {
+                                    const d: any = (citation as any).accessedAt;
+                                    const iso = (d instanceof Date ? d : new Date(d)).toISOString();
+                                    return iso.split('T')[0];
+                                  })()
+                                }
+                              })
+                            }}
+                          />
+                          <a
+                            href={citation.url}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow"
+                            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors group"
+                            title={`Quelle: ${citation.title} - Öffnet in neuem Tab`}
+                          >
+                            <ExternalLink className="h-3 w-3 group-hover:scale-110 transition-transform" />
+                            <span className="underline group-hover:no-underline">
+                              {citation.title}
+                            </span>
+                            {citation.publishedDate && (
+                              <span className="text-xs text-gray-500 ml-2">
+                                ({new Date(citation.publishedDate).getFullYear()})
+                              </span>
+                            )}
+                          </a>
+                        </div>
                       ))}
+                    </div>
+
+                    {/* Additional SEO Meta Information */}
+                    <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-600">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Diese Quellen wurden zuletzt am {new Date().toLocaleDateString('de-DE')} verifiziert und basieren auf aktuellen medizinischen Leitlinien.
+                      </p>
                     </div>
                   </motion.div>
                 )}

@@ -86,7 +86,7 @@ export default function CookiesPage() {
 
           <div className="bg-muted p-4 rounded-lg">
             <p className="mb-2"><strong>Cookie-Einstellungen ändern:</strong></p>
-            <Link href="/cookie-einstellungen" className="text-primary hover:underline">
+            <Link href={`/${locale}/cookie-einstellungen`} className="text-primary hover:underline">
               Cookie-Einstellungen öffnen →
             </Link>
           </div>
