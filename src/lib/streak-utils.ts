@@ -155,20 +155,23 @@ export async function updateDailyQuestAndStreak(userId: string): Promise<StreakU
     }
   }
 
-  // Check if daily quest just got completed
+  // Check if daily quest just got completed OR if completed today but streak not updated yet
   const justCompleted = !questCompleted && questProgress >= 5;
   if (justCompleted) {
     questCompleted = true;
     console.log('🎉 Daily Quest completed!');
   }
 
-  // Handle streak logic only if daily quest was just completed
+  // Handle streak logic if daily quest is completed today AND streak not updated yet
   let currentStreak = currentProgress.streak_days;
   let longestStreak = currentProgress.longest_streak;
   let currentStreakStart = currentProgress.current_streak_start;
   const lastSeen = currentProgress.last_seen;
 
-  if (justCompleted) {
+  // Check if daily quest is completed today but streak not updated yet
+  const shouldUpdateStreak = questCompleted && questDate === today && lastSeen !== today;
+
+  if (justCompleted || shouldUpdateStreak) {
     // Check if streak should be reset (84 hours = 3.5 days)
     const shouldResetStreak = checkStreakReset84h(lastSeen);
     
@@ -200,7 +203,7 @@ export async function updateDailyQuestAndStreak(userId: string): Promise<StreakU
     .order('days_required');
 
   // Check for new milestones achieved only if streak was updated
-  const newMilestones = justCompleted ? (milestones?.filter(
+  const newMilestones = (justCompleted || shouldUpdateStreak) ? (milestones?.filter(
     milestone => milestone.days_required > lastMilestoneAchieved && currentStreak >= milestone.days_required
   ) || []) : [];
 
@@ -210,7 +213,7 @@ export async function updateDailyQuestAndStreak(userId: string): Promise<StreakU
     xp: currentProgress.xp || 0,
     streak_days: currentStreak,
     longest_streak: longestStreak,
-    last_seen: justCompleted ? today : currentProgress.last_seen,
+    last_seen: (justCompleted || shouldUpdateStreak) ? today : currentProgress.last_seen,
     current_streak_start: currentStreakStart,
     last_milestone_achieved: Math.max(lastMilestoneAchieved, ...newMilestones.map(m => m.days_required)),
     xp_boost_multiplier: currentProgress.xp_boost_multiplier || '1.00',

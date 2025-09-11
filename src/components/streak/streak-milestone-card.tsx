@@ -16,7 +16,7 @@ const MILESTONES: StreakMilestone[] = [
     daysRequired: 3,
     xpBoostMultiplier: '1.20',
     boostDurationHours: 24,
-    rewardDescription: '3 Tage Serie erreicht! Du erhältst 20% mehr XP für einen Tag.',
+    rewardDescription: '3 Daily Quests erreicht! Du erhältst 20% mehr XP für einen Tag.',
     isActive: true,
     createdAt: new Date(),
   },
@@ -25,7 +25,7 @@ const MILESTONES: StreakMilestone[] = [
     daysRequired: 5,
     xpBoostMultiplier: '1.30',
     boostDurationHours: 24,
-    rewardDescription: '5 Tage hintereinander! Du bekommst 30% mehr XP für einen Tag.',
+    rewardDescription: '5 Daily Quests hintereinander! Du bekommst 30% mehr XP für einen Tag.',
     isActive: true,
     createdAt: new Date(),
   },
@@ -34,7 +34,7 @@ const MILESTONES: StreakMilestone[] = [
     daysRequired: 7,
     xpBoostMultiplier: '1.50',
     boostDurationHours: 48,
-    rewardDescription: 'Eine Woche durchgehalten! Du bekommst 50% mehr XP für zwei Tage.',
+    rewardDescription: '7 Daily Quests durchgehalten! Du bekommst 50% mehr XP für zwei Tage.',
     isActive: true,
     createdAt: new Date(),
   },
@@ -43,7 +43,7 @@ const MILESTONES: StreakMilestone[] = [
     daysRequired: 14,
     xpBoostMultiplier: '2.00',
     boostDurationHours: 72,
-    rewardDescription: 'Zwei Wochen am Stück! Dein Lernengagement zahlt sich aus mit 2x XP.',
+    rewardDescription: '14 Daily Quests am Stück! Dein Lernengagement zahlt sich aus mit 2x XP.',
     isActive: true,
     createdAt: new Date(),
   },
@@ -194,7 +194,7 @@ export function StreakMilestoneCard({
             {currentStreak}
           </div>
           <div className="text-lg font-semibold text-orange-700 dark:text-orange-300 mb-2">
-            🔥 Tage Serie
+            🔥 Daily Quest Streak
           </div>
           
           {/* Streak Visualization */}
@@ -283,7 +283,7 @@ export function StreakMilestoneCard({
           <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-3">
             <div className="text-sm text-gray-700 dark:text-gray-200">
               {currentStreak === 0
-                ? '🎯 Starte deine erste Serie! Tägliches Lernen bringt XP-Boosts.'
+                ? '🎯 Starte deine erste Serie! Tägliches Daily Quest abschließen bringt XP-Boosts.'
                 : effectiveNextMilestone.rewardDescription
               }
             </div>
