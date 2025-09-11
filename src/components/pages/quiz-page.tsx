@@ -93,6 +93,8 @@ export function QuizPage({ topic }: QuizPageProps) {
   const [usedHints, setUsedHints] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [startTime] = useState(Date.now());
+  const [completedQuestions, setCompletedQuestions] = useState(0);
+  const [quizEnded, setQuizEnded] = useState(false);
 
   // Hint balance state - simplified
   const [hintsBalance, setHintsBalance] = useState(0);
@@ -159,6 +161,15 @@ export function QuizPage({ topic }: QuizPageProps) {
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
+  // Check if daily quest is completed (5 questions answered correctly)
+  useEffect(() => {
+    if (completedQuestions >= 5 && !quizEnded) {
+      console.log('🎯 Daily Quest completed! Ending quiz...');
+      setQuizEnded(true);
+      setShowResults(true);
+    }
+  }, [completedQuestions, quizEnded]);
+
   // Loading state
   if (loading) {
     return (
@@ -215,6 +226,11 @@ export function QuizPage({ topic }: QuizPageProps) {
 
     try {
       await saveAttemptToDb(questionId, isCorrect, timeMs, hintsUsed);
+
+      // Increment completed questions counter
+      if (isCorrect) {
+        setCompletedQuestions(prev => prev + 1);
+      }
     } catch (error) {
       console.error('Failed to save attempt:', error);
       // Don't break the quiz flow if saving fails
@@ -222,7 +238,7 @@ export function QuizPage({ topic }: QuizPageProps) {
   };
 
   const handleNext = () => {
-    if (isLastQuestion) {
+    if (isLastQuestion || quizEnded) {
       setShowResults(true);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
@@ -325,6 +341,8 @@ export function QuizPage({ topic }: QuizPageProps) {
           {...results}
           onRestart={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
           onReview={() => router.push(createLocalizedPath(locale, '/review'))}
+          // Pass the actual number of questions answered (not the total available questions)
+          total={Math.min(completedQuestions, 5)}
         />
       </MainLayout>
     );

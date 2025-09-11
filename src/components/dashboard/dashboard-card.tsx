@@ -30,6 +30,10 @@ interface UserProgress {
   xp_boost_multiplier: number;
   xp_boost_expiry?: string;
   next_milestone?: StreakMilestone;
+  // Daily Quest fields
+  daily_quest_completed: boolean;
+  daily_quest_date: string;
+  daily_quest_progress: number;
 }
 
 export function DashboardCard() {
@@ -78,8 +82,9 @@ export function DashboardCard() {
     loadUserProgress();
   }, []);
 
-  // Calculate today's progress (simple goal: 5 questions per day)
-  const todayProgress = Math.min(((userProgress?.today_attempts || 0) / 5) * 100, 100);
+  // Calculate today's progress using daily quest data from database
+  const todayProgress = Math.min(((userProgress?.daily_quest_progress || 0) / 5) * 100, 100);
+  const isDailyQuestCompleted = userProgress?.daily_quest_completed || false;
 
   return (
     <MainLayout>
@@ -238,7 +243,7 @@ export function DashboardCard() {
                   <Target className="h-5 w-5 text-blue-500" />
                   📅 Daily Quest
                 </CardTitle>
-                {todayProgress >= 100 && (
+                {isDailyQuestCompleted && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -253,8 +258,8 @@ export function DashboardCard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span>5 Fragen heute beantworten</span>
-                  <span className="font-medium">{userProgress?.today_attempts || 0}/5</span>
+                  <span>5 Fragen richtig beantworten</span>
+                  <span className="font-medium">{userProgress?.daily_quest_progress || 0}/5</span>
                 </div>
                 
                 {/* Health Bar Style Progress */}

@@ -10,7 +10,191 @@ export interface StreakUpdateResult {
 }
 
 /**
- * Updates user streak based on login activity (not quiz attempts)
+ * Updates user streak based on daily quest completion (new logic)
+ * Call this when daily quest is completed
+ */
+export async function updateUserStreakFromDailyQuest(userId: string): Promise<StreakUpdateResult> {
+  const supabase = createServerClient();
+
+  // Get current progress
+  const { data: progress, error: progressError } = await supabase
+    .from('user_progress')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (progressError && progressError.code !== 'PGRST116') {
+    throw progressError;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  // Only update streak if daily quest is completed today
+  if (!progress?.dailyQuestCompleted || progress.dailyQuestDate !== today) {
+    console.log('❌ Daily quest not completed today - no streak update');
+    return {
+      updatedProgress: progress || {
+        user_id: userId,
+        xp: 0,
+        streak_days: 0,
+        longest_streak: 0,
+        last_seen: today,
+        current_streak_start: null,
+        last_milestone_achieved: 0,
+        xp_boost_multiplier: '1.00',
+        xp_boost_expiry: null,
+        dailyQuestCompleted: false,
+        dailyQuestDate: null,
+        dailyQuestProgress: 0,
+      },
+      milestonesAchieved: [],
+      xpBoostActive: false,
+      xpBoostMultiplier: 1,
+      xpBoostExpiry: undefined,
+    };
+  }
+
+  let currentStreak = progress?.streak_days || 0;
+  let longestStreak = progress?.longest_streak || 0;
+  let currentStreakStart = progress?.current_streak_start;
+  const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
+  const lastSeen = progress?.last_seen;
+
+  console.log('🔥 Debug updateUserStreakFromDailyQuest:', {
+    userId,
+    today,
+    yesterday,
+    lastSeen,
+    currentStreakBefore: currentStreak,
+    dailyQuestCompleted: progress?.dailyQuestCompleted,
+    dailyQuestDate: progress?.dailyQuestDate,
+  });
+
+  // Calculate new streak based on daily quest completion
+  if (lastSeen === today) {
+    // Already processed today - no change needed
+    console.log('📅 Streak already updated today - no change');
+  } else if (lastSeen === yesterday) {
+    console.log('📅 Consecutive day - incrementing streak');
+    currentStreak += 1;
+    longestStreak = Math.max(longestStreak, currentStreak);
+  } else if (!lastSeen || lastSeen < yesterday) {
+    console.log('📅 New streak started');
+    currentStreak = 1;
+    currentStreakStart = today;
+    longestStreak = Math.max(longestStreak, currentStreak);
+  } else {
+    console.log('📅 Gap detected - resetting streak');
+    currentStreak = 1;
+    currentStreakStart = today;
+    longestStreak = Math.max(longestStreak, currentStreak);
+  }
+
+  console.log('✅ Streak calculation result:', {
+    currentStreak,
+    longestStreak,
+    lastSeen: today
+  });
+
+  // Get available milestones
+  const { data: milestones } = await supabase
+    .from('streak_milestones')
+    .select('*')
+    .eq('is_active', true)
+    .order('days_required');
+
+  // Check for new milestones achieved
+  const newMilestones = milestones?.filter(
+    milestone => milestone.days_required > lastMilestoneAchieved && currentStreak >= milestone.days_required
+  ) || [];
+
+  // Update progress record
+  const updatedProgress = {
+    user_id: userId,
+    xp: progress?.xp || 0,
+    streak_days: currentStreak,
+    longest_streak: longestStreak,
+    last_seen: today,
+    current_streak_start: currentStreakStart,
+    last_milestone_achieved: Math.max(lastMilestoneAchieved, ...newMilestones.map(m => m.days_required)),
+    xp_boost_multiplier: progress?.xp_boost_multiplier || '1.00',
+    xp_boost_expiry: progress?.xp_boost_expiry,
+        daily_quest_completed: progress?.dailyQuestCompleted || false,
+        daily_quest_date: progress?.dailyQuestDate,
+        daily_quest_progress: progress?.dailyQuestProgress || 0,
+  };
+
+  const { data: savedProgress, error: updateError } = await supabase
+    .from('user_progress')
+    .upsert(updatedProgress, { onConflict: 'user_id' })
+    .select()
+    .single();
+
+  if (updateError) throw updateError;
+
+  // Process new milestones
+  const milestonesAchieved: StreakMilestone[] = [];
+  for (const milestone of newMilestones) {
+    // Check if already achieved
+    const { data: existing } = await supabase
+      .from('user_milestone_achievements')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('milestone_id', milestone.id)
+      .limit(1);
+
+    if (!existing || existing.length === 0) {
+      // Create achievement record
+      const boostExpiry = new Date(Date.now() + milestone.boost_duration_hours * 60 * 60 * 1000);
+
+      const { error: achievementError } = await supabase
+        .from('user_milestone_achievements')
+        .insert({
+          user_id: userId,
+          milestone_id: milestone.id,
+          xp_boost_multiplier: milestone.xp_boost_multiplier,
+          boost_expiry: boostExpiry.toISOString(),
+        });
+
+      if (achievementError) {
+        console.error('Error creating milestone achievement:', achievementError);
+      } else {
+        milestonesAchieved.push(milestone);
+
+        // Update user's XP boost if this milestone has higher multiplier
+        if (parseFloat(milestone.xp_boost_multiplier) > parseFloat(savedProgress.xp_boost_multiplier || '1.00')) {
+          const { error: boostUpdateError } = await supabase
+            .from('user_progress')
+            .update({
+              xp_boost_multiplier: milestone.xp_boost_multiplier,
+              xp_boost_expiry: boostExpiry.toISOString(),
+            })
+            .eq('user_id', userId);
+
+          if (boostUpdateError) {
+            console.error('Error updating XP boost:', boostUpdateError);
+          }
+        }
+      }
+    }
+  }
+
+  // Check if XP boost is still active
+  const now = new Date();
+  const xpBoostActive = savedProgress.xp_boost_expiry && new Date(savedProgress.xp_boost_expiry) > now;
+
+  return {
+    updatedProgress: savedProgress,
+    milestonesAchieved,
+    xpBoostActive: xpBoostActive || false,
+    xpBoostMultiplier: parseFloat(savedProgress.xp_boost_multiplier || '1.00'),
+    xpBoostExpiry: savedProgress.xp_boost_expiry ? new Date(savedProgress.xp_boost_expiry) : undefined,
+  };
+}
+
+/**
+ * Updates user streak based on login activity (legacy function - kept for backward compatibility)
  * Call this when user logs in or becomes active
  */
 export async function updateUserStreak(userId: string): Promise<StreakUpdateResult> {

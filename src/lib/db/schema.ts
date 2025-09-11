@@ -62,6 +62,10 @@ export const userProgress = pgTable('user_progress', {
   lastMilestoneAchieved: integer('last_milestone_achieved').notNull().default(0),
   xpBoostMultiplier: decimal('xp_boost_multiplier', { precision: 3, scale: 2 }).notNull().default('1.00'),
   xpBoostExpiry: timestamp('xp_boost_expiry'),
+  // Daily Quest tracking
+  dailyQuestCompleted: boolean('daily_quest_completed').notNull().default(false),
+  dailyQuestDate: date('daily_quest_date'),
+  dailyQuestProgress: integer('daily_quest_progress').notNull().default(0),
 });
 
 // Streak milestones

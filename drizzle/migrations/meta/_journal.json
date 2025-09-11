@@ -50,6 +50,13 @@
       "when": 1757269339156,
       "tag": "0006_stale_anita_blake",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1757603755881,
+      "tag": "0007_true_ted_forrester",
+      "breakpoints": true
     }
   ]
 }

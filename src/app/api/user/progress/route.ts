@@ -12,9 +12,13 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     xp_boost_active: boolean;
     xp_boost_multiplier: number;
     xp_boost_expiry?: string;
-            next_streak_milestone?: StreakMilestone;
-        next_xp_milestone?: any;
-        last_xp_milestone?: any;
+    next_streak_milestone?: StreakMilestone;
+    next_xp_milestone?: any;
+    last_xp_milestone?: any;
+    // Daily Quest fields
+    daily_quest_completed: boolean;
+    daily_quest_date: string;
+    daily_quest_progress: number;
   }
 }>>> {
   try {
@@ -79,6 +83,10 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
         next_streak_milestone: nextStreakMilestone,
         next_xp_milestone: nextXpMilestone || undefined,
         last_xp_milestone: lastXpMilestone || undefined,
+        // Daily Quest fields from database
+        daily_quest_completed: streakResult.updatedProgress.daily_quest_completed || false,
+        daily_quest_date: streakResult.updatedProgress.daily_quest_date || null,
+        daily_quest_progress: streakResult.updatedProgress.daily_quest_progress || 0,
       },
       topic_progress: [],
       success: true
