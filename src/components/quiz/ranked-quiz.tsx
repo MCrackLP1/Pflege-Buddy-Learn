@@ -29,7 +29,7 @@ interface QuizState {
   timeLeft: number;
   showFeedback: boolean;
   isLoading: boolean;
-  startTime: number;
+  questionStartTime: number;
   lastAnswerCorrect: boolean | null;
   lastScore: number;
 }
@@ -51,7 +51,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
     timeLeft: 20,
     showFeedback: false,
     isLoading: true,
-    startTime: Date.now(),
+    questionStartTime: Date.now(),
     lastAnswerCorrect: null,
     lastScore: 0,
   });
@@ -139,7 +139,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
           timeLeft: 20,
           showFeedback: false,
           isLoading: false,
-          startTime: Date.now(),
+          questionStartTime: Date.now(),
           lastAnswerCorrect: null,
           lastScore: 0,
         });
@@ -190,7 +190,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
     if (!quizState.currentQuestion || !sessionId) return;
 
     const answer = finalAnswer !== undefined ? finalAnswer : quizState.answer;
-    const timeMs = Date.now() - quizState.startTime;
+    const timeMs = Date.now() - quizState.questionStartTime;
 
     try {
       const response = await fetch('/api/ranked/attempt', {

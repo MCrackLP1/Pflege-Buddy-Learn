@@ -1,5 +1,5 @@
 import { createServerClient } from '../src/lib/supabase/server';
-import { updateUserStreak, getNextMilestone, getActiveXPBoost } from '../src/lib/streak-utils';
+import { updateUserStreakFromDailyQuest, getNextMilestone, getActiveXPBoost, checkAndResetExpiredStreak } from '../src/lib/streak-utils';
 
 async function debugStreak(userId: string) {
   const supabase = createServerClient();
@@ -61,13 +61,28 @@ async function debugStreak(userId: string) {
 
     // 6. Update streak
     console.log('6️⃣ Updating streak:');
-    const streakResult = await updateUserStreak(userId);
-    console.log('Streak result:', {
-      currentStreak: streakResult.updatedProgress.streakDays,
-      longestStreak: streakResult.updatedProgress.longestStreak,
-      lastSeen: streakResult.updatedProgress.lastSeen,
-      xpBoostActive: streakResult.xpBoostActive,
-      xpBoostMultiplier: streakResult.xpBoostMultiplier,
+    // Check for expired streaks first
+    const wasReset = await checkAndResetExpiredStreak(userId);
+    console.log('🔥 Streak reset check:', wasReset ? 'RESET' : 'VALID');
+    
+    // Note: updateUserStreakFromDailyQuest requires daily quest to be completed
+    // This is just for debugging - in real app it's called when daily quest completes
+    console.log('⚠️  updateUserStreakFromDailyQuest requires daily quest completion');
+    
+    // Get current progress after reset check
+    const { data: finalProgress } = await supabase
+      .from('user_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    console.log('Final progress:', {
+      currentStreak: finalProgress?.streak_days || 0,
+      longestStreak: finalProgress?.longest_streak || 0,
+      lastSeen: finalProgress?.last_seen,
+      dailyQuestProgress: finalProgress?.daily_quest_progress || 0,
+      dailyQuestCompleted: finalProgress?.daily_quest_completed || false,
+      xpBoostMultiplier: finalProgress?.xp_boost_multiplier || '1.00',
     });
 
   } catch (error) {

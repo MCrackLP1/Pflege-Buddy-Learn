@@ -328,7 +328,7 @@ export function QuizPage({ topic }: QuizPageProps) {
       if (isCorrect) {
         correct++;
         // Use the standardized calculateXP function for consistency
-        const timeSpent = startTime ? Date.now() - startTime : 0; // Fallback if startTime not available
+        const timeSpent = questionStartTimes[question.id] ? Date.now() - questionStartTimes[question.id] : 0;
         const xpForThisQuestion = calculateXP(question.difficulty, usedHints[question.id] || 0, timeSpent);
         totalXP += xpForThisQuestion;
       }
