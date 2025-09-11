@@ -20,8 +20,8 @@ export function XpMilestoneCard({
 }: XpMilestoneCardProps) {
   const t = useTranslations();
 
-  // Fallback milestones for robust display
-  const fallbackMilestones = [
+  // Hardcoded milestones - completely independent from API for reliability
+  const ALL_MILESTONES = [
     { xpRequired: 100, freeHintsReward: 5, rewardDescription: '100 XP erreicht! Du erhältst 5 gratis Hints für deine Lernfortschritte.' },
     { xpRequired: 500, freeHintsReward: 5, rewardDescription: '500 XP erreicht! Du erhältst 5 gratis Hints als Belohnung.' },
     { xpRequired: 1000, freeHintsReward: 5, rewardDescription: '1000 XP erreicht! Du erhältst 5 gratis Hints - du bist auf dem richtigen Weg!' },
@@ -31,17 +31,19 @@ export function XpMilestoneCard({
     { xpRequired: 25000, freeHintsReward: 15, rewardDescription: '25000 XP erreicht! Du erhältst 15 gratis Hints - du bist ein Pflege-Experte!' },
   ];
 
-  // Get effective next milestone (use fallback if API data missing)
-  const effectiveNextMilestone = nextMilestone || fallbackMilestones.find(m => m.xpRequired > currentXp);
-  
-  // Get effective last milestone (use fallback if API data missing)
-  const effectiveLastMilestone = lastMilestone || fallbackMilestones
+  // Simple, reliable milestone calculation
+  const nextMilestoneData = ALL_MILESTONES.find(m => m.xpRequired > currentXp) || {
+    xpRequired: currentXp + 1000,
+    freeHintsReward: 5,
+    rewardDescription: 'Weiter lernen!'
+  };
+
+  const lastMilestoneData = ALL_MILESTONES
     .filter(m => m.xpRequired <= currentXp)
     .sort((a, b) => b.xpRequired - a.xpRequired)[0];
 
-  const progressToNextMilestone = effectiveNextMilestone
-    ? Math.min((currentXp / effectiveNextMilestone.xpRequired) * 100, 100)
-    : 100;
+  const xpToNext = Math.max(0, nextMilestoneData.xpRequired - currentXp);
+  const progressToNextMilestone = Math.min((currentXp / nextMilestoneData.xpRequired) * 100, 100);
 
   return (
     <Card className="relative overflow-hidden">
@@ -64,7 +66,7 @@ export function XpMilestoneCard({
         </div>
 
         {/* Next Milestone Progress */}
-        {effectiveNextMilestone && (
+        {nextMilestoneData && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
@@ -73,7 +75,7 @@ export function XpMilestoneCard({
               </div>
               <div className="flex items-center gap-1">
                 <Target className="h-3 w-3" />
-                <span className="font-medium">{effectiveNextMilestone.xpRequired} XP</span>
+                <span className="font-medium">{nextMilestoneData.xpRequired} XP</span>
               </div>
             </div>
 
@@ -84,11 +86,11 @@ export function XpMilestoneCard({
 
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
-                {effectiveNextMilestone.xpRequired - currentXp} {t('xp.xpToGo') || 'XP bis zum Ziel'}
+                {xpToNext} {t('xp.xpToGo') || 'XP bis zum Ziel'}
               </span>
               <div className="flex items-center gap-1">
                 <Lightbulb className="h-3 w-3" />
-                <span>+{effectiveNextMilestone.freeHintsReward} {t('xp.freeHints') || 'gratis Hints'}</span>
+                <span>+{nextMilestoneData.freeHintsReward} {t('xp.freeHints') || 'gratis Hints'}</span>
               </div>
             </div>
 
@@ -96,16 +98,16 @@ export function XpMilestoneCard({
         )}
 
         {/* Last Achieved Milestone */}
-        {effectiveLastMilestone && (
+        {lastMilestoneData && (
           <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-3">
             <div className="flex items-start gap-2">
               <Trophy className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
               <div className="text-xs">
                 <div className="font-medium text-green-700 dark:text-green-300 mb-1">
-                  {t('xp.lastMilestone') || 'Zuletzt erreicht'}: {effectiveLastMilestone.xpRequired} XP
+                  {t('xp.lastMilestone') || 'Zuletzt erreicht'}: {lastMilestoneData.xpRequired} XP
                 </div>
                 <div className="text-muted-foreground">
-                  {effectiveLastMilestone.rewardDescription}
+                  {lastMilestoneData.rewardDescription}
                 </div>
               </div>
             </div>
@@ -113,7 +115,7 @@ export function XpMilestoneCard({
         )}
 
         {/* No milestones available yet */}
-        {!effectiveNextMilestone && !effectiveLastMilestone && currentXp === 0 && (
+        {currentXp === 0 && (
           <div className="bg-secondary/50 rounded-lg p-3 text-xs text-center text-muted-foreground">
             {t('xp.startLearning') || 'Beginne zu lernen und sammle XP!'}
           </div>
