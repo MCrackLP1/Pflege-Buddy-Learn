@@ -4,7 +4,7 @@ import { AttemptRequestSchema } from '@/lib/validation';
 import { rateLimiter, RATE_LIMITS } from '@/middleware/rate-limiter';
 import { invalidateUserCache } from '@/lib/api/performance';
 import { calculateXP } from '@/lib/utils/quiz';
-import { updateUserStreakFromDailyQuest, getActiveXPBoost, calculateXPWithBoost, checkAndResetExpiredStreak } from '@/lib/streak-utils';
+import { updateDailyQuestAndStreak, getActiveXPBoost, calculateXPWithBoost } from '@/lib/streak-utils';
 import { updateXpMilestones } from '@/lib/xp-utils';
 import type { ApiResponse } from '@/types/api.types';
 
@@ -43,17 +43,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       });
     }
 
-    // Check and reset expired streaks before processing attempt
-    try {
-      console.log('🔥 Checking for expired streaks before attempt...');
-      const wasReset = await checkAndResetExpiredStreak(user.id);
-      if (wasReset) {
-        console.log('🚫 Streak was reset due to inactivity before attempt');
-      }
-    } catch (streakCheckError) {
-      console.error('Failed to check expired streak:', streakCheckError);
-      // Don't fail the request if streak check fails
-    }
+    // Note: Daily Quest and Streak management now handled per correct answer
 
     // Parse and validate request body
     const body = await req.json();
@@ -148,75 +138,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       }
     }
 
-    // Update daily quest progress if answer is correct
+    // Simple Daily Quest and Streak Management - only for correct answers
     if (validatedData.isCorrect) {
       try {
-        const today = new Date().toISOString().split('T')[0];
-
-        // Get current daily quest progress
-        const { data: currentProgress, error: progressError } = await supabase
-          .from('user_progress')
-          .select('daily_quest_progress, daily_quest_completed, daily_quest_date')
-          .eq('user_id', user.id)
-          .single();
-
-        if (progressError && progressError.code !== 'PGRST116') {
-          console.error('Failed to fetch daily quest progress:', progressError);
-        }
-
-        const currentQuestProgress = currentProgress?.daily_quest_progress || 0;
-        const isQuestCompleted = currentProgress?.daily_quest_completed || false;
-        const questDate = currentProgress?.daily_quest_date;
-
-        // Reset progress if it's a new day
-        let newQuestProgress = currentQuestProgress;
-        let newQuestCompleted = isQuestCompleted;
-        let newQuestDate = questDate;
-
-        if (questDate !== today) {
-          // New day - reset progress
-          newQuestProgress = 1; // This is the first question of the day
-          newQuestCompleted = false;
-          newQuestDate = today;
-        } else if (!isQuestCompleted && currentQuestProgress < 5) {
-          // Same day, quest not completed, increment progress
-          newQuestProgress = currentQuestProgress + 1;
-
-          // Mark as completed if we reach 5 questions
-          if (newQuestProgress >= 5) {
-            newQuestCompleted = true;
-            newQuestDate = today;
-          }
-        }
-
-        // Update daily quest progress
-        const { error: questUpdateError } = await supabase
-          .from('user_progress')
-          .upsert({
-            user_id: user.id,
-            daily_quest_progress: newQuestProgress,
-            daily_quest_completed: newQuestCompleted,
-            daily_quest_date: newQuestDate,
-          });
-
-        if (questUpdateError) {
-          console.error('Failed to update daily quest progress:', questUpdateError);
-        } else {
-          console.log(`📊 Daily Quest Progress: ${newQuestProgress}/5, Completed: ${newQuestCompleted}`);
-        }
-
-        // If daily quest was just completed, update streak (only if not already done today)
-        if (newQuestCompleted && !isQuestCompleted) {
-          try {
-            console.log('🎯 Daily Quest completed! Updating streak...');
-            await updateUserStreakFromDailyQuest(user.id);
-          } catch (streakError) {
-            console.error('Failed to update user streak after daily quest completion:', streakError);
-          }
-        }
-
+        console.log('🎯 Processing Daily Quest and Streak...');
+        await updateDailyQuestAndStreak(user.id);
       } catch (questError) {
-        console.error('Failed to update daily quest:', questError);
+        console.error('Failed to update daily quest and streak:', questError);
         // Don't fail the request if quest update fails
       }
     }

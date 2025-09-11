@@ -10,26 +10,35 @@ export interface StreakUpdateResult {
 }
 
 /**
- * Check if streak should be reset due to 24+ hour gap
+ * Check if streak should be reset due to 84+ hour gap (3.5 days)
  * @param lastSeenDate - Last seen date (YYYY-MM-DD format)
  * @returns true if streak should be reset, false otherwise
  */
-function checkStreakReset(lastSeenDate: string | null | undefined): boolean {
+function checkStreakReset84h(lastSeenDate: string | null | undefined): boolean {
   if (!lastSeenDate) {
     // No previous activity - not a reset case
     return false;
   }
 
-  const today = new Date().toISOString().split('T')[0];
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const today = new Date();
+  const lastSeenTime = new Date(lastSeenDate + 'T00:00:00.000Z');
+  const timeDiff = today.getTime() - lastSeenTime.getTime();
+  const hoursDiff = timeDiff / (1000 * 60 * 60);
   
-  // If last seen was before yesterday, streak should be reset
-  if (lastSeenDate < yesterday) {
-    console.log(`🕐 Streak reset check: lastSeen (${lastSeenDate}) was before yesterday (${yesterday})`);
+  // If more than 84 hours (3.5 days) have passed, reset streak
+  if (hoursDiff > 84) {
+    console.log(`🕐 Streak reset check: ${Math.round(hoursDiff)}h since last daily quest (>84h limit)`);
     return true;
   }
   
   return false;
+}
+
+/**
+ * Legacy function for backward compatibility - now uses 84h logic
+ */
+function checkStreakReset(lastSeenDate: string | null | undefined): boolean {
+  return checkStreakReset84h(lastSeenDate);
 }
 
 /**
@@ -85,11 +94,12 @@ export async function checkAndResetExpiredStreak(userId: string): Promise<boolea
 }
 
 /**
- * Updates user streak based on daily quest completion (simplified logic)
- * Call this when daily quest is completed
+ * Simple Daily Quest and Streak Management
+ * Call this for every correct answer in any quiz mode
  */
-export async function updateUserStreakFromDailyQuest(userId: string): Promise<StreakUpdateResult> {
+export async function updateDailyQuestAndStreak(userId: string): Promise<StreakUpdateResult> {
   const supabase = createServerClient();
+  const today = new Date().toISOString().split('T')[0];
 
   // Get current progress
   const { data: progress, error: progressError } = await supabase
@@ -102,78 +112,112 @@ export async function updateUserStreakFromDailyQuest(userId: string): Promise<St
     throw progressError;
   }
 
-  const today = new Date().toISOString().split('T')[0];
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  // Initialize defaults
+  const currentProgress = progress || {
+    user_id: userId,
+    xp: 0,
+    streak_days: 0,
+    longest_streak: 0,
+    last_seen: null,
+    current_streak_start: null,
+    last_milestone_achieved: 0,
+    xp_boost_multiplier: '1.00',
+    xp_boost_expiry: null,
+    daily_quest_completed: false,
+    daily_quest_date: null,
+    daily_quest_progress: 0,
+  };
 
-  let currentStreak = progress?.streak_days || 0;
-  let longestStreak = progress?.longest_streak || 0;
-  let currentStreakStart = progress?.current_streak_start;
-  const lastMilestoneAchieved = progress?.last_milestone_achieved || 0;
-  const lastSeen = progress?.last_seen;
-
-  console.log('🔥 Daily Quest Streak Update:', {
+  console.log('🎯 Daily Quest Check:', {
     userId,
-    currentStreakBefore: currentStreak,
-    lastSeen,
     today,
-    yesterday,
+    currentProgress: currentProgress.daily_quest_progress,
+    completed: currentProgress.daily_quest_completed,
+    questDate: currentProgress.daily_quest_date,
   });
 
-  // Check if streak should be reset due to 24+ hour gap
-  const shouldResetStreak = checkStreakReset(lastSeen);
-  
-  if (shouldResetStreak) {
-    console.log('🚫 Streak reset due to 24+ hour gap');
-    currentStreak = 1; // Start new streak with today's daily quest completion
-    currentStreakStart = today;
-    longestStreak = Math.max(longestStreak, currentStreak);
-  } else if (lastSeen === today) {
-    // Already processed today - no change needed
-    console.log('📅 Streak already updated today - keeping current streak');
-  } else if (lastSeen === yesterday) {
-    // Consecutive day - increment streak
-    console.log('📅 Consecutive day - incrementing streak');
-    currentStreak += 1;
-    longestStreak = Math.max(longestStreak, currentStreak);
+  // Check if we need to reset daily quest (new day)
+  let questProgress = currentProgress.daily_quest_progress;
+  let questCompleted = currentProgress.daily_quest_completed;
+  let questDate = currentProgress.daily_quest_date;
+
+  if (questDate !== today) {
+    // New day - reset daily quest
+    console.log('📅 New day - resetting daily quest');
+    questProgress = 1; // This answer counts as first question of the day
+    questCompleted = false;
+    questDate = today;
   } else {
-    // Gap or first time - start new streak
-    console.log('📅 Starting new streak (gap detected or first time)');
-    currentStreak = 1;
-    currentStreakStart = today;
-    longestStreak = Math.max(longestStreak, currentStreak);
+    // Same day - increment progress if not completed
+    if (!questCompleted && questProgress < 5) {
+      questProgress += 1;
+      console.log(`📊 Daily Quest Progress: ${questProgress}/5`);
+    }
   }
 
-  console.log('✅ New streak values:', {
-    currentStreak,
-    longestStreak,
-  });
+  // Check if daily quest just got completed
+  const justCompleted = !questCompleted && questProgress >= 5;
+  if (justCompleted) {
+    questCompleted = true;
+    console.log('🎉 Daily Quest completed!');
+  }
 
-  // Get available milestones
+  // Handle streak logic only if daily quest was just completed
+  let currentStreak = currentProgress.streak_days;
+  let longestStreak = currentProgress.longest_streak;
+  let currentStreakStart = currentProgress.current_streak_start;
+  const lastSeen = currentProgress.last_seen;
+
+  if (justCompleted) {
+    // Check if streak should be reset (84 hours = 3.5 days)
+    const shouldResetStreak = checkStreakReset84h(lastSeen);
+    
+    if (shouldResetStreak) {
+      console.log('🚫 Streak reset due to 84+ hour gap');
+      currentStreak = 1;
+      currentStreakStart = today;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    } else if (lastSeen === today) {
+      // Already got streak point today - no change
+      console.log('📅 Streak already updated today');
+    } else {
+      // Add streak point
+      currentStreak += 1;
+      longestStreak = Math.max(longestStreak, currentStreak);
+      if (!currentStreakStart) {
+        currentStreakStart = today;
+      }
+      console.log(`🔥 Streak updated: ${currentStreak} days`);
+    }
+  }
+
+  // Get available milestones  
+  const lastMilestoneAchieved = currentProgress.last_milestone_achieved || 0;
   const { data: milestones } = await supabase
     .from('streak_milestones')
     .select('*')
     .eq('is_active', true)
     .order('days_required');
 
-  // Check for new milestones achieved
-  const newMilestones = milestones?.filter(
+  // Check for new milestones achieved only if streak was updated
+  const newMilestones = justCompleted ? (milestones?.filter(
     milestone => milestone.days_required > lastMilestoneAchieved && currentStreak >= milestone.days_required
-  ) || [];
+  ) || []) : [];
 
-  // Update progress record
+  // Update progress record with new values
   const updatedProgress = {
     user_id: userId,
-    xp: progress?.xp || 0,
+    xp: currentProgress.xp || 0,
     streak_days: currentStreak,
     longest_streak: longestStreak,
-    last_seen: today,
+    last_seen: justCompleted ? today : currentProgress.last_seen,
     current_streak_start: currentStreakStart,
     last_milestone_achieved: Math.max(lastMilestoneAchieved, ...newMilestones.map(m => m.days_required)),
-    xp_boost_multiplier: progress?.xp_boost_multiplier || '1.00',
-    xp_boost_expiry: progress?.xp_boost_expiry,
-        daily_quest_completed: progress?.dailyQuestCompleted || false,
-        daily_quest_date: progress?.dailyQuestDate,
-        daily_quest_progress: progress?.dailyQuestProgress || 0,
+    xp_boost_multiplier: currentProgress.xp_boost_multiplier || '1.00',
+    xp_boost_expiry: currentProgress.xp_boost_expiry,
+    daily_quest_completed: questCompleted,
+    daily_quest_date: questDate,
+    daily_quest_progress: questProgress,
   };
 
   const { data: savedProgress, error: updateError } = await supabase
