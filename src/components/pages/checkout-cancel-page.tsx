@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { XCircle, ArrowLeft, ShoppingCart, Home, RefreshCw } from 'lucide-react';
+import { XCircle, ArrowLeft, Home, RefreshCw } from 'lucide-react';
 
 export function CheckoutCancelPage() {
   const router = useRouter();

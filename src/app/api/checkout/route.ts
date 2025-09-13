@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     } else if (validatedData.priceId) {
       priceId = validatedData.priceId;
       // Determine package size from price ID
-      const priceToSku = Object.entries(HINTS_PRICES).find(([_, price]) => price === priceId);
+      const priceToSku = Object.entries(HINTS_PRICES).find(([, price]) => price === priceId);
       if (!priceToSku) {
         return NextResponse.json(
           { error: 'Invalid price ID provided' },

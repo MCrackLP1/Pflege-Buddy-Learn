@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLocale } from 'next-intl';
+// import { useLocale } from 'next-intl'; // Not needed anymore, using locale variable
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
@@ -10,11 +10,10 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import Head from 'next/head';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import React from 'react';
-import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
-import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
+// import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
+// import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
 import {
   Brain,
   BookOpen,
@@ -30,7 +29,6 @@ import {
   User,
   CheckCircle,
   Instagram,
-  Star,
   Users,
   type LucideIcon
 } from 'lucide-react';
@@ -63,7 +61,7 @@ function LoadingAnimation() {
 }
 
 // Enhanced Feature Card Component
-function FeatureCard({ icon: Icon, title, description, delay = 0, link, onClick }: {
+function FeatureCard({ icon: Icon, title, description, delay = 0, link: _link, onClick }: {
   icon: LucideIcon,
   title: string,
   description: string,
@@ -121,7 +119,7 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link, onClick 
   );
 }
 
-function CategoryCard({ icon: Icon, title, description, example, link, onClick }: {
+function CategoryCard({ icon: Icon, title, description, example, link: _link, onClick }: {
   icon: LucideIcon;
   title: string;
   description: string;
@@ -463,7 +461,7 @@ function ModernHeroSection() {
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">Komplette Lernplattform</h2>
                     <p className="text-sm text-muted-foreground">
-                      <a href={`/${useLocale()}/learn`} className="text-blue-600 hover:text-blue-700 underline">
+                      <a href={`/${locale}/learn`} className="text-blue-600 hover:text-blue-700 underline">
                         14 Fachbereiche sofort verfügbar
                       </a>
                     </p>
@@ -545,7 +543,7 @@ function ModernHeroSection() {
 function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; onSkip: () => void }) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const tComponents = useTranslations('components');
+  // const tComponents = useTranslations('components');
 
   const handleSave = async () => {
     if (!name.trim()) return;
@@ -621,13 +619,14 @@ function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; on
 }
 
 export function HomePage() {
-  const { session, loading, signIn } = useAuth();
+  const { session, loading, signIn: _signIn } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
+  const locale = locale;
 
   // Translations
   const tErrors = useTranslations('errors');
-  const tComponents = useTranslations('components');
+  // const tComponents = useTranslations('components');
   const tHomeHero = useTranslations('components.homeHero');
   const tHomeFeatures = useTranslations('components.homeFeatures');
   const tHomeCategories = useTranslations('components.homeCategories');
@@ -698,7 +697,7 @@ export function HomePage() {
 
       if (response.ok) {
         const responseData = await response.json();
-        const updatedProfile = responseData.data;
+        const _updatedProfile = responseData.data;
         setShowNameModal(false);
       } else {
         const errorData = await response.json();
@@ -731,7 +730,7 @@ export function HomePage() {
   }
 
   if (!session) {
-    const structuredData = [
+    const _structuredData = [
       // WebApplication Schema
       {
         "@context": "https://schema.org",
@@ -1167,12 +1166,12 @@ export function HomePage() {
               <div>
                 <h4 className="font-semibold mb-4 text-foreground text-sm xs:text-base">{tHomeFooter('legal')}</h4>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li><a href={`/${useLocale()}/datenschutz`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
-                  <li><a href={`/${useLocale()}/agb`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
-                  <li><a href={`/${useLocale()}/cookies`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Cookies</a></li>
-                  <li><a href={`/${useLocale()}/widerruf`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Widerruf</a></li>
-                  <li><a href={`/${useLocale()}/impressum`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
-                  <li><a href={`/${useLocale()}/disclaimer-medizin`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Medizin-Disclaimer</a></li>
+                  <li><a href={`/${locale}/datenschutz`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
+                  <li><a href={`/${locale}/agb`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
+                  <li><a href={`/${locale}/cookies`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Cookies</a></li>
+                  <li><a href={`/${locale}/widerruf`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Widerruf</a></li>
+                  <li><a href={`/${locale}/impressum`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
+                  <li><a href={`/${locale}/disclaimer-medizin`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Medizin-Disclaimer</a></li>
                 </ul>
               </div>
               <div>

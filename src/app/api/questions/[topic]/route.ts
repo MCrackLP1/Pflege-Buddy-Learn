@@ -21,7 +21,7 @@ export async function GET(
     console.log('Processing topic:', topic);
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
-    const offset = parseInt(url.searchParams.get('offset') || '0');
+    // const offset = parseInt(url.searchParams.get('offset') || '0'); // Not yet implemented
     
     let questions;
     

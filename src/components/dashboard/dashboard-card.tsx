@@ -6,14 +6,13 @@ import { useRouter } from 'next/navigation';
 import { createLocalizedPath } from '@/lib/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { MainLayout } from '@/components/layout/main-layout';
 import { StreakMilestoneCard } from '@/components/streak/streak-milestone-card';
 import { XpMilestoneCard } from '@/components/xp/xp-milestone-card';
 import { HintsDisplay } from '@/components/ui/hints-display';
 import { Target, Play, Flame, Star, Lightbulb, Trophy, Zap, CheckCircle, Sparkles } from 'lucide-react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { StreakMilestone, XpMilestone } from '@/lib/db/schema';
 
 interface UserProgress {

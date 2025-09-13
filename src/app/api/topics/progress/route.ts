@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import type { Attempt } from '@/lib/db/schema';
 
 export async function GET() {
   try {
@@ -43,7 +42,7 @@ export async function GET() {
       const totalQuestions = topic.questions?.length || 0;
       
       // Get user attempts for this topic
-      const topicAttempts = (attempts || []).filter((attempt: any) => 
+      const topicAttempts = (attempts || []).filter((attempt: { questions?: { topic_id?: string } }) =>
         attempt.questions?.topic_id === topic.id
       );
 

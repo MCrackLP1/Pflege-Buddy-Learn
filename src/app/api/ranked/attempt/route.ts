@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { questions } from '@/lib/db/schema';
 import { updateDailyQuestAndStreak } from '@/lib/streak-utils';
 import { updateXpMilestones } from '@/lib/xp-utils';
 import { calculateXP } from '@/lib/utils/quiz';

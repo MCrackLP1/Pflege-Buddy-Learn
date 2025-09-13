@@ -36,7 +36,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
     if (attemptsError) throw attemptsError;
 
     // Transform attempts for review page
-    const reviewItems = (attempts || []).map((attempt: any) => {
+    const reviewItems = (attempts || []).map((attempt: { questions?: { type?: string; stem?: string; choices?: Array<{ id: string; label: string; isCorrect: boolean }> }; user_answer?: string; is_correct?: boolean; created_at?: string }) => {
       const question = attempt.questions;
       let userAnswer = '';
       let correctAnswer = '';

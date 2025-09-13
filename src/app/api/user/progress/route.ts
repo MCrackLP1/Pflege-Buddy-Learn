@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { getNextMilestone, getActiveXPBoost } from '@/lib/streak-utils';
+import { getActiveXPBoost } from '@/lib/streak-utils';
 import { getNextXpMilestone, getLastAchievedXpMilestone } from '@/lib/xp-utils';
 import type { ApiResponse, UserProgressData } from '@/types/api.types';
 import type { StreakMilestone } from '@/lib/db/schema';
@@ -13,8 +13,8 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     xp_boost_multiplier: number;
     xp_boost_expiry?: string;
     next_streak_milestone?: StreakMilestone;
-    next_xp_milestone?: any;
-    last_xp_milestone?: any;
+    next_xp_milestone?: { id: string; xpRequired: number; freeHintsReward: number; rewardDescription: string; isActive: boolean; createdAt: string };
+    last_xp_milestone?: { id: string; xpRequired: number; freeHintsReward: number; rewardDescription: string; isActive: boolean; createdAt: string };
     // Daily Quest fields
     daily_quest_completed: boolean;
     daily_quest_date: string;
@@ -51,7 +51,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     // Note: Streak management is now handled when users answer questions
 
     // Get updated user progress after streak check/reset
-    const { data: userProgress, error: progressError } = await supabase
+    const { data: userProgress, error: _progressError } = await supabase
       .from('user_progress')
       .select('*')
       .eq('user_id', user.id)

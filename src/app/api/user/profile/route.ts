@@ -121,7 +121,7 @@ export async function PUT(
       .single();
 
     // Prepare update object
-    const updateData: any = {};
+    const updateData: Record<string, string> = {};
     if (displayName !== undefined) {
       updateData.display_name = displayName.trim();
     }

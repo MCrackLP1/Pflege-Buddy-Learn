@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.redirect(errorRedirectUrl);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Auth callback processing error:', err);
 
       // Redirect to home page with generic error

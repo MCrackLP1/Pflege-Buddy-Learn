@@ -5,7 +5,7 @@ import './globals.css'
 import './accessibility.css'
 
 // Preload critical resources
-import { headers } from 'next/headers'
+// import { headers } from 'next/headers' // Not used currently
 
 const inter = Inter({ subsets: ['latin'] })
 

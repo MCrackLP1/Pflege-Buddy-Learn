@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
       console.log('Processing checkout session:', session.id);
 
       // Extract metadata
-      const { userId, packageSize, hintsQuantity } = session.metadata || {};
+      const { userId, hintsQuantity } = session.metadata || {};
+      // const packageSize = session.metadata?.packageSize; // Not used currently
 
       if (!userId || !hintsQuantity) {
         console.error('Missing required metadata in session:', session.id);

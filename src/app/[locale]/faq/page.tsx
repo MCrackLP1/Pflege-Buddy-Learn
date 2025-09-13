@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { HelpCircle, Search, Users, BookOpen, Shield, Award } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -183,7 +182,7 @@ export default function FAQPage() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {category.questions.map((faq: any, index: number) => (
+                  {category.questions.map((faq: { name: string; answer: string }, index: number) => (
                     <details key={index} className="group">
                       <summary className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                         <span className="font-medium text-left pr-4">
