@@ -182,7 +182,7 @@ export default function FAQPage() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-6">
-                  {category.questions.map((faq: { name: string; answer: string }, index: number) => (
+                  {category.questions.map((faq: { '@type': string; name: string; acceptedAnswer: { '@type': string; text: string } }, index: number) => (
                     <details key={index} className="group">
                       <summary className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
                         <span className="font-medium text-left pr-4">

@@ -41,29 +41,41 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
       let userAnswer = '';
       let correctAnswer = '';
 
+      if (!question) {
+        return {
+          id: 'unknown',
+          question: 'Frage nicht verfügbar',
+          userAnswer: attempt.user_answer || 'Unbekannt',
+          correctAnswer: 'Unbekannt',
+          isCorrect: attempt.is_correct || false,
+          date: attempt.created_at || new Date().toISOString()
+        };
+      }
+
       if (question.type === 'tf') {
-        userAnswer = attempt.is_correct ? 
-          (question.tf_correct_answer ? 'Wahr' : 'Falsch') : 
-          (question.tf_correct_answer ? 'Falsch' : 'Wahr');
-        correctAnswer = question.tf_correct_answer ? 'Wahr' : 'Falsch';
+        // For True/False questions, we need to find the correct answer from choices
+        const correctChoice = question.choices?.find(c => c.isCorrect);
+        const correctAnswerValue = correctChoice?.label || 'Unbekannt';
+        userAnswer = attempt.is_correct ? correctAnswerValue : (correctAnswerValue === 'Wahr' ? 'Falsch' : 'Wahr');
+        correctAnswer = correctAnswerValue;
       } else {
         // For MC questions, we need to reconstruct which choice was selected
         // This is complex, so for now we'll show simplified version
         userAnswer = attempt.is_correct ? 'Richtig beantwortet' : 'Falsch beantwortet';
-        const correctChoice = question.choices?.find((c: SupabaseChoice) => c.is_correct);
+        const correctChoice = question.choices?.find((c: any) => c.isCorrect);
         correctAnswer = correctChoice?.label || 'Unbekannt';
       }
 
       return {
-        id: attempt.id,
-        question: question.stem,
+        id: (attempt as any).question_id || (attempt as any).id || 'unknown',
+        question: question.stem || 'Frage nicht verfügbar',
         userAnswer,
         correctAnswer,
-        isCorrect: attempt.is_correct,
-        explanation: question.explanation_md,
-        topic: question.topics?.title || 'Unbekannt',
-        completedAt: attempt.created_at, // Keep as string, convert in frontend
-        citations: (question.citations || []).map((c: SupabaseCitation) => ({
+        isCorrect: attempt.is_correct || false,
+        explanation: (question as any).explanation_md || 'Keine Erklärung verfügbar',
+        topic: (question as any).topics?.title || 'Unbekannt',
+        completedAt: attempt.created_at || new Date().toISOString(),
+        citations: ((question as any).citations || []).map((c: any) => ({
           id: c.id,
           url: c.url,
           title: c.title,

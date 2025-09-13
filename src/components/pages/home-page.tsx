@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// import { useLocale } from 'next-intl'; // Not needed anymore, using locale variable
+import { useLocale } from 'next-intl';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
@@ -12,8 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import React from 'react';
-// import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
-// import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
+import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
+import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
 import {
   Brain,
   BookOpen,
@@ -461,7 +461,7 @@ function ModernHeroSection() {
                   <div>
                     <h2 className="text-lg font-semibold text-foreground">Komplette Lernplattform</h2>
                     <p className="text-sm text-muted-foreground">
-                      <a href={`/${locale}/learn`} className="text-blue-600 hover:text-blue-700 underline">
+                      <a href={`/${useLocale()}/learn`} className="text-blue-600 hover:text-blue-700 underline">
                         14 Fachbereiche sofort verfügbar
                       </a>
                     </p>
@@ -543,7 +543,7 @@ function ModernHeroSection() {
 function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; onSkip: () => void }) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  // const tComponents = useTranslations('components');
+  const tComponents = useTranslations('components');
 
   const handleSave = async () => {
     if (!name.trim()) return;
@@ -622,11 +622,11 @@ export function HomePage() {
   const { session, loading, signIn: _signIn } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
-  const locale = locale;
+  const locale = useLocale();
 
   // Translations
   const tErrors = useTranslations('errors');
-  // const tComponents = useTranslations('components');
+  const tComponents = useTranslations('components');
   const tHomeHero = useTranslations('components.homeHero');
   const tHomeFeatures = useTranslations('components.homeFeatures');
   const tHomeCategories = useTranslations('components.homeCategories');

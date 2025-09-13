@@ -42,7 +42,7 @@ export async function GET() {
       const totalQuestions = topic.questions?.length || 0;
       
       // Get user attempts for this topic
-      const topicAttempts = (attempts || []).filter((attempt: { questions?: { topic_id?: string } }) =>
+      const topicAttempts = (attempts || []).filter((attempt: any) =>
         attempt.questions?.topic_id === topic.id
       );
 
