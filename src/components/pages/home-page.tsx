@@ -1169,7 +1169,10 @@ export function HomePage() {
                 <ul className="space-y-2 text-muted-foreground">
                   <li><a href={`/${useLocale()}/datenschutz`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Datenschutz</a></li>
                   <li><a href={`/${useLocale()}/agb`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">AGB</a></li>
+                  <li><a href={`/${useLocale()}/cookies`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Cookies</a></li>
+                  <li><a href={`/${useLocale()}/widerruf`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Widerruf</a></li>
                   <li><a href={`/${useLocale()}/impressum`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Impressum</a></li>
+                  <li><a href={`/${useLocale()}/disclaimer-medizin`} className="hover:text-foreground transition-colors text-sm xs:text-base min-h-[44px] flex items-center touch-manipulation">Medizin-Disclaimer</a></li>
                 </ul>
               </div>
               <div>
@@ -1193,7 +1196,32 @@ export function HomePage() {
               </div>
             </div>
             <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-              <p>&copy; 2025 PflegeBuddy. Alle Rechte vorbehalten. Entwickelt mit ❤️ für Pflegeprofis.</p>
+              <div className="space-y-4">
+                <p>&copy; 2025 PflegeBuddy. Alle Rechte vorbehalten. Entwickelt mit ❤️ für Pflegeprofis.</p>
+                <div className="space-y-2">
+                  <p className="text-xs">
+                    <strong>Haftungsausschluss:</strong> Kein Ersatz für professionelle medizinische Beratung.
+                    Bei gesundheitlichen Problemen qualifizierte Fachkräfte konsultieren oder Notruf 112.
+                  </p>
+                  <p className="text-xs">
+                    <strong>Medizinischer Haftungsausschluss:</strong> Diese App dient ausschließlich der Wissensvermittlung.
+                  </p>
+                  <p className="text-xs">
+                    Europäische Online-Streitbeilegungsplattform:{' '}
+                    <a
+                      href="https://consumer-redress.ec.europa.eu/index_de"
+                      className="underline hover:no-underline"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      consumer-redress.ec.europa.eu
+                    </a>
+                  </p>
+                  <p className="text-xs">
+                    Verbraucherschlichtungsstelle: Universalschlichtungsstelle des Bundes
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </footer>

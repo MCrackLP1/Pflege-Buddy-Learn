@@ -57,6 +57,18 @@ export function Footer({ showFullFooter = true }: FooterProps) {
                 Widerruf
               </Link>
               <Link
+                href={createLocalizedPath(locale, 'cookies')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cookies
+              </Link>
+              <Link
+                href={createLocalizedPath(locale, 'agb')}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                AGB
+              </Link>
+              <Link
                 href={createLocalizedPath(locale, 'disclaimer-medizin')}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
