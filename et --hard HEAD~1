@@ -1,0 +1,5 @@
+[33mf69a722[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m Optimize quiz layout for mobile devices with sticky navigation and scrollable content
+[33mf3c93b7[m Optimize quiz performance by making XP operations asynchronous and adding loading states
+[33m8d72f82[m Fix footer legal links and notices - add missing AGB, Cookies, Widerruf, Medizin-Disclaimer links and legal compliance text
+[33m147cd50[m Remove header box from quiz page containing 'Zurück' button, '🧠 Pflege-Quiz' title, and '💡 Hints' display
+[33me97cbb5[m fix: XP milestone NaN display - complete overhaul
