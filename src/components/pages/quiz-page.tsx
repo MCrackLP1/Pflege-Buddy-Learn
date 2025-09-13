@@ -97,6 +97,9 @@ export function QuizPage({ topic }: QuizPageProps) {
   // Hint balance state - simplified
   const [hintsBalance, setHintsBalance] = useState(0);
   const [hintsLoading, setHintsLoading] = useState(true);
+
+  // Loading state for transitions
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Load questions from API - always fresh and random
   useEffect(() => {
@@ -219,14 +222,25 @@ export function QuizPage({ topic }: QuizPageProps) {
     const currentQuestion = questions[currentQuestionIndex];
     if (!currentQuestion) return;
 
-    // Save current question attempt before proceeding
-    await saveCurrentQuestionAttempt(currentQuestion);
+    setIsTransitioning(true);
 
-    // Navigate to next question or show results
-    if (currentQuestionIndex === questions.length - 1) {
-      setShowResults(true);
-    } else {
-      setCurrentQuestionIndex(prev => prev + 1);
+    try {
+      // Save current question attempt before proceeding
+      await saveCurrentQuestionAttempt(currentQuestion);
+
+      // Small delay for better UX feedback
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Navigate to next question or show results
+      if (currentQuestionIndex === questions.length - 1) {
+        setShowResults(true);
+      } else {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Error transitioning to next question:', error);
+    } finally {
+      setIsTransitioning(false);
     }
   };
 
@@ -401,6 +415,7 @@ export function QuizPage({ topic }: QuizPageProps) {
                 answer={answers[currentQuestion.id]}
                 onAnswer={handleAnswer}
                 onNext={handleNext}
+                isTransitioning={isTransitioning}
                 onHintUsed={() => handleHintUsed(currentQuestion.id)}
                 usedHints={usedHints[currentQuestion.id] || 0}
                 isLastQuestion={isLastQuestion}

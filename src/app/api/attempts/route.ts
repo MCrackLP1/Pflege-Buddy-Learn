@@ -63,7 +63,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       }, { status: 404 });
     }
 
-    // Save attempt to database
+    // Save attempt to database (this is the critical operation)
     const { error: saveError } = await supabase
       .from('attempts')
       .insert({
@@ -82,75 +82,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       }, { status: 500 });
     }
 
-    // Calculate and update XP if correct
+    console.log(`✅ Saved attempt for question ${validatedData.questionId}: ${validatedData.isCorrect ? 'correct' : 'incorrect'}`);
+
+    // Handle XP and related operations asynchronously (don't block the response)
     if (validatedData.isCorrect) {
-      // Use the standardized calculateXP function
-      const baseXPGained = calculateXP(question.difficulty, validatedData.usedHints, validatedData.timeMs);
-
-      // Get active XP boost for user
-      const xpBoostInfo = await getActiveXPBoost(user.id);
-      const finalXPGained = calculateXPWithBoost(baseXPGained, xpBoostInfo.multiplier);
-
-      console.log(`XP gained: ${baseXPGained} (base) x ${xpBoostInfo.multiplier} (boost) = ${finalXPGained} (final)`);
-
-      // Get current XP first, then add the new XP
-      const { data: currentProgress, error: fetchError } = await supabase
-        .from('user_progress')
-        .select('xp')
-        .eq('user_id', user.id)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = not found
-        console.error('Failed to fetch current XP:', fetchError);
-      }
-
-      const currentXP = currentProgress?.xp || 0;
-      const newTotalXP = currentXP + finalXPGained;
-
-      // Update with the new total XP
-      const { error: xpError } = await supabase
-        .from('user_progress')
-        .upsert({
-          user_id: user.id,
-          xp: newTotalXP,
-          last_seen: new Date().toISOString().split('T')[0]
-        });
-
-      if (xpError) {
-        console.error('Failed to update XP:', xpError);
-        // Don't fail the request if XP update fails
-      } else {
-        console.log(`XP updated: ${currentXP} + ${finalXPGained} = ${newTotalXP}`);
-
-        // Check for XP milestones and award free hints
-        try {
-          const xpMilestoneResult = await updateXpMilestones(user.id, newTotalXP);
-          if (xpMilestoneResult.milestonesAchieved.length > 0) {
-            console.log(`🎉 XP milestones achieved: ${xpMilestoneResult.milestonesAchieved.length}`);
-            xpMilestoneResult.milestonesAchieved.forEach(milestone => {
-              console.log(`  - ${milestone.xpRequired} XP: +5 hints`);
-            });
-          }
-        } catch (milestoneError) {
-          console.error('Failed to update XP milestones:', milestoneError);
-          // Don't fail the request if milestone update fails
-        }
-      }
+      // Fire and forget - don't wait for completion
+      handleXPOperations(user.id, question.difficulty, validatedData.usedHints, validatedData.timeMs)
+        .catch(error => console.error('XP operations failed:', error));
     }
 
-    // Simple Daily Quest and Streak Management - only for correct answers
-    if (validatedData.isCorrect) {
-      try {
-        console.log('🎯 Processing Daily Quest and Streak...');
-        await updateDailyQuestAndStreak(user.id);
-      } catch (questError) {
-        console.error('Failed to update daily quest and streak:', questError);
-        // Don't fail the request if quest update fails
-      }
-    }
-
-    // Invalidate user cache for fresh data
-    invalidateUserCache(user.id);
+    // XP and related operations are handled asynchronously above
+    // Cache invalidation happens in the async function
 
     return NextResponse.json({ 
       success: true,
@@ -178,6 +120,58 @@ export async function POST(req: NextRequest): Promise<NextResponse<ApiResponse>>
       success: false, 
       error: 'Internal server error' 
     }, { status: 500 });
+  }
+}
+
+// Helper function to handle XP operations asynchronously
+async function handleXPOperations(userId: string, questionDifficulty: number, usedHints: number, timeMs: number) {
+  try {
+    const supabase = createServerClient();
+
+    // Calculate XP
+    const baseXPGained = calculateXP(questionDifficulty, usedHints, timeMs);
+    const xpBoostInfo = await getActiveXPBoost(userId);
+    const finalXPGained = calculateXPWithBoost(baseXPGained, xpBoostInfo.multiplier);
+
+    console.log(`XP gained: ${baseXPGained} (base) x ${xpBoostInfo.multiplier} (boost) = ${finalXPGained} (final)`);
+
+    // Get current XP and update atomically
+    const { data: currentProgress } = await supabase
+      .from('user_progress')
+      .select('xp')
+      .eq('user_id', userId)
+      .single();
+
+    const currentXP = currentProgress?.xp || 0;
+    const newTotalXP = currentXP + finalXPGained;
+
+    // Update XP
+    await supabase
+      .from('user_progress')
+      .upsert({
+        user_id: userId,
+        xp: newTotalXP,
+        last_seen: new Date().toISOString().split('T')[0]
+      });
+
+    console.log(`XP updated: ${currentXP} + ${finalXPGained} = ${newTotalXP}`);
+
+    // Update milestones and daily quest in parallel
+    const [milestoneResult] = await Promise.allSettled([
+      updateXpMilestones(userId, newTotalXP),
+      updateDailyQuestAndStreak(userId)
+    ]);
+
+    if (milestoneResult.status === 'fulfilled' && milestoneResult.value.milestonesAchieved.length > 0) {
+      console.log(`🎉 XP milestones achieved: ${milestoneResult.value.milestonesAchieved.length}`);
+    }
+
+    // Invalidate cache
+    invalidateUserCache(userId);
+
+  } catch (error) {
+    console.error('XP operations failed:', error);
+    // Don't throw - this is fire-and-forget
   }
 }
 

@@ -21,6 +21,7 @@ interface QuizQuestionProps {
   isLastQuestion: boolean;
   hintsBalance: number;
   hintsLoading: boolean;
+  isTransitioning?: boolean;
 }
 
 export function QuizQuestion({
@@ -32,7 +33,8 @@ export function QuizQuestion({
   usedHints,
   isLastQuestion,
   hintsBalance,
-  hintsLoading
+  hintsLoading,
+  isTransitioning = false
 }: QuizQuestionProps) {
   const [showHint, setShowHint] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -317,10 +319,20 @@ export function QuizQuestion({
                 >
                   <Button
                     onClick={handleNext}
-                    className="w-full h-14 text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    disabled={isTransitioning}
+                    className="w-full h-14 text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 group"
                   >
-                    <Sparkles className="w-6 h-6 mr-2 group-hover:rotate-12 transition-transform" />
-                    {isLastQuestion ? '🏆 Quiz beenden' : '➡️ Nächste Frage'}
+                    {isTransitioning ? (
+                      <>
+                        <div className="w-6 h-6 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Speichere Antwort...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-6 h-6 mr-2 group-hover:rotate-12 transition-transform" />
+                        {isLastQuestion ? '🏆 Quiz beenden' : '➡️ Nächste Frage'}
+                      </>
+                    )}
                   </Button>
                 </motion.div>
               )}
