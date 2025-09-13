@@ -382,49 +382,55 @@ export function QuizPage({ topic }: QuizPageProps) {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      {/* Mobile-Optimized Quiz Layout */}
+      <div className="flex flex-col h-screen max-h-screen overflow-hidden md:h-auto md:max-h-none md:space-y-6 md:overflow-visible">
+        {/* Fixed Header - Progress */}
+        <div className="flex-shrink-0 pb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Card className="shadow-sm">
+              <CardContent className="p-4">
+                <QuizProgress
+                  current={currentQuestionIndex + 1}
+                  total={questions.length}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
 
-        {/* Progress Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Card>
-            <CardContent className="p-6">
-              <QuizProgress
-                current={currentQuestionIndex + 1}
-                total={questions.length}
-              />
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Scrollable Content - Question */}
+        <div className="flex-1 overflow-y-auto pb-4">
+          <motion.div
+            key={currentQuestionIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="shadow-lg h-full md:h-auto">
+              <CardContent className="p-4 h-full md:h-auto">
+                <QuizQuestion
+                  question={currentQuestion}
+                  answer={answers[currentQuestion.id]}
+                  onAnswer={handleAnswer}
+                  onNext={handleNext}
+                  isTransitioning={isTransitioning}
+                  onHintUsed={() => handleHintUsed(currentQuestion.id)}
+                  usedHints={usedHints[currentQuestion.id] || 0}
+                  isLastQuestion={isLastQuestion}
+                  hintsBalance={hintsBalance}
+                  hintsLoading={hintsLoading}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
 
-        {/* Question Section */}
-        <motion.div
-          key={currentQuestionIndex}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <Card className="shadow-lg">
-            <CardContent className="p-6">
-              <QuizQuestion
-                question={currentQuestion}
-                answer={answers[currentQuestion.id]}
-                onAnswer={handleAnswer}
-                onNext={handleNext}
-                isTransitioning={isTransitioning}
-                onHintUsed={() => handleHintUsed(currentQuestion.id)}
-                usedHints={usedHints[currentQuestion.id] || 0}
-                isLastQuestion={isLastQuestion}
-                hintsBalance={hintsBalance}
-                hintsLoading={hintsLoading}
-              />
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Fixed Footer - Navigation will be handled inside QuizQuestion */}
       </div>
     </MainLayout>
   );
