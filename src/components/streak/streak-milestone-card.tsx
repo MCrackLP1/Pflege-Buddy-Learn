@@ -187,13 +187,13 @@ export function StreakMilestoneCard({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-6 relative z-10">
+      <CardContent className="space-section relative z-10">
         {/* Current Streak Display - Gaming Style */}
         <div className="text-center p-6 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-xl border-2 border-orange-300/50 dark:border-orange-700/50">
-          <div className="text-5xl font-black bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+          <div className="text-display bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
             {currentStreak}
           </div>
-          <div className="text-lg font-semibold text-orange-700 dark:text-orange-300 mb-2">
+          <div className="text-body font-semibold text-orange-700 dark:text-orange-300 mb-2">
             🔥 Daily Quest Streak
           </div>
           

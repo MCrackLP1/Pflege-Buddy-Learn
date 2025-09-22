@@ -90,7 +90,7 @@ export function DashboardCard() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-section">
           {/* Hero Quest Card - Tägliche Session starten */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,33 +115,35 @@ export function DashboardCard() {
                     <Play className="w-8 h-8 text-white ml-1" />
                   </div>
                 </motion.div>
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                <CardTitle className="text-heading-1 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
                   🎮 Tägliche Quest starten!
                 </CardTitle>
-                <p className="text-muted-foreground text-lg">Sammle XP und erweitere dein Pflegewissen</p>
+                <p className="text-body text-muted-foreground">Sammle XP und erweitere dein Pflegewissen</p>
               </CardHeader>
               
-              <CardContent className="space-y-4 relative z-10">
+              <CardContent className="space-card relative z-10">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Button 
-                    className="w-full h-14 text-xl font-bold bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  <Button
+                    size="xl"
+                    className="w-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 group text-lg font-semibold"
                     onClick={() => router.push(createLocalizedPath(locale, '/quiz/random'))}
                   >
-                    <Play className="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" />
+                    <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                     ⚡ Sofort starten
-                    <Sparkles className="w-5 h-5 ml-2 group-hover:rotate-12 transition-transform" />
+                    <Sparkles className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
                   </Button>
                 </motion.div>
                 
-                <Button 
-                  variant="outline" 
-                  className="w-full h-12 text-lg font-semibold group"
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full group"
                   onClick={() => router.push(createLocalizedPath(locale, '/learn'))}
                 >
-                  <Trophy className="w-5 h-5 mr-2 group-hover:text-yellow-500 transition-colors" />
+                  <Trophy className="w-4 h-4 mr-2 group-hover:text-yellow-500 transition-colors" />
                   📚 Themen wählen
                 </Button>
               </CardContent>
@@ -155,14 +157,14 @@ export function DashboardCard() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-yellow-500" />
                   Status-Hub
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-4 md:gap-6">
                   {/* Serie (Flame) */}
                   <div className="text-center space-y-2">
                     <motion.div
@@ -240,8 +242,8 @@ export function DashboardCard() {
                 ? 'border-green-300 bg-green-50 dark:bg-green-900/20' 
                 : ''
             }`}>
-              <CardHeader className="flex flex-row items-center space-y-0 pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
+              <CardHeader className="flex flex-row items-center space-y-0 pb-4">
+                <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5 text-blue-500" />
                   📅 Daily Quest
                 </CardTitle>
@@ -251,14 +253,14 @@ export function DashboardCard() {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
                   >
-                    <Badge className="ml-auto bg-green-500 hover:bg-green-600">
+                    <Badge className="ml-auto bg-success hover:bg-success/90">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Abgeschlossen!
                     </Badge>
                   </motion.div>
                 )}
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-card">
                 <div className="flex items-center justify-between text-sm">
                   <span>5 Fragen richtig beantworten</span>
                   <span className="font-medium">{userProgress?.daily_quest_progress || 0}/5</span>
@@ -324,7 +326,7 @@ export function DashboardCard() {
           >
             <Card>
               <CardContent className="p-4">
-                <p className="text-xs text-center leading-relaxed text-muted-foreground">
+                <p className="text-caption text-center leading-relaxed">
                   {t('home.disclaimer')}
                 </p>
               </CardContent>

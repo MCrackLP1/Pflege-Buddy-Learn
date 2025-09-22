@@ -46,67 +46,66 @@ export function XpMilestoneCard({
   const progressToNextMilestone = Math.min((currentXp / nextMilestoneData.xpRequired) * 100, 100);
 
   return (
-    <Card className="relative overflow-hidden">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
+    <Card className="relative overflow-hidden card-game">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2">
           <Target className="h-5 w-5 text-blue-500" />
           {t('xp.xpMilestones') || 'XP Meilensteine'}
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-section">
         {/* Current XP Display */}
-        <div className="text-center">
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="text-center p-4 bg-surface-3 rounded-xl border border-primary/10">
+          <div className="text-display font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
             {currentXp}
           </div>
-          <div className="text-sm text-muted-foreground">
-            {t('xp.totalXp') || 'Gesamt-XP'}
+          <div className="text-caption">
+            ⭐ {t('xp.totalXp') || 'Gesamt-XP'}
           </div>
         </div>
 
         {/* Next Milestone Progress */}
         {nextMilestoneData && (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
+          <div className="p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl border-2 border-yellow-200/50 dark:border-yellow-700/50">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Trophy className="h-4 w-4 text-yellow-500" />
-                <span>{t('xp.nextMilestone') || 'Nächster Meilenstein'}</span>
+                <span className="font-medium">{t('xp.nextMilestone') || 'Nächster Meilenstein'}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Target className="h-3 w-3" />
-                <span className="font-medium">{nextMilestoneData.xpRequired} XP</span>
+                <span className="font-bold text-primary">{nextMilestoneData.xpRequired} XP</span>
               </div>
             </div>
 
             <Progress
               value={Math.min(progressToNextMilestone, 100)}
-              className="h-2"
+              className="h-3 mb-3"
             />
 
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                {xpToNext} {t('xp.xpToGo') || 'XP bis zum Ziel'}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                🎯 {xpToNext} {t('xp.xpToGo') || 'XP bis zum Ziel'}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 badge-success">
                 <Lightbulb className="h-3 w-3" />
                 <span>+{nextMilestoneData.freeHintsReward} {t('xp.freeHints') || 'gratis Hints'}</span>
               </div>
             </div>
-
           </div>
         )}
 
         {/* Last Achieved Milestone */}
         {lastMilestoneData && (
-          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-3">
-            <div className="flex items-start gap-2">
-              <Trophy className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-              <div className="text-xs">
-                <div className="font-medium text-green-700 dark:text-green-300 mb-1">
-                  {t('xp.lastMilestone') || 'Zuletzt erreicht'}: {lastMilestoneData.xpRequired} XP
+          <div className="status-success rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <Trophy className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="font-semibold text-success mb-2">
+                  🎉 {t('xp.lastMilestone') || 'Zuletzt erreicht'}: {lastMilestoneData.xpRequired} XP
                 </div>
-                <div className="text-muted-foreground">
+                <div className="text-body leading-relaxed">
                   {lastMilestoneData.rewardDescription}
                 </div>
               </div>
@@ -116,8 +115,10 @@ export function XpMilestoneCard({
 
         {/* No milestones available yet */}
         {currentXp === 0 && (
-          <div className="bg-secondary/50 rounded-lg p-3 text-xs text-center text-muted-foreground">
-            {t('xp.startLearning') || 'Beginne zu lernen und sammle XP!'}
+          <div className="bg-surface-3 rounded-xl p-4 text-center border border-primary/5">
+            <div className="text-body text-muted-foreground">
+              🚀 {t('xp.startLearning') || 'Beginne zu lernen und sammle XP!'}
+            </div>
           </div>
         )}
 

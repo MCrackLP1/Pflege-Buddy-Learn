@@ -26,8 +26,8 @@ export function Navigation() {
   const currentPath = pathname.split('/').slice(2).join('/') || '';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-      <div className="flex justify-around items-center py-2 px-4 max-w-md mx-auto">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg">
+      <div className="flex justify-around items-center py-3 px-4 max-w-md mx-auto">
         {navigationItems.map(({ key, icon: Icon, path }) => {
           const href = createLocalizedPath(locale, path);
           const isActive = currentPath === path || (path === '' && currentPath === '');
@@ -36,16 +36,15 @@ export function Navigation() {
             <Button
               key={key}
               variant="ghost"
-              size="sm"
               onClick={() => router.push(href)}
               className={cn(
-                "flex flex-col items-center gap-1 h-auto py-2 px-3 min-h-[44px]",
-                isActive && "text-primary"
+                "flex flex-col items-center gap-1 h-auto py-2 px-3 min-h-[52px] rounded-xl transition-all duration-200",
+                isActive && "bg-primary/10 text-primary shadow-sm"
               )}
               aria-label={t(`nav.${key}` as keyof typeof t) || key}
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-xs font-medium">
+              <Icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} />
+              <span className={cn("text-xs font-medium transition-colors duration-200", isActive && "font-semibold")}>
                 {t(`nav.${key}` as keyof typeof t) || key}
               </span>
             </Button>

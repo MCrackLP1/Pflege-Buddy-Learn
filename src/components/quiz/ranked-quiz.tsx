@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { CountdownTimer } from '@/components/ui/countdown-timer';
 import { Lightbulb, ExternalLink, Trophy, Target, Clock } from 'lucide-react';
 import type { QuestionWithChoices } from '@/lib/db/schema';
@@ -324,18 +325,20 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
       {/* Question Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg leading-relaxed">
+          <CardTitle className="text-heading-3 leading-relaxed">
             {currentQuestion.stem}
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="px-2 py-1 bg-secondary rounded-full">
+          <div className="flex items-center gap-2 text-caption">
+            <Badge variant="secondary" className="text-xs">
               {currentQuestion.type === 'mc' ? t('quiz.multipleChoice') : t('quiz.trueFalse')}
-            </span>
-            <span>Schwierigkeit: {currentQuestion.difficulty}/5</span>
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              Schwierigkeit: {currentQuestion.difficulty}/5
+            </Badge>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-card">
           {/* Answer Options */}
           {currentQuestion.type === 'mc' ? (
             <RadioGroup
@@ -386,14 +389,15 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
           {/* Hint Section */}
           {canShowHint && !quizState.showFeedback && (
-            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-              <div className="text-sm">
-                Verfügbare Hints: {hintsBalance}
+            <div className="flex items-center justify-between p-4 bg-surface-3 rounded-xl border border-primary/10">
+              <div className="text-sm font-medium">
+                💡 Verfügbare Hints: {hintsBalance}
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleHintUsed}
+                className="hover:bg-primary/5"
               >
                 <Lightbulb className="h-4 w-4 mr-1" />
                 {t('quiz.hint')}
@@ -403,10 +407,10 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
           {/* Show Hint */}
           {quizState.usedHints > 0 && currentQuestion.hints && (
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <div className="flex items-start gap-2">
-                <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm leading-relaxed">
+            <div className="p-4 bg-info/10 border border-info/20 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Lightbulb className="h-5 w-5 text-info mt-0.5 shrink-0" />
+                <p className="text-body leading-relaxed">
                   {currentQuestion.hints[quizState.usedHints - 1]}
                 </p>
               </div>

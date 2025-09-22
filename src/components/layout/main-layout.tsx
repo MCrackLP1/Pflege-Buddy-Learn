@@ -27,7 +27,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <ScriptManager>
-          <main className="flex-1 p-4 max-w-md mx-auto w-full">
+          <main className="flex-1 page-container">
             {children}
           </main>
         </ScriptManager>
@@ -40,7 +40,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <ScriptManager>
-        <main className="flex-1 p-4 pb-20 max-w-md mx-auto w-full">
+        <main className="flex-1 page-container">
           {children}
         </main>
       </ScriptManager>

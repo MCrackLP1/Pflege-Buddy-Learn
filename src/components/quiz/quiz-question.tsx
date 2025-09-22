@@ -93,18 +93,20 @@ export function QuizQuestion({
       {/* Question Card - Ranked Style */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg leading-relaxed">
+          <CardTitle className="text-heading-3 leading-relaxed">
             {question.stem}
           </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="px-2 py-1 bg-secondary rounded-full">
+          <div className="flex items-center gap-2 text-caption">
+            <Badge variant="secondary" className="text-xs">
               {question.type === 'mc' ? t('quiz.multipleChoice') : t('quiz.trueFalse')}
-            </span>
-            <span>Schwierigkeit: {question.difficulty}/5</span>
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              Schwierigkeit: {question.difficulty}/5
+            </Badge>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-card">
           {/* Answer Options */}
           {question.type === 'mc' ? (
             <RadioGroup
@@ -155,14 +157,15 @@ export function QuizQuestion({
 
           {/* Hint Section */}
           {canShowHint && !showFeedback && (
-            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-              <div className="text-sm">
-                Verfügbare Hints: {hintsBalance}
+            <div className="flex items-center justify-between p-4 bg-surface-3 rounded-xl border border-primary/10">
+              <div className="text-sm font-medium">
+                💡 Verfügbare Hints: {hintsBalance}
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleHint}
+                className="hover:bg-primary/5"
               >
                 <Lightbulb className="h-4 w-4 mr-1" />
                 {t('quiz.hint')}
@@ -172,10 +175,10 @@ export function QuizQuestion({
 
           {/* Show Hint */}
           {showHint && question.hints && (
-            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <div className="flex items-start gap-2">
-                <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm leading-relaxed">
+            <div className="p-4 bg-info/10 border border-info/20 rounded-xl">
+              <div className="flex items-start gap-3">
+                <Lightbulb className="h-5 w-5 text-info mt-0.5 shrink-0" />
+                <p className="text-body leading-relaxed">
                   {question.hints[usedHints - 1]}
                 </p>
               </div>
@@ -190,7 +193,7 @@ export function QuizQuestion({
               className="w-full"
               size="lg"
             >
-              {t('quiz.submit')}
+              ✅ {t('quiz.submit')}
             </Button>
           )}
         </CardContent>
