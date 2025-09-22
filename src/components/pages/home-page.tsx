@@ -36,17 +36,17 @@ import {
 // Loading Animation Component
 function LoadingAnimation() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="text-center space-y-6">
         <div className="relative">
           <div className="w-20 h-20 mx-auto">
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 animate-spin opacity-75"></div>
-            <div className="absolute inset-2 rounded-full bg-white dark:bg-gray-800"></div>
+            <div className="absolute inset-2 rounded-full bg-gray-800"></div>
             <Heart className="w-8 h-8 text-blue-600 absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-xl font-semibold text-white">
             PflegeBuddy Learn lädt...
           </h2>
           <div className="flex justify-center space-x-1">
@@ -302,7 +302,7 @@ function ModernHeroSection() {
   // Main render logic - ModernHeroSection is only called when no session exists
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -315,7 +315,7 @@ function ModernHeroSection() {
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200/20 dark:bg-blue-800/20 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-600/30 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -327,7 +327,7 @@ function ModernHeroSection() {
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-200/20 dark:bg-green-800/20 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-600/30 rounded-full blur-3xl"
         />
       </div>
 
@@ -341,7 +341,7 @@ function ModernHeroSection() {
           {/* Left Column - Content */}
           <div className="space-y-8">
             <motion.div variants={itemVariants} className="space-y-4">
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+              <Badge variant="secondary" className="bg-blue-900/50 text-blue-300 border-blue-700">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Für professionelle Pflegekräfte
               </Badge>
@@ -517,8 +517,8 @@ function ModernHeroSection() {
                   <div className="space-y-3">
                     {trustIndicators.map((indicator, index) => (
                       <div key={index} className="flex items-start space-x-3">
-                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
-                          <div className="text-blue-600 dark:text-blue-400">
+                        <div className="w-8 h-8 bg-blue-900/50 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="text-blue-400">
                             {indicator.icon}
                           </div>
                         </div>
@@ -899,7 +899,7 @@ export function HomePage() {
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl" 
+              className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/25 rounded-full blur-3xl" 
             />
             <motion.div 
               animate={{
@@ -911,7 +911,7 @@ export function HomePage() {
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 dark:bg-secondary/20 rounded-full blur-3xl" 
+              className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/25 rounded-full blur-3xl" 
             />
             <motion.div 
               animate={{
@@ -924,7 +924,7 @@ export function HomePage() {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="absolute top-1/2 left-1/2 w-48 h-48 bg-accent/10 dark:bg-accent/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2" 
+              className="absolute top-1/2 left-1/2 w-48 h-48 bg-indigo-600/25 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2" 
             />
           </div>
 
