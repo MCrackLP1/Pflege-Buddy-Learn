@@ -889,8 +889,43 @@ export function HomePage() {
         <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background relative overflow-hidden" aria-labelledby="features-heading">
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+            <motion.div 
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 90, 180],
+              }}
+              transition={{
+                duration: 15,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 dark:bg-primary/20 rounded-full blur-3xl" 
+            />
+            <motion.div 
+              animate={{
+                scale: [1.1, 1, 1.1],
+                rotate: [180, 90, 0],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 dark:bg-secondary/20 rounded-full blur-3xl" 
+            />
+            <motion.div 
+              animate={{
+                scale: [1, 1.3, 1],
+                x: [0, 30, 0],
+                y: [0, -20, 0],
+              }}
+              transition={{
+                duration: 22,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-1/2 left-1/2 w-48 h-48 bg-accent/10 dark:bg-accent/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2" 
+            />
           </div>
 
           <div className="max-w-6xl mx-auto relative z-10">

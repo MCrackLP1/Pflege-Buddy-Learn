@@ -196,9 +196,12 @@
   }
 
   html {
-    @apply dark;
     /* Prevent horizontal scrolling */
     overflow-x: hidden;
+  }
+  
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
