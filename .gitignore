@@ -59,6 +59,7 @@ coverage
 # COMPREHENSIVE IDE Coverage
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 *.swn

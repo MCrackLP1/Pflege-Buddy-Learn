@@ -1,1 +1,31 @@
+# Cursor IDE specific ignores
+agents/
+*.mdc.backup
+*.md.backup
 
+# Node.js and build artifacts
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Environment and secrets
+.env*
+!.env.template
+!.env.example
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
