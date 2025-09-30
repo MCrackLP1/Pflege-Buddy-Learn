@@ -136,7 +136,8 @@ export function extractTopicsFromQuestions(questions: QuestionWithCitations[]): 
   const foundTopics = new Set<string>();
 
   questions.forEach(question => {
-    const explanation: string = (question as any).explanationMd || (question as any).explanation_md || '';
+    const explanation: string = (question as { explanationMd?: string; explanation_md?: string }).explanationMd ||
+                                 (question as { explanationMd?: string; explanation_md?: string }).explanation_md || '';
     const text = (question.stem + ' ' + explanation).toLowerCase();
 
     Object.entries(topicKeywords).forEach(([topic, keywords]) => {

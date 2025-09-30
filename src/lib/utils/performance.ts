@@ -3,6 +3,8 @@
  * on low-end devices and respecting user preferences
  */
 
+import type { ExtendedNavigator } from '@/types/components';
+
 // Check if user prefers reduced motion
 export const prefersReducedMotion = (): boolean => {
   if (typeof window === 'undefined') return false;
@@ -43,8 +45,9 @@ export const getDeviceCapabilities = (): DeviceCapabilities => {
   }
 
   try {
-    const connection = (navigator as any).connection;
-    const deviceMemory = (navigator as any).deviceMemory;
+    const extendedNavigator = navigator as ExtendedNavigator;
+    const connection = extendedNavigator.connection;
+    const deviceMemory = extendedNavigator.deviceMemory;
     const hardwareConcurrency = navigator.hardwareConcurrency;
 
     // Check for low-end device indicators
@@ -57,7 +60,7 @@ export const getDeviceCapabilities = (): DeviceCapabilities => {
     const isLowMemory = deviceMemory && deviceMemory < 4;
     const isLowConcurrency = hardwareConcurrency && hardwareConcurrency < 4;
 
-    const isLowEnd = isSlowConnection || isLowMemory || isLowConcurrency;
+    const isLowEnd = Boolean(isSlowConnection || isLowMemory || isLowConcurrency);
 
     // Check WebGL support for complex animations
     let supportsWebGL = false;
@@ -105,7 +108,7 @@ export const getDeviceCapabilities = (): DeviceCapabilities => {
 };
 
 // Debounce function for performance optimization
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
   immediate?: boolean
@@ -128,7 +131,7 @@ export const debounce = <T extends (...args: any[]) => any>(
 };
 
 // Throttle function for scroll and resize events
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
@@ -164,16 +167,18 @@ export const createOptimizedIntersectionObserver = (
 export const requestAnimationFrame = (() => {
   if (typeof window === 'undefined') return (cb: () => void) => setTimeout(cb, 16);
 
+  const extendedWindow = window as unknown as ExtendedNavigator & Window;
   return window.requestAnimationFrame ||
-         (window as any).webkitRequestAnimationFrame ||
+         extendedWindow.webkitRequestAnimationFrame ||
          ((cb: () => void) => setTimeout(cb, 16));
 })();
 
 export const cancelAnimationFrame = (() => {
   if (typeof window === 'undefined') return (id: number) => clearTimeout(id);
 
+  const extendedWindow = window as unknown as ExtendedNavigator & Window;
   return window.cancelAnimationFrame ||
-         (window as any).webkitCancelAnimationFrame ||
+         extendedWindow.webkitCancelAnimationFrame ||
          ((id: number) => clearTimeout(id));
 })();
 

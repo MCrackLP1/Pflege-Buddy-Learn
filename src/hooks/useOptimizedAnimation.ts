@@ -9,7 +9,7 @@ export interface AnimationConfig {
   disabled?: boolean;
   delay?: number;
   duration?: number;
-  ease?: string | number[];
+  ease?: any;
 }
 
 // Global state to avoid duplicate device capability checks

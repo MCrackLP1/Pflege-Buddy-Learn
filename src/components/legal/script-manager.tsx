@@ -115,7 +115,7 @@ function unloadFunctionalScripts() {
 // Type definitions for gtag (if using Google Analytics)
 declare global {
   interface Window {
-    dataLayer: any[];
-    gtag: (...args: any[]) => void;
+    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
   }
 }

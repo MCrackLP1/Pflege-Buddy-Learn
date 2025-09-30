@@ -188,6 +188,34 @@ export interface SchemaMarkupProps {
 }
 
 // ============================================================================
+// BROWSER API TYPES
+// ============================================================================
+
+// Network Information API
+export interface NetworkInformation {
+  readonly effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
+  readonly type?: 'bluetooth' | 'cellular' | 'ethernet' | 'none' | 'wifi' | 'wimax' | 'other' | 'unknown';
+  readonly downlink: number;
+  readonly downlinkMax?: number;
+  readonly rtt: number;
+  readonly saveData: boolean;
+  onchange: ((this: NetworkInformation, ev: Event) => any) | null;
+}
+
+// Extended Navigator interface
+export interface ExtendedNavigator extends Navigator {
+  connection?: NetworkInformation;
+  deviceMemory?: number;
+  webkitRequestAnimationFrame?: (callback: FrameRequestCallback) => number;
+  webkitCancelAnimationFrame?: (id: number) => void;
+}
+
+// Framer Motion easing types
+export type EasingFunction = (t: number) => number;
+export type EasingType = 'linear' | 'easeIn' | 'easeOut' | 'easeInOut' | 'circIn' | 'circOut' | 'circInOut' |
+                        'backIn' | 'backOut' | 'backInOut' | 'anticipate' | string | EasingFunction;
+
+// ============================================================================
 // UTILITY TYPES FOR COMPONENTS
 // ============================================================================
 
