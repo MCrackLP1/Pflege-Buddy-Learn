@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Head from 'next/head';
+import type { FlexibleSchemaData } from '@/types/components';
 
 interface SchemaMarkupProps {
   type: 'website' | 'article' | 'educational' | 'quiz' | 'question';
@@ -50,8 +51,8 @@ export function SchemaMarkup({
 }: SchemaMarkupProps) {
   const pathname = usePathname();
 
-  const generateSchemaData = () => {
-    const baseSchema: any = {
+  const generateSchemaData = (): FlexibleSchemaData[] => {
+    const baseSchema: FlexibleSchemaData = {
       "@context": "https://schema.org",
       "@type": type === 'website' ? 'WebSite' :
               type === 'article' ? 'Article' :

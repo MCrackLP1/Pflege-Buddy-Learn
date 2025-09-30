@@ -139,7 +139,7 @@ export function QuizFeedback({
                           "@type": "ScholarlyArticle",
                           "headline": question.stem,
                           "description": question.explanationMd?.substring(0, 200) + '...',
-                          "dateModified": (citation.accessedAt instanceof Date ? citation.accessedAt : new Date(citation.accessedAt as any)).toISOString().split('T')[0]
+                          "dateModified": (citation.accessedAt instanceof Date ? citation.accessedAt : new Date(citation.accessedAt as string | number)).toISOString().split('T')[0]
                         }
                       })
                     }}

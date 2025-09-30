@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Session, User } from '@supabase/supabase-js';
+import type { GoogleOAuthError } from '@/types/components';
 
 interface AuthError {
   message: string;
@@ -76,7 +77,7 @@ export function AuthProvider({
         throw oauthError;
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('OAuth sign-in error:', err);
       setLoading(false);
 
@@ -84,16 +85,17 @@ export function AuthProvider({
       let errorType: AuthError['type'] = 'unknown';
       let errorCode: string | undefined;
 
-      if (err.message?.includes('network') || err.message?.includes('fetch')) {
+      const oauthError = err as GoogleOAuthError;
+      if (oauthError.message?.includes('network') || oauthError.message?.includes('fetch')) {
         errorMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.';
         errorType = 'network';
-      } else if (err.message?.includes('popup') || err.message?.includes('blocked')) {
+      } else if (oauthError.message?.includes('popup') || oauthError.message?.includes('blocked')) {
         errorMessage = 'Popup-Fenster wurde blockiert. Bitte erlauben Sie Popups für diese Seite und versuchen Sie es erneut.';
         errorType = 'oauth';
-      } else if (err.message?.includes('cancelled') || err.message?.includes('denied')) {
+      } else if (oauthError.message?.includes('cancelled') || oauthError.message?.includes('denied')) {
         errorMessage = 'Anmeldung wurde abgebrochen. Bitte versuchen Sie es erneut.';
         errorType = 'user_cancelled';
-      } else if (err.message?.includes('invalid') || err.message?.includes('unauthorized')) {
+      } else if (oauthError.message?.includes('invalid') || oauthError.message?.includes('unauthorized')) {
         errorMessage = 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.';
         errorType = 'oauth';
       }
@@ -114,7 +116,7 @@ export function AuthProvider({
       setLoading(false);
       // Navigate to home page after sign out
       router.push('/');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Sign out error:', err);
       setLoading(false);
       setError({
