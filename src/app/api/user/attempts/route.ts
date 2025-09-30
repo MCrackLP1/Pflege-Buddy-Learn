@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { ApiResponse, ReviewItemData } from '@/types/api.types';
+import type { Database } from '@/types/database.types';
 
 
 export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: ReviewItemData[] }>>> {
@@ -36,7 +37,22 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
     if (attemptsError) throw attemptsError;
 
     // Transform attempts for review page
-    const reviewItems = (attempts || []).map((attempt: { questions?: { type?: string; stem?: string; choices?: Array<{ id: string; label: string; isCorrect: boolean }> }; user_answer?: string; is_correct?: boolean; created_at?: string }) => {
+    const reviewItems = (attempts || []).map((attempt: {
+      id: string;
+      question_id: string;
+      is_correct: boolean;
+      created_at: string;
+      user_answer?: string;
+      questions?: {
+        stem: string;
+        explanation_md?: string;
+        type: string;
+        tf_correct_answer?: boolean;
+        choices?: Database['public']['Tables']['choices']['Row'][];
+        citations?: Database['public']['Tables']['citations']['Row'][];
+        topics?: { title: string };
+      };
+    }) => {
       const question = attempt.questions;
       let userAnswer = '';
       let correctAnswer = '';
@@ -54,7 +70,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
 
       if (question.type === 'tf') {
         // For True/False questions, we need to find the correct answer from choices
-        const correctChoice = question.choices?.find(c => c.isCorrect);
+        const correctChoice = question.choices?.find(c => c.is_correct);
         const correctAnswerValue = correctChoice?.label || 'Unbekannt';
         userAnswer = attempt.is_correct ? correctAnswerValue : (correctAnswerValue === 'Wahr' ? 'Falsch' : 'Wahr');
         correctAnswer = correctAnswerValue;
@@ -62,20 +78,20 @@ export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: Re
         // For MC questions, we need to reconstruct which choice was selected
         // This is complex, so for now we'll show simplified version
         userAnswer = attempt.is_correct ? 'Richtig beantwortet' : 'Falsch beantwortet';
-        const correctChoice = question.choices?.find((c: any) => c.isCorrect);
+        const correctChoice = question.choices?.find((c: Database['public']['Tables']['choices']['Row']) => c.is_correct);
         correctAnswer = correctChoice?.label || 'Unbekannt';
       }
 
       return {
-        id: (attempt as any).question_id || (attempt as any).id || 'unknown',
+        id: attempt.question_id || attempt.id || 'unknown',
         question: question.stem || 'Frage nicht verfügbar',
         userAnswer,
         correctAnswer,
         isCorrect: attempt.is_correct || false,
-        explanation: (question as any).explanation_md || 'Keine Erklärung verfügbar',
-        topic: (question as any).topics?.title || 'Unbekannt',
+        explanation: question.explanation_md || 'Keine Erklärung verfügbar',
+        topic: question.topics?.title || 'Unbekannt',
         completedAt: attempt.created_at || new Date().toISOString(),
-        citations: ((question as any).citations || []).map((c: any) => ({
+        citations: (question.citations || []).map((c: Database['public']['Tables']['citations']['Row']) => ({
           id: c.id,
           url: c.url,
           title: c.title,

@@ -10,7 +10,7 @@ export const prefersReducedMotion = (): boolean => {
   try {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     return mediaQuery.matches;
-  } catch (error) {
+  } catch {
     // Fallback for older browsers or SSR
     return false;
   }
@@ -74,7 +74,7 @@ export const getDeviceCapabilities = (): DeviceCapabilities => {
       if (canvas.parentNode) {
         canvas.parentNode.removeChild(canvas);
       }
-    } catch (e) {
+    } catch {
       supportsWebGL = false;
     }
 
@@ -90,7 +90,7 @@ export const getDeviceCapabilities = (): DeviceCapabilities => {
     deviceCapabilitiesCache = capabilities;
 
     return capabilities;
-  } catch (error) {
+  } catch {
     // Fallback for any detection errors
     const fallbackCapabilities: DeviceCapabilities = {
       isLowEnd: false,

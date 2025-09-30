@@ -41,7 +41,7 @@ class SafeStorage {
           this.storage = sessionStorage;
           console.log('✅ sessionStorage available as fallback');
         }
-      } catch (sessionError) {
+      } catch {
         console.warn('⚠️ sessionStorage also not available, using memory storage');
         // Will use in-memory fallback
       }

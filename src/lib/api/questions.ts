@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import type { QuestionWithChoices } from '@/lib/db/schema';
+import type { Database } from '@/types/database.types';
 
 /**
  * Fetch questions for a specific topic from database using Supabase client
@@ -69,13 +70,13 @@ export async function getQuestionsByTopic(
       hints: q.hints || [],
       tfCorrectAnswer: q.tf_correct_answer,
       createdAt: new Date(q.created_at),
-      choices: (q.choices || []).map((c: any) => ({
+      choices: (q.choices || []).map((c: Database['public']['Tables']['choices']['Row']) => ({
         id: c.id,
         questionId: c.question_id,
         label: c.label,
         isCorrect: c.is_correct, // Map snake_case to camelCase
       })),
-      citations: (q.citations || []).map((c: any) => ({
+      citations: (q.citations || []).map((c: Database['public']['Tables']['citations']['Row']) => ({
         id: c.id,
         questionId: c.question_id,
         url: c.url,
@@ -139,13 +140,13 @@ export async function getRandomQuestions(count: number = 10): Promise<QuestionWi
         hints: q.hints || [],
         tfCorrectAnswer: q.tf_correct_answer,
         createdAt: new Date(q.created_at),
-        choices: (q.choices || []).map((c: any) => ({
+        choices: (q.choices || []).map((c: Database['public']['Tables']['choices']['Row']) => ({
           id: c.id,
           questionId: c.question_id,
           label: c.label,
           isCorrect: c.is_correct, // Map snake_case to camelCase
         })),
-        citations: (q.citations || []).map((c: any) => ({
+        citations: (q.citations || []).map((c: Database['public']['Tables']['citations']['Row']) => ({
           id: c.id,
           questionId: c.question_id,
           url: c.url,

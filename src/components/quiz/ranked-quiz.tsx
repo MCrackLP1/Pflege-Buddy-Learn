@@ -84,7 +84,7 @@ export function RankedQuiz({ onEndSession, onUpdateStats }: RankedQuizProps) {
 
     // Always shuffle for new questions or if no previous shuffle exists
     return shuffleArray(quizState.currentQuestion.choices);
-  }, [quizState.currentQuestion?.id, quizState.currentQuestion?.type, quizState.currentQuestion?.choices]);
+  }, [quizState.currentQuestion]);
   // Removed freeHintsLeft - using unified hints system
 
   // Initialize session

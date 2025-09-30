@@ -51,7 +51,7 @@ export async function GET(): Promise<NextResponse<ApiResponse<{
     // Note: Streak management is now handled when users answer questions
 
     // Get updated user progress after streak check/reset
-    const { data: userProgress, error: _progressError } = await supabase
+    const { data: userProgress } = await supabase
       .from('user_progress')
       .select('*')
       .eq('user_id', user.id)

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
+import Image from 'next/image';
 import { useAuth } from '@/components/providers/auth-provider';
 import { AuthCard } from '@/components/auth/auth-card';
 import { DashboardCard } from '@/components/dashboard/dashboard-card';
@@ -60,12 +61,11 @@ function LoadingAnimation() {
 }
 
 // Enhanced Feature Card Component
-function FeatureCard({ icon: Icon, title, description, delay = 0, link: _link, onClick }: {
+function FeatureCard({ icon: Icon, title, description, delay = 0, onClick }: {
   icon: LucideIcon,
   title: string,
   description: string,
   delay?: number,
-  link?: string,
   onClick?: () => void
 }) {
   const { shouldAnimate, getTransition } = useOptimizedAnimation({ delay });
@@ -118,12 +118,11 @@ function FeatureCard({ icon: Icon, title, description, delay = 0, link: _link, o
   );
 }
 
-function CategoryCard({ icon: Icon, title, description, example, link: _link, onClick }: {
+function CategoryCard({ icon: Icon, title, description, example, onClick }: {
   icon: LucideIcon;
   title: string;
   description: string;
   example?: { question: string; answer: string };
-  link?: string;
   onClick?: () => void;
 }) {
   const categoryContent = (
@@ -616,7 +615,7 @@ function NameInputModal({ onSave, onSkip }: { onSave: (name: string) => void; on
 }
 
 export function HomePage() {
-  const { session, loading, signIn: _signIn } = useAuth();
+  const { session, loading } = useAuth();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const [showNameModal, setShowNameModal] = useState(false);
   const locale = useLocale();
@@ -732,12 +731,12 @@ export function HomePage() {
               {/* Logo & Brand */}
               <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0">
-                  <img
+                  <Image
                     src="/favicon/logo.webp"
                     alt="PflegeBuddy Logo"
                     className="h-10 w-auto"
-                    width="40"
-                    height="40"
+                    width={40}
+                    height={40}
                     loading="lazy"
                   />
                 </div>
@@ -1083,12 +1082,12 @@ export function HomePage() {
             <div className="grid md:grid-cols-3 gap-8">
               <div>
                 <div className="flex items-center space-x-3 mb-4">
-                  <img
+                  <Image
                     src="/favicon/logo.webp"
                     alt="PflegeBuddy Logo"
                     className="h-8 w-auto"
-                    width="32"
-                    height="32"
+                    width={32}
+                    height={32}
                     loading="lazy"
                   />
                   <span className="text-lg font-bold text-foreground">{tNavbar('brand')}</span>

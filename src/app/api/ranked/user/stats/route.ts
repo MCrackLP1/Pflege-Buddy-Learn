@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { ApiResponse } from '@/types/api.types';
 
-export async function GET(_req: NextRequest): Promise<NextResponse<ApiResponse>> {
+export async function GET(): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = createServerClient();
 

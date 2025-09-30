@@ -86,7 +86,6 @@ export default function RootLayout({
           href="/fonts.css"
           as="style"
         />
-        <link href="/fonts.css" rel="stylesheet" />
       </head>
       <body className={inter.className}>
         {children}

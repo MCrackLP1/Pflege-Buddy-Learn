@@ -54,7 +54,7 @@ export function QuizQuestion({
   const shuffledChoices = useMemo(() => {
     if (!question || question.type !== 'mc' || !question.choices) return [];
     return shuffleArray(question.choices);
-  }, [question?.id, question?.type, question?.choices]);
+  }, [question]);
 
   // Calculate if the current answer is correct
   const isCurrentAnswerCorrect = () => {

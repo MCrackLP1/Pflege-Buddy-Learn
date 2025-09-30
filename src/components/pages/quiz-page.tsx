@@ -168,7 +168,7 @@ export function QuizPage({ topic }: QuizPageProps) {
         [currentQuestion.id]: Date.now()
       }));
     }
-  }, [currentQuestion?.id, questionStartTimes]);
+  }, [currentQuestion, questionStartTimes]);
 
   // Loading state
   if (loading) {

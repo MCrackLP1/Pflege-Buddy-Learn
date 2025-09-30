@@ -2,6 +2,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { apiCache, cacheKeys } from '@/lib/cache';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 import type { UserProgressData } from '@/types/api.types';
+import type { Database } from '@/types/database.types';
 
 /**
  * Performance-optimized question fetching with caching and single-query optimization
@@ -44,7 +45,11 @@ export async function getOptimizedQuestionsByTopic(
   }
 
   // Transform and cache
-  const transformedQuestions = (questionsData || []).map((q: any) => ({
+  const transformedQuestions = (questionsData || []).map((q: Database['public']['Tables']['questions']['Row'] & {
+    choices?: Database['public']['Tables']['choices']['Row'][];
+    citations?: Database['public']['Tables']['citations']['Row'][];
+    topics?: { title: string }[];
+  }) => ({
     id: q.id,
     topicId: q.topic_id,
     type: q.type,

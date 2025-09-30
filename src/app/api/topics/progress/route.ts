@@ -42,8 +42,12 @@ export async function GET() {
       const totalQuestions = topic.questions?.length || 0;
       
       // Get user attempts for this topic
-      const topicAttempts = (attempts || []).filter((attempt: any) =>
-        attempt.questions?.topic_id === topic.id
+      const topicAttempts = (attempts || []).filter((attempt: {
+        question_id: string;
+        is_correct: boolean;
+        questions: { topic_id: string }[];
+      }) =>
+        attempt.questions?.[0]?.topic_id === topic.id
       );
 
       // Get unique correct questions (user might have attempted same question multiple times)
