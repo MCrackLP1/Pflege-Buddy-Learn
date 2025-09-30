@@ -51,7 +51,6 @@ export function ProfilePage() {
   const tCommon = useTranslations('common');
   const tComponents = useTranslations('components');
   const tErrors = useTranslations('errors');
-  const tValidation = useTranslations('validation');
   const locale = useLocale();
   const { user, signOut } = useAuth();
   const router = useRouter();

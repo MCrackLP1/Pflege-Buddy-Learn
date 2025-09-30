@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Star, Flame, RotateCcw, Eye, Play, Sparkles, Target } from 'lucide-react';
+import { Trophy, Star, Flame, Eye, Play, Sparkles, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface QuizResultsProps {

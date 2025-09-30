@@ -7,7 +7,7 @@ type Props = {
 };
 
 export async function GET(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: Props
 ): Promise<NextResponse<ApiResponse>> {
   try {

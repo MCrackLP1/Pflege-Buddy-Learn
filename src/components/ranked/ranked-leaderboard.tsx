@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Trophy, Medal, Award, Target, Clock } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 interface LeaderboardEntry {
   id: string;
@@ -55,32 +54,6 @@ export function RankedLeaderboard() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
-
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Trophy className="h-5 w-5 text-yellow-500" />;
-      case 2:
-        return <Medal className="h-5 w-5 text-gray-400" />;
-      case 3:
-        return <Award className="h-5 w-5 text-amber-600" />;
-      default:
-        return <span className="text-lg font-bold text-muted-foreground">#{rank}</span>;
-    }
-  };
-
-  const getRankBadgeVariant = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return 'default';
-      case 2:
-        return 'secondary';
-      case 3:
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
 
   if (loading) {
     return (

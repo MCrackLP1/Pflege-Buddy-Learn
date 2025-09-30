@@ -5,18 +5,13 @@ import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Trophy, Target, Lightbulb } from 'lucide-react';
-import type { XpMilestone } from '@/lib/db/schema';
 
 interface XpMilestoneCardProps {
   currentXp: number;
-  nextMilestone?: XpMilestone;
-  lastMilestone?: XpMilestone;
 }
 
 export function XpMilestoneCard({
   currentXp,
-  nextMilestone,
-  lastMilestone,
 }: XpMilestoneCardProps) {
   const t = useTranslations();
 

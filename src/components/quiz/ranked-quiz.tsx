@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CountdownTimer } from '@/components/ui/countdown-timer';
-import { Lightbulb, ExternalLink, Trophy, Target, Clock } from 'lucide-react';
+import { Lightbulb, Trophy, Target, Clock } from 'lucide-react';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 
 interface RankedQuizProps {

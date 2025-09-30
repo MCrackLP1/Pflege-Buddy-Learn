@@ -274,13 +274,11 @@ export function QuestionSchemaMarkup({
 export function QuizSchemaMarkup({
   title,
   description,
-  questionCount,
   topics,
   difficulty
 }: {
   title: string;
   description: string;
-  questionCount: number;
   topics: string[];
   difficulty: number;
 }) {

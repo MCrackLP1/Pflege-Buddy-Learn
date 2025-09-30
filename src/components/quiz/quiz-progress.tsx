@@ -1,7 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Target, Zap, Trophy } from 'lucide-react';
@@ -13,7 +11,6 @@ interface QuizProgressProps {
 }
 
 export function QuizProgress({ current, total }: QuizProgressProps) {
-  const t = useTranslations('quiz');
   const progressPercent = (current / total) * 100;
   const isNearEnd = current >= total * 0.8; // Last 20% of questions
 

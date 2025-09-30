@@ -9,10 +9,8 @@ import { QuizQuestion } from '@/components/quiz/quiz-question';
 import { QuizResults } from '@/components/quiz/quiz-results';
 import { QuizProgress } from '@/components/quiz/quiz-progress';
 import { calculateXP } from '@/lib/utils/quiz';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Brain, Sparkles } from 'lucide-react';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 
 interface QuizPageProps {

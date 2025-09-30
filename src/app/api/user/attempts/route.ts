@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import type { ApiResponse, ReviewItemData, SupabaseChoice, SupabaseCitation } from '@/types/api.types';
+import type { ApiResponse, ReviewItemData } from '@/types/api.types';
 
 
 export async function GET(): Promise<NextResponse<ApiResponse<{ review_items: ReviewItemData[] }>>> {

@@ -152,7 +152,7 @@ export function extractTopicsFromQuestions(questions: QuestionWithCitations[]): 
 /**
  * Generate internal linking suggestions for SEO
  */
-export function generateInternalLinks(sourceUrl: string, relatedTopics: string[]): Array<{
+export function generateInternalLinks(relatedTopics: string[]): Array<{
   url: string;
   anchorText: string;
   title: string;

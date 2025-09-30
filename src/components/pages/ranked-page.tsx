@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { createLocalizedPath } from '@/lib/navigation';
 import { MainLayout } from '@/components/layout/main-layout';
 import { RankedQuiz } from '@/components/quiz/ranked-quiz';
 import { RankedLeaderboard } from '@/components/ranked/ranked-leaderboard';
@@ -21,8 +18,6 @@ type RankedStats = {
 type PageState = 'menu' | 'playing' | 'results';
 
 export function RankedPage() {
-  const t = useTranslations();
-  const router = useRouter();
   const [pageState, setPageState] = useState<PageState>('menu');
   const [sessionStats, setSessionStats] = useState<RankedStats>({
     questionsAnswered: 0,
@@ -30,7 +25,6 @@ export function RankedPage() {
     totalScore: 0,
     currentStreak: 0,
   });
-  const [userRank, setUserRank] = useState<number | null>(null);
 
   const handleStartSession = () => {
     setPageState('playing');

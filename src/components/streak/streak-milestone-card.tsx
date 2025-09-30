@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Flame, Trophy, Zap, Calendar, Gift } from 'lucide-react';
+import { Flame, Trophy, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { StreakMilestone } from '@/lib/db/schema';
 
@@ -55,7 +53,6 @@ interface StreakMilestoneCardProps {
   xpBoostActive: boolean;
   xpBoostMultiplier: number;
   xpBoostExpiry?: Date;
-  nextMilestone?: StreakMilestone;
 }
 
 // Helper function to format XP boost display
@@ -92,11 +89,9 @@ export function StreakMilestoneCard({
   xpBoostActive,
   xpBoostMultiplier,
   xpBoostExpiry,
-  nextMilestone,
 }: StreakMilestoneCardProps) {
   // Use hardcoded milestones - ignore API data completely
   const effectiveNextMilestone = getNextMilestone(currentStreak);
-  const t = useTranslations();
   const [timeLeft, setTimeLeft] = useState<string>('');
 
   // Update countdown timer for XP boost

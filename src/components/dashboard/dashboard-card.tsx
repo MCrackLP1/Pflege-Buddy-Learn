@@ -296,10 +296,9 @@ export function DashboardCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <StreakMilestoneCard 
+            <StreakMilestoneCard
               currentStreak={userProgress?.streak_days || 0}
               longestStreak={userProgress?.longest_streak || 0}
-              nextMilestone={userProgress?.next_streak_milestone || undefined}
               xpBoostActive={userProgress?.xp_boost_active || false}
               xpBoostMultiplier={userProgress?.xp_boost_multiplier || 1}
               xpBoostExpiry={userProgress?.xp_boost_expiry ? new Date(userProgress.xp_boost_expiry) : undefined}
@@ -311,10 +310,8 @@ export function DashboardCard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <XpMilestoneCard 
+            <XpMilestoneCard
               currentXp={userProgress?.xp || 0}
-              nextMilestone={userProgress?.next_xp_milestone}
-              lastMilestone={userProgress?.last_xp_milestone}
             />
           </motion.div>
 

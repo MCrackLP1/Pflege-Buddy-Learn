@@ -38,7 +38,7 @@ export function AuthProvider({
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_event, session) => {
         setSession(session);
         setLoading(false);
 

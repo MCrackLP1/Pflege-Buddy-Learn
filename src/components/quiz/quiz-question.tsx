@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Lightbulb, CheckCircle2, XCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Lightbulb } from 'lucide-react';
 import type { QuestionWithChoices } from '@/lib/db/schema';
 import { QuizFeedback } from './quiz-feedback';
 
@@ -34,7 +33,6 @@ export function QuizQuestion({
   usedHints,
   isLastQuestion,
   hintsBalance,
-  hintsLoading,
   isTransitioning = false
 }: QuizQuestionProps) {
   

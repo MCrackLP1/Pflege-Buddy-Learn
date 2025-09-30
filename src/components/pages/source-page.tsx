@@ -1,6 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Calendar, BookOpen, Award, Users } from 'lucide-react';
@@ -32,8 +31,6 @@ export function SourcePage({
   authority,
   relatedQuestions = []
 }: SourcePageProps) {
-  const t = useTranslations();
-
   const getAuthorityBadgeColor = (authority: string) => {
     switch (authority.toLowerCase()) {
       case 'hoch':

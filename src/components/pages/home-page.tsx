@@ -13,7 +13,6 @@ import { Badge } from '@/components/ui/badge';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import React from 'react';
 import { useOptimizedAnimation } from '@/hooks/useOptimizedAnimation';
-import { shouldDisableAnimations, getOptimizedVariants } from '@/lib/utils/performance';
 import {
   Brain,
   BookOpen,
@@ -230,14 +229,12 @@ const AnimatedCounter = ({ value, duration = 2 }: { value: string, duration?: nu
 
 // Modern Hero Section Component
 function ModernHeroSection() {
-  const { shouldAnimate, getTransition, variants } = useOptimizedAnimation();
+  const { shouldAnimate } = useOptimizedAnimation();
   const controls = useAnimation()
-  const [isVisible, setIsVisible] = useState(false)
   const tHomeHero = useTranslations('components.homeHero');
 
   useEffect(() => {
     if (shouldAnimate) {
-      setIsVisible(true)
       controls.start("visible")
     }
   }, [controls, shouldAnimate])
@@ -626,8 +623,6 @@ export function HomePage() {
 
   // Translations
   const tErrors = useTranslations('errors');
-  const tComponents = useTranslations('components');
-  const tHomeHero = useTranslations('components.homeHero');
   const tHomeFeatures = useTranslations('components.homeFeatures');
   const tHomeCategories = useTranslations('components.homeCategories');
   const tHomeProcess = useTranslations('components.homeProcess');
@@ -696,8 +691,6 @@ export function HomePage() {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
-        const _updatedProfile = responseData.data;
         setShowNameModal(false);
       } else {
         const errorData = await response.json();
@@ -730,100 +723,6 @@ export function HomePage() {
   }
 
   if (!session) {
-    const _structuredData = [
-      // WebApplication Schema
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "PflegeBuddy Learn",
-        "description": "Interaktives Lernquiz für Pflegekräfte mit Multiple-Choice Fragen zu medizinischen Themen",
-        "url": "https://www.pflegebuddy.app",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Web Browser",
-        "browserRequirements": "Modern Web Browser",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "EUR",
-          "availability": "https://schema.org/InStock"
-        },
-        "creator": {
-          "@type": "Organization",
-          "name": "PflegeBuddy",
-          "url": "https://www.pflegebuddy.app",
-          "logo": "https://www.pflegebuddy.app/favicon/logo.webp"
-        },
-        "featureList": [
-          "Interaktive Multiple-Choice Fragen",
-          "Erfahrungspunkt-System (XP)",
-          "Intelligente Hinweise",
-          "Lernfortschritt-Tracking",
-          "Tägliche Lernserie",
-          "14 Fachbereiche mit +1392 Fragen verfügbar"
-        ],
-        "screenshot": "https://www.pflegebuddy.app/favicon/logo.webp",
-        "datePublished": "2025-01-01",
-        "softwareVersion": "1.0"
-      },
-      // Organization Schema
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "PflegeBuddy",
-        "url": "https://www.pflegebuddy.app",
-        "logo": "https://www.pflegebuddy.app/favicon/logo.webp",
-        "description": "Digitale Lernplattform für Pflegefachkräfte und medizinisches Personal",
-        "foundingDate": "2025",
-        "knowsAbout": [
-          "Pflegeweiterbildung",
-          "Medizinische Weiterbildung",
-          "Multiple-Choice Lernsysteme",
-          "DSGVO-konforme Gesundheitsdaten",
-          "Medizinische Fachkenntnisse"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+491741632129",
-          "email": "deinpflegebuddy@gmail.com",
-          "contactType": "customer service"
-        },
-        "sameAs": [
-          "https://www.instagram.com/pflege.buddy/"
-        ]
-      },
-      // Course Schema
-      {
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Pflegefachwissen Weiterbildung",
-        "description": "Umfassende Lernplattform mit 14 Fachbereichen und +1392 Fragen für Pflegekräfte",
-        "provider": {
-          "@type": "Organization",
-          "name": "PflegeBuddy"
-        },
-        "courseMode": "online",
-        "educationalCredentialAwarded": "Lernzertifikat",
-        "hasCourseInstance": {
-          "@type": "CourseInstance",
-          "courseMode": "online",
-          "instructor": {
-            "@type": "Organization",
-            "name": "PflegeBuddy Team"
-          }
-        },
-        "teaches": [
-          "Notfallmanagement",
-          "Medikamentengabe",
-          "Hygiene & Infektionsschutz",
-          "Pflegedokumentation",
-          "Schmerzmanagement",
-          "Palliative Pflege"
-        ],
-        "educationalLevel": "Professional",
-        "occupationalCategory": "Pflegefachkraft"
-      }
-    ];
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {/* Navigation */}

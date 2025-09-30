@@ -1,6 +1,5 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ExternalLink, BookOpen } from 'lucide-react';
@@ -31,7 +30,6 @@ export function RelatedQuestions({
   title = "Verwandte Fragen",
   maxItems = 5
 }: RelatedQuestionsProps) {
-  const t = useTranslations();
   const locale = useLocale();
 
   const filteredQuestions = questions
